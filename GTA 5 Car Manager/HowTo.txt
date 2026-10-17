@@ -1,0 +1,579 @@
+============================================================
+  GTA GARAGE MANAGER
+  HowTo - Ghid de utilizare (RO) / User guide (EN)
+  Fisier / File: GTA 5 Car Manager/GTA_Car_Manager.html
+============================================================
+
+  [RO] Ghidul in limba romana incepe mai jos.
+  [EN] The English guide starts after the Romanian one
+       (search for "ENGLISH").
+
+
+############################################################
+#                         ROMANA                           #
+############################################################
+
+CUPRINS
+  1. Ce este si unde se salveaza datele
+  2. Bara de sus (header)
+  3. Prima pornire
+  4. Limba paginii (EN / RO)
+  5. Teme de culori
+  6. Adaugarea unei masini
+  7. Editare, favorite, stergere
+  8. Iconitele de pe carduri
+  9. Cautare, filtre si sortare
+ 10. Garaje si locuri ocupate
+ 11. Import si export (backup)
+ 12. Poze
+ 13. Probleme frecvente
+
+
+------------------------------------------------------------
+1. CE ESTE SI UNDE SE SALVEAZA DATELE
+------------------------------------------------------------
+Pagina tine evidenta masinilor din GTA Online: in ce garaj
+sunt, pe ce loc, ce modificari au si cate locuri libere mai
+ai in fiecare garaj.
+
+IMPORTANT: datele NU se salveaza pe GitHub. Se salveaza doar
+in browserul in care lucrezi (baza de date IndexedDB).
+  - Alt calculator, alt browser sau telefon = pagina goala.
+  - Daca stergi datele browserului (cache, cookies, "site
+    data"), se sterg si masinile.
+  - Modul incognito nu pastreaza nimic dupa inchidere.
+Solutia: fa periodic export (sectiunea 11) si pastreaza
+fisierele Cars.json si Garages.json.
+
+
+------------------------------------------------------------
+2. BARA DE SUS (HEADER)
+------------------------------------------------------------
+In mijloc: titlul "GTA Garage Manager". Fontul si culoarea
+lui se schimba odata cu tema aleasa.
+
+In dreapta, de la stanga la dreapta:
+  ◐  Cercul colorat ... alegerea temei (sectiunea 5)
+  EN / RO ............. limba paginii (sectiunea 4)
+  🅿️ Garages/Garaje ... administrarea garajelor (sectiunea 10)
+  ⋮  Meniul cu 3 puncte  import / export (sectiunea 11)
+
+Meniurile se inchid cu click in afara lor sau cu tasta Esc.
+Pe telefon, butoanele apar centrat sub titlu.
+
+Daca apare un mesaj rosu "DB error" in bara de sus,
+browserul blocheaza stocarea locala (vezi sectiunea 13).
+Cand totul e in regula, nu apare nimic.
+
+
+------------------------------------------------------------
+3. PRIMA PORNIRE
+------------------------------------------------------------
+Pe un dispozitiv nou, pagina e goala. Ai doua variante:
+  a) Importi backup-urile din meniul ⋮:
+     "Import Cars.json" si "Import Garages.json".
+  b) Incepi de la zero: definesti garajele (sectiunea 10),
+     apoi adaugi masinile (sectiunea 6).
+
+
+------------------------------------------------------------
+4. LIMBA PAGINII (EN / RO)
+------------------------------------------------------------
+Meniul mic EN / RO din dreapta sus schimba limba.
+  - La prima deschidere pagina apare in engleza.
+  - Dupa ce alegi RO, pagina ramane in romana la urmatoarele
+    deschideri (in acelasi browser).
+Numele din joc (clase, garaje, Imani, HSW, Benny's) si
+numele temelor raman neschimbate in ambele limbi.
+
+
+------------------------------------------------------------
+5. TEME DE CULORI
+------------------------------------------------------------
+Click pe cercul colorat din dreapta sus.
+
+TEME GATA FACUTE (12)
+  Inchise:   Graphite (implicita), Midnight, OLED Black,
+             Los Santos Green, Neon Night, Vice Sunset,
+             Ocean, Crimson, Mocha
+  Deschise:  Light, Paper, Desert
+Fiecare tema schimba tot: fundalul, cardurile, textul,
+butoanele, culorile de stare si fontul titlului.
+Toate au fost verificate sa aiba text usor de citit.
+
+TEMA PERSONALIZATA (Custom)
+  - Background / Fundal: culoarea paginii.
+  - Accent: culoarea butoanelor si a filtrelor active.
+  - Title font / Font titlu: fontul titlului (12 variante).
+  - Schimbarile se vad imediat.
+  - Culoarea textului se alege automat (deschis sau inchis),
+    ca sa ramana lizibil pe orice fundal. Daca alegi o
+    culoare "la mijloc" (ex. magenta aprins), pagina o
+    deschide sau o inchide putin, pastrand nuanta.
+
+Tema aleasa se salveaza in browser si ramane la urmatoarele
+deschideri. Pe alt browser/dispozitiv porneste cu Graphite.
+
+Nota: fonturile titlului se incarca de pe Google Fonts.
+Fara internet, titlul apare cu un font obisnuit.
+
+
+------------------------------------------------------------
+6. ADAUGAREA UNEI MASINI
+------------------------------------------------------------
+Apasa "Add" / "Adauga". Campurile:
+  - Manufacturer / Producator ... ex: Pegassi
+  - Model ...................... ex: Oppressor MK II
+  - Class / Clasa .............. ex: Super, Muscle, Off-Road
+  - Garage / Garaj ............. alegi din lista sau scrii
+                                 numele. Sub camp vezi imediat
+                                 cate locuri sunt ocupate si
+                                 libere (sectiunea 10).
+  - Level / Spot (Nivel / Loc) . ex: Garage B1 / Loc 3
+  - Notes / Note ............... culoare, placuta, comentarii.
+                                 Notele apar si in cautare.
+  - Bife: Modified, Favorite, HSW, Benny's, Imani Tech.
+    La Imani alegi si tipul: RC Unit sau Lock-On Jammer.
+  - Image / Imagine ............ screenshot cu masina
+                                 (sectiunea 12).
+Apasa "Save" / "Salveaza".
+
+
+------------------------------------------------------------
+7. EDITARE, FAVORITE, STERGERE
+------------------------------------------------------------
+Butoanele de sub fiecare card:
+  ★   Marcheaza / scoate de la favorite (un singur click).
+      Cardurile favorite au contur auriu.
+  ✏️  Editeaza masina. Daca nu alegi o poza noua, ramane
+      cea veche.
+  🗑️  Sterge masina (cere confirmare). Stergerea e
+      definitiva - nu exista "undo".
+
+
+------------------------------------------------------------
+8. ICONITELE DE PE CARDURI
+------------------------------------------------------------
+  Stea aurie ............ Favorite
+  Cheie + surubelnita ... Modified (modificata)
+  Telecomanda ........... Imani Tech: RC Unit
+  Jammer (antena rosie) . Imani Tech: Lock-On Jammer
+  Fulger ................ HSW
+  Masina lowrider mov ... Benny's
+Tine mouse-ul pe o iconita ca sa vezi numele ei.
+
+Poze: cand tii mouse-ul peste poza unei masini, aceasta se
+mareste. Pe telefon/tableta efectul nu exista.
+
+
+------------------------------------------------------------
+9. CAUTARE, FILTRE SI SORTARE
+------------------------------------------------------------
+CAUTARE (campul de sus) - cauta in: producator, model,
+clasa, garaj, loc, note si tip Imani.
+  - Nu conteaza diacriticele sau literele mari:
+    "placuta" gaseste "plăcuță", "ubermacht" gaseste
+    "Übermacht".
+
+FILTRE CU BIFA (Favorite, Imani, Modified, HSW, Benny's)
+  - Fiecare are iconita lui si, alaturi, numarul de masini
+    care au optiunea respectiva.
+  - Poti bifa mai multe deodata: se afiseaza doar masinile
+    care le au pe TOATE.
+
+LISTE DE FILTRARE
+  - Garaj: arata si ocuparea, ex. "Agency (18/21)".
+    Cand alegi un garaj, caseta de sus arata
+    Ocupate / Libere / Total pentru el.
+  - Clasa si Producator.
+
+SORTARE
+  - Originala (ordinea adaugarii), Clasa A→Z, Garaj A→Z,
+    Favorite primele, Modificate primele.
+
+"Results: X / Y" arata cate masini se vad din total.
+
+
+------------------------------------------------------------
+10. GARAJE SI LOCURI OCUPATE
+------------------------------------------------------------
+Butonul "🅿️ Garages" / "Garaje" (dreapta sus) deschide
+administrarea garajelor.
+  - Adaugare: scrii numele si numarul de locuri, apoi
+    "Save garage".
+  - Editare (✏️) si stergere (🗑️) din tabel. Stergerea unui
+    garaj NU sterge masinile din el, doar definitia locurilor.
+  - Garajele folosite la masini dar nedefinite apar in tabel
+    cu "(undefined)" si un buton ➕ pentru definire rapida.
+
+ATENTIE: numele garajului trebuie scris EXACT la fel la
+masini si in lista de garaje (aceleasi litere, spatii,
+majuscule), altfel ocuparea nu se calculeaza corect.
+Cel mai sigur: alege garajul din lista care apare cand scrii.
+
+GARAJ PLIN
+  - In formularul masinii, sub campul Garaj:
+      verde = mai sunt locuri libere
+      rosu "⚠ Garage full" = nu mai sunt locuri
+  - La salvarea intr-un garaj plin, pagina cere confirmare.
+    Poti renunta sau salva oricum.
+  - Daca editezi o masina care e deja in garajul respectiv,
+    nu primesti avertismentul.
+
+
+------------------------------------------------------------
+11. IMPORT SI EXPORT (BACKUP)
+------------------------------------------------------------
+Toate se afla in meniul ⋮ (trei puncte, dreapta sus):
+
+  Cars / Masini
+    📤 Export Cars.json ..... descarca toate masinile,
+                              CU POZE
+    📥 Import Cars.json ..... incarca masinile dintr-un fisier
+  Garages / Garaje
+    📤 Export Garages.json .. descarca garajele cu locurile
+    📥 Import Garages.json .. incarca garajele dintr-un fisier
+
+!!! ATENTIE: IMPORTUL INLOCUIESTE TOT !!!
+Importul de masini sterge toate masinile existente si le
+pune pe cele din fisier. La fel si importul de garaje.
+Inainte de orice import, fa un export ca backup.
+
+Recomandare: fa export dupa fiecare sesiune in care ai
+modificat ceva si pastreaza fisierele intr-un loc sigur
+(ex. Google Drive). Poti pastra mai multe versiuni
+redenumite cu data, ex. "Cars_2026-10-17.json". La import,
+numele fisierului nu conteaza.
+
+
+------------------------------------------------------------
+12. POZE
+------------------------------------------------------------
+  - Foloseste screenshot-uri originale, cat mai mari.
+  - Pagina le micsoreaza automat la 1000 px latime si le
+    salveaza la calitate buna (WebP). Pozele mai mici nu sunt
+    marite artificial.
+  - Pozele intra in Cars.json, deci fisierul poate ajunge la
+    cativa MB. E normal.
+  - Pe card, poza e decupata ca sa umple cadrul; la marire,
+    toate pozele au aceeasi dimensiune.
+
+
+------------------------------------------------------------
+13. PROBLEME FRECVENTE
+------------------------------------------------------------
+Pagina e goala
+  -> Esti pe alt browser/dispozitiv sau s-au sters datele
+     browserului. Din meniul ⋮: "Import Cars.json" si
+     "Import Garages.json".
+
+Nu vad ultimele modificari dupa ce am urcat fisierul pe
+GitHub
+  -> GitHub Pages are nevoie de 1-2 minute sa se actualizeze.
+     Apoi apasa Ctrl+F5 ca sa ocolesti cache-ul.
+
+Link-ul din index.html nu deschide pagina
+  -> Fisierul trebuie sa se numeasca exact
+     "GTA_Car_Manager.html", in folderul "GTA 5 Car Manager".
+
+Ocuparea unui garaj apare gresita sau "?"
+  -> Numele garajului de la masini difera de cel din lista
+     de garaje, sau garajul nu are numar de locuri definit
+     (sectiunea 10).
+
+Pozele arata sterse
+  -> Au fost salvate cu o versiune mai veche a paginii.
+     Editeaza masina (✏️) si incarca din nou poza originala.
+
+Titlul apare cu un font obisnuit
+  -> Fonturile vin de pe Google Fonts; verifica conexiunea
+     la internet sau blocantele de reclame/scripturi.
+
+Apare "DB error" in bara de sus
+  -> Browserul blocheaza stocarea locala (setari de
+     confidentialitate, incognito). Deschide pagina normal.
+
+
+
+############################################################
+#                         ENGLISH                          #
+############################################################
+
+CONTENTS
+  1. What it is and where data is stored
+  2. Top bar (header)
+  3. First start
+  4. Page language (EN / RO)
+  5. Color themes
+  6. Adding a car
+  7. Edit, favorite, delete
+  8. Card icons
+  9. Search, filters and sorting
+ 10. Garages and occupied slots
+ 11. Import and export (backup)
+ 12. Images
+ 13. Troubleshooting
+
+
+------------------------------------------------------------
+1. WHAT IT IS AND WHERE DATA IS STORED
+------------------------------------------------------------
+The page keeps track of your GTA Online cars: which garage
+they're in, which spot, what upgrades they have and how many
+free slots each garage has left.
+
+IMPORTANT: your data is NOT stored on GitHub. It is stored
+only in the browser you are using (IndexedDB database).
+  - Another computer, another browser or a phone = empty page.
+  - Clearing browser data (cache, cookies, "site data")
+    also deletes your cars.
+  - Incognito mode keeps nothing after you close it.
+Solution: export regularly (section 11) and keep the
+Cars.json and Garages.json files.
+
+
+------------------------------------------------------------
+2. TOP BAR (HEADER)
+------------------------------------------------------------
+Center: the "GTA Garage Manager" title. Its font and color
+change with the selected theme.
+
+On the right, from left to right:
+  ◐  Color circle ..... theme picker (section 5)
+  EN / RO ............. page language (section 4)
+  🅿️ Garages .......... garage management (section 10)
+  ⋮  Three-dot menu ... import / export (section 11)
+
+Menus close when you click outside them or press Esc.
+On phones, the buttons are centered below the title.
+
+If a red "DB error" message appears in the top bar, the
+browser is blocking local storage (see section 13).
+When everything works, nothing is shown.
+
+
+------------------------------------------------------------
+3. FIRST START
+------------------------------------------------------------
+On a new device the page is empty. Two options:
+  a) Import your backups from the ⋮ menu:
+     "Import Cars.json" and "Import Garages.json".
+  b) Start from scratch: define your garages (section 10),
+     then add your cars (section 6).
+
+
+------------------------------------------------------------
+4. PAGE LANGUAGE (EN / RO)
+------------------------------------------------------------
+The small EN / RO menu at the top right switches language.
+  - The first time it opens, the page is in English.
+  - Once you pick RO, the page stays in Romanian on later
+    visits (in the same browser).
+In-game names (classes, garages, Imani, HSW, Benny's) and
+theme names stay the same in both languages.
+
+
+------------------------------------------------------------
+5. COLOR THEMES
+------------------------------------------------------------
+Click the color circle at the top right.
+
+READY-MADE THEMES (12)
+  Dark:   Graphite (default), Midnight, OLED Black,
+          Los Santos Green, Neon Night, Vice Sunset,
+          Ocean, Crimson, Mocha
+  Light:  Light, Paper, Desert
+Each theme changes everything: background, cards, text,
+buttons, status colors and the title font.
+All of them were checked for easy-to-read text.
+
+CUSTOM THEME
+  - Background: the page color.
+  - Accent: the color of buttons and active filters.
+  - Title font: the title's font (12 options).
+  - Changes apply instantly.
+  - The text color is picked automatically (light or dark)
+    so it stays readable on any background. If you pick a
+    "middle" color (e.g. bright magenta), the page makes it
+    slightly lighter or darker while keeping the hue.
+
+The selected theme is saved in the browser and kept on later
+visits. On another browser/device it starts with Graphite.
+
+Note: title fonts are loaded from Google Fonts. Without an
+internet connection the title uses a regular font.
+
+
+------------------------------------------------------------
+6. ADDING A CAR
+------------------------------------------------------------
+Press "Add". The fields:
+  - Manufacturer ............... e.g. Pegassi
+  - Model ...................... e.g. Oppressor MK II
+  - Class / Type ............... e.g. Super, Muscle, Off-Road
+  - Garage ..................... pick from the list or type
+                                 the name. Right below you see
+                                 occupied and free slots
+                                 (section 10).
+  - Level / Spot ............... e.g. Garage B1 / Spot 3
+  - Notes ...................... color, plate, comments.
+                                 Notes are searchable too.
+  - Checkboxes: Modified, Favorite, HSW, Benny's, Imani Tech.
+    For Imani, also pick the type: RC Unit or Lock-On Jammer.
+  - Image ...................... a screenshot of the car
+                                 (section 12).
+Press "Save".
+
+
+------------------------------------------------------------
+7. EDIT, FAVORITE, DELETE
+------------------------------------------------------------
+Buttons under each card:
+  ★   Add to / remove from favorites (one click).
+      Favorite cards have a gold border.
+  ✏️  Edit the car. If you don't choose a new image, the
+      old one is kept.
+  🗑️  Delete the car (asks for confirmation). Deleting is
+      permanent - there is no "undo".
+
+
+------------------------------------------------------------
+8. CARD ICONS
+------------------------------------------------------------
+  Gold star ............. Favorite
+  Wrench + screwdriver .. Modified
+  Remote control ........ Imani Tech: RC Unit
+  Jammer (red antenna) .. Imani Tech: Lock-On Jammer
+  Lightning bolt ........ HSW
+  Purple lowrider ....... Benny's
+Hover over an icon to see its name.
+
+Images: hovering over a car's picture enlarges it.
+This effect doesn't exist on phones/tablets.
+
+
+------------------------------------------------------------
+9. SEARCH, FILTERS AND SORTING
+------------------------------------------------------------
+SEARCH (top field) - looks in: manufacturer, model, class,
+garage, spot, notes and Imani type.
+  - Accents and letter case don't matter:
+    "ubermacht" finds "Übermacht".
+
+CHECKBOX FILTERS (Favorite, Imani, Modified, HSW, Benny's)
+  - Each one shows its icon and, next to it, how many cars
+    have that option.
+  - You can tick several at once: only cars that have ALL
+    of them are shown.
+
+DROPDOWN FILTERS
+  - Garage: also shows occupancy, e.g. "Agency (18/21)".
+    When you pick a garage, the box at the top shows
+    Occupied / Free / Total for it.
+  - Class and Manufacturer.
+
+SORTING
+  - Original (order added), Class A→Z, Garage A→Z,
+    Favorites first, Modified first.
+
+"Results: X / Y" shows how many cars are visible out of the
+total.
+
+
+------------------------------------------------------------
+10. GARAGES AND OCCUPIED SLOTS
+------------------------------------------------------------
+The "🅿️ Garages" button (top right) opens garage management.
+  - Add: type the name and number of slots, then
+    "Save garage".
+  - Edit (✏️) and delete (🗑️) from the table. Deleting a
+    garage does NOT delete its cars, only the slot definition.
+  - Garages used on cars but not defined show up in the
+    table as "(undefined)" with a ➕ button for quick setup.
+
+WARNING: the garage name must be written EXACTLY the same on
+cars and in the garage list (same letters, spaces, case),
+otherwise occupancy is calculated wrong.
+Safest: pick the garage from the list that appears as you
+type.
+
+FULL GARAGE
+  - In the car form, below the Garage field:
+      green = free slots available
+      red "⚠ Garage full" = no free slots
+  - When saving into a full garage, the page asks you to
+    confirm. You can cancel or save anyway.
+  - If you edit a car that is already in that garage, you
+    don't get the warning.
+
+
+------------------------------------------------------------
+11. IMPORT AND EXPORT (BACKUP)
+------------------------------------------------------------
+Everything is in the ⋮ menu (three dots, top right):
+
+  Cars
+    📤 Export Cars.json ..... downloads all cars,
+                              WITH IMAGES
+    📥 Import Cars.json ..... loads cars from a file
+  Garages
+    📤 Export Garages.json .. downloads garages with slots
+    📥 Import Garages.json .. loads garages from a file
+
+!!! WARNING: IMPORT REPLACES EVERYTHING !!!
+Importing cars deletes all existing cars and replaces them
+with the ones in the file. Importing garages works the same.
+Before any import, export a backup first.
+
+Tip: export after every session in which you changed
+something and keep the files somewhere safe (e.g. Google
+Drive). You can keep several versions renamed with the date,
+e.g. "Cars_2026-10-17.json". The file name doesn't matter
+when importing.
+
+
+------------------------------------------------------------
+12. IMAGES
+------------------------------------------------------------
+  - Use original screenshots, as large as possible.
+  - The page automatically shrinks them to 1000 px wide and
+    saves them in good quality (WebP). Smaller images are
+    not artificially enlarged.
+  - Images are included in Cars.json, so the file can reach
+    a few MB. That's normal.
+  - On the card, the image is cropped to fill the frame;
+    when enlarged, all images have the same size.
+
+
+------------------------------------------------------------
+13. TROUBLESHOOTING
+------------------------------------------------------------
+The page is empty
+  -> You're on another browser/device, or browser data was
+     cleared. From the ⋮ menu: "Import Cars.json" and
+     "Import Garages.json".
+
+I don't see my latest changes after uploading to GitHub
+  -> GitHub Pages needs 1-2 minutes to update. Then press
+     Ctrl+F5 to bypass the cache.
+
+The link in index.html doesn't open the page
+  -> The file must be named exactly "GTA_Car_Manager.html",
+     inside the "GTA 5 Car Manager" folder.
+
+A garage's occupancy looks wrong or shows "?"
+  -> The garage name on the cars differs from the one in the
+     garage list, or the garage has no slot count defined
+     (section 10).
+
+Images look blurry
+  -> They were saved with an older version of the page.
+     Edit the car (✏️) and upload the original image again.
+
+The title shows a regular font
+  -> Fonts come from Google Fonts; check your internet
+     connection or ad/script blockers.
+
+"DB error" appears in the top bar
+  -> The browser is blocking local storage (privacy
+     settings, incognito). Open the page normally.
