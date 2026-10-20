@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vehicle Export Tracker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Russo+One&family=Orbitron&family=Audiowide&family=Black+Ops+One&family=Monoton&family=Pacifico&family=Righteous&family=Racing+Sans+One&family=Bungee&family=Rubik+Mono+One&family=Permanent+Marker&family=Rye&display=swap">
+<script>
+// ---------- Themes (same set as Car Manager, plus "Dispatch"), applied before the page draws ----------
+const THEME_KEY = "gtaProductionTheme";
+const THEME_FONTS = ["Barlow Condensed", "Russo One", "Orbitron", "Audiowide", "Black Ops One", "Monoton", "Pacifico", "Righteous", "Racing Sans One", "Bungee", "Rubik Mono One", "Permanent Marker", "Rye"];
+const THEMES = {
+  dispatch: {"name": "Dispatch", "font": "Barlow Condensed", "dark": true, "bg": "#121820", "header": "#0e141b", "bg2": "#1b232d", "bg3": "#232d39", "border": "#3b4757", "text": "#ece6da", "muted": "#a5adb7", "accent": "#f2a93b", "accentText": "#1d1404", "ok": "#3fcaa6", "bad": "#ff6464", "warn": "#f2a93b", "gold": "#f2c94c", "title": "#ece6da", "glow": "#f2a93b"},
+  graphite: {"name": "Graphite", "font": "Russo One", "dark": true, "bg": "#1c2026", "header": "#111418", "bg2": "#2a313b", "bg3": "#353d4a", "border": "#4a5263", "text": "#eef1f5", "muted": "#a3acbb", "accent": "#4d94ff", "accentText": "#0b1220", "ok": "#5fd38a", "bad": "#ff7272", "warn": "#f5a623", "gold": "#f2c94c", "title": "#eef1f5", "glow": "#4d94ff"},
+  midnight: {"name": "Midnight", "font": "Orbitron", "dark": true, "bg": "#0d1424", "header": "#080d18", "bg2": "#162036", "bg3": "#1f2b46", "border": "#2f3e61", "text": "#e6ecff", "muted": "#9eabcb", "accent": "#6ea8ff", "accentText": "#071022", "ok": "#5fd8a0", "bad": "#ff7a85", "warn": "#ffb84d", "gold": "#f5cd57", "title": "#bcd4ff", "glow": "#3d7bff"},
+  oled: {"name": "OLED Black", "font": "Audiowide", "dark": true, "bg": "#000000", "header": "#000000", "bg2": "#111111", "bg3": "#1c1c1c", "border": "#333333", "text": "#f2f2f2", "muted": "#a6a6a6", "accent": "#e6e6e6", "accentText": "#000000", "ok": "#5fd38a", "bad": "#ff6b6b", "warn": "#f5a623", "gold": "#f2c94c", "title": "#ffffff", "glow": "#666666"},
+  lsgreen: {"name": "Los Santos Green", "font": "Black Ops One", "dark": true, "bg": "#0f1d16", "header": "#09140e", "bg2": "#17291f", "bg3": "#21382b", "border": "#335241", "text": "#e8f5ec", "muted": "#9fbfab", "accent": "#4cd982", "accentText": "#062012", "ok": "#7ee2a4", "bad": "#ff7b72", "warn": "#f5c04d", "gold": "#f2d15c", "title": "#7cf0a8", "glow": "#1fae5c"},
+  neon: {"name": "Neon Night", "font": "Monoton", "dark": true, "bg": "#140c22", "header": "#0c0616", "bg2": "#21143a", "bg3": "#2c1c4c", "border": "#46307a", "text": "#f3e9ff", "muted": "#b8a5d6", "accent": "#ff4fd8", "accentText": "#1a0716", "ok": "#5ff0c0", "bad": "#ff7a9a", "warn": "#ffc35c", "gold": "#ffd76a", "title": "#ff7ae0", "glow": "#ff2ad4"},
+  sunset: {"name": "Vice Sunset", "font": "Pacifico", "dark": true, "bg": "#22121f", "header": "#170b15", "bg2": "#331b2e", "bg3": "#42243b", "border": "#64385a", "text": "#fff0f2", "muted": "#d3a9be", "accent": "#ff8a4c", "accentText": "#250d05", "ok": "#6fe0a8", "bad": "#ff7a8a", "warn": "#ffcc5c", "gold": "#ffd36a", "title": "#ffb070", "glow": "#ff3f8e"},
+  ocean: {"name": "Ocean", "font": "Righteous", "dark": true, "bg": "#0b1d24", "header": "#061318", "bg2": "#122b35", "bg3": "#1a3a47", "border": "#2a5666", "text": "#e5f7fb", "muted": "#9cc3cf", "accent": "#2ed3d3", "accentText": "#04191c", "ok": "#6ee6a6", "bad": "#ff7f7f", "warn": "#ffc65c", "gold": "#f5d060", "title": "#7ff0f0", "glow": "#14a6b8"},
+  crimson: {"name": "Crimson", "font": "Racing Sans One", "dark": true, "bg": "#1a0d0f", "header": "#100607", "bg2": "#2a1417", "bg3": "#381b1f", "border": "#5a2d33", "text": "#fbecec", "muted": "#cfa3a7", "accent": "#ff4d5e", "accentText": "#1e0507", "ok": "#6fdc98", "bad": "#ff8a8a", "warn": "#ffc04d", "gold": "#f5cd57", "title": "#ff6b78", "glow": "#d90f2a"},
+  mocha: {"name": "Mocha", "font": "Bungee", "dark": true, "bg": "#1f1814", "header": "#15100d", "bg2": "#2e241e", "bg3": "#3b2f27", "border": "#5a4a3e", "text": "#f6ede4", "muted": "#c4b09f", "accent": "#e0a060", "accentText": "#21140a", "ok": "#8ad6a0", "bad": "#ff8a7a", "warn": "#f2c14e", "gold": "#f2cf6a", "title": "#f0c08a", "glow": "#a8642a"},
+  light: {"name": "Light", "font": "Rubik Mono One", "dark": false, "bg": "#f3f5f8", "header": "#ffffff", "bg2": "#ffffff", "bg3": "#e8ecf2", "border": "#cfd6e0", "text": "#1a2230", "muted": "#566175", "accent": "#2563eb", "accentText": "#ffffff", "ok": "#1b7a42", "bad": "#c42b2b", "warn": "#9a5800", "gold": "#b07d00", "title": "#1a2230", "glow": "#93b4ff"},
+  paper: {"name": "Paper", "font": "Permanent Marker", "dark": false, "bg": "#f4efe4", "header": "#fbf8f1", "bg2": "#fffdf8", "bg3": "#ece5d5", "border": "#d6cbb4", "text": "#2b2620", "muted": "#62594c", "accent": "#b8452d", "accentText": "#ffffff", "ok": "#2e7a3c", "bad": "#b3261e", "warn": "#8f5600", "gold": "#a77a00", "title": "#2b2620", "glow": "#e3c9a0"},
+  desert: {"name": "Desert", "font": "Rye", "dark": false, "bg": "#efe0c8", "header": "#f6ead6", "bg2": "#faf2e4", "bg3": "#e6d3b6", "border": "#cdb48f", "text": "#2e2014", "muted": "#634c35", "accent": "#b5541c", "accentText": "#ffffff", "ok": "#2f6f35", "bad": "#a8261b", "warn": "#875000", "gold": "#9a6d00", "title": "#7a3510", "glow": "#e2a868"}
+};
+
+const Color = {
+  hex2rgb(h) {
+    h = h.replace("#", "");
+    if (h.length === 3) h = h.split("").map(c => c + c).join("");
+    return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
+  },
+  rgb2hex(rgb) {
+    return "#" + rgb.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, "0")).join("");
+  },
+  mix(a, b, t) { // t = share of b
+    const A = Color.hex2rgb(a), B = Color.hex2rgb(b);
+    return Color.rgb2hex(A.map((v, i) => v + (B[i] - v) * t));
+  },
+  lum(h) {
+    return Color.hex2rgb(h)
+      .map(v => v / 255)
+      .map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4))
+      .reduce((s, c, i) => s + c * [0.2126, 0.7152, 0.0722][i], 0);
+  },
+  contrast(a, b) {
+    const x = Color.lum(a), y = Color.lum(b);
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+  },
+  // nudge color toward `toward` until it reaches `min` contrast on every surface
+  ensure(c, surfaces, min, toward) {
+    let out = c;
+    for (let t = 0; t <= 1.0001; t += 0.04) {
+      out = Color.mix(c, toward, t);
+      if (surfaces.every(s => Color.contrast(out, s) >= min)) return out;
+    }
+    return toward;
+  }
+};
+
+// Build a full, readable theme from just a background + accent color
+function buildCustomTheme(bg, accent, font) {
+  const W = "#f4f5f7", K = "#14161a";
+  const text = Color.contrast(W, bg) >= Color.contrast(K, bg) ? W : K;
+  const darkText = text === K;
+  let toward = text, away = darkText ? "#ffffff" : "#000000";
+  // mid-tone colors (bright magenta, orange...) can't hold readable text as-is:
+  // shift them just enough toward light/dark, keeping the hue
+  if (Color.contrast(text, bg) < 5.2) {
+    for (let t = 0.03; t <= 1; t += 0.03) {
+      const b = Color.mix(bg, away, t);
+      if (Color.contrast(text, b) >= 5.2) { bg = b; break; }
+    }
+  }
+  // dark text: cards a bit lighter than the page (paper look); light text: cards a bit lighter too
+  let bg2 = darkText ? Color.mix(bg, "#ffffff", 0.5) : Color.mix(bg, toward, 0.07);
+  let bg3 = darkText ? Color.mix(bg, toward, 0.07) : Color.mix(bg, toward, 0.13);
+  // if surfaces drifting toward the text would hurt readability, drift the other way
+  if (Color.contrast(text, bg3) < 4.5) {
+    bg2 = Color.mix(bg, away, 0.12);
+    bg3 = Color.mix(bg, away, 0.22);
+  }
+  const surfaces = [bg, bg2, bg3];
+  const header = darkText ? Color.mix(bg, "#ffffff", 0.35) : Color.mix(bg, "#000000", 0.35);
+  let muted = text;
+  for (let t = 0.6; t >= 0; t -= 0.03) {
+    const m = Color.mix(text, bg, t);
+    if (surfaces.every(s => Color.contrast(m, s) >= 4.6)) { muted = m; break; }
+  }
+  const base = darkText
+    ? { ok: "#1b7a42", bad: "#c42b2b", warn: "#9a5800", gold: "#a77a00" }
+    : { ok: "#5fd38a", bad: "#ff7272", warn: "#f5a623", gold: "#f2c94c" };
+  const status = {};
+  for (const k of ["ok", "bad", "warn"]) status[k] = Color.ensure(base[k], [bg, bg2], 4.5, text);
+  const acc = Color.ensure(accent, [bg, bg2], 3, text);
+  const accentText = Color.contrast("#ffffff", acc) >= Color.contrast("#000000", acc) ? "#ffffff" : "#000000";
+  const title = Color.contrast(acc, header) >= 4.5 ? acc : text;
+  return {
+    name: "Custom", font: font || "Righteous", dark: !darkText,
+    bg, header, bg2, bg3, border: Color.mix(bg, text, 0.28), text, muted,
+    accent: acc, accentText, ...status, gold: Color.ensure(base.gold, [bg2], 3, text),
+    title, glow: acc
+  };
+}
+
+function themeTokens(cfg) {
+  if (cfg && cfg.id === "custom") return buildCustomTheme(cfg.bg, cfg.accent, cfg.font);
+  return THEMES[cfg && cfg.id] || THEMES.dispatch;
+}
+
+// Production Manager names its colors differently; map the shared theme onto them
+function applyTheme(cfg) {
+  const t = themeTokens(cfg);
+  const r = document.documentElement.style;
+  const full = Color.ensure(t.dark ? "#6fb4ff" : "#1f5fbf", [t.bg, t.bg2], 4.5, t.text);
+  const map = {
+    asphalt: t.bg, header: t.header, panel: t.bg2, "panel-2": t.bg3, line: t.border,
+    steel: Color.mix(t.bg3, t.border, 0.55), text: t.text, muted: t.muted,
+    sodium: t.accent, "sodium-ink": t.accentText, ok: t.ok, bad: t.bad, warn: t.warn, full,
+    title: t.title, glow: t.glow
+  };
+  for (const [k, v] of Object.entries(map)) r.setProperty("--" + k, v);
+  r.setProperty("--title-font", `'${t.font}'`);
+  r.setProperty("--shadow", t.dark ? "rgba(0,0,0,.55)" : "rgba(30,35,45,.2)");
+  document.documentElement.style.colorScheme = t.dark ? "dark" : "light";
+  document.documentElement.dataset.dark = t.dark ? "1" : "0";
+}
+
+function loadThemeCfg() {
+  try {
+    const v = JSON.parse(localStorage.getItem(THEME_KEY) || "null");
+    if (v && (THEMES[v.id] || v.id === "custom")) return v;
+  } catch (e) {}
+  return { id: "dispatch" };
+}
+let themeCfg = loadThemeCfg();
+applyTheme(themeCfg);
+
+</script>
+<style>
+  :root {
+    --bg: var(--asphalt);
+    --card: var(--panel);
+    --sidebar: var(--asphalt);
+    --accent: var(--sodium);
+    --green: #1db954;
+    --green-bg: color-mix(in srgb, var(--ok) 16%, var(--panel));
+    --text: var(--text);
+    --muted: var(--muted);
+    --border: var(--line);
+    --top: #ff5c5c;
+    --mid: #ffcc33;
+    --std: #4cd964;
+    --sell: #ff8a65;
+    --sell-bg: color-mix(in srgb, var(--warn) 18%, var(--panel));
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Barlow, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+  }
+  .sidebar {
+    width: 380px;
+    min-width: 380px;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+  .sidebar h2 { font-size: 1.1rem; margin-bottom: 2px; color: var(--accent); }
+  .sidebar .count { font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; }
+  .range-stats {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .range-stat {
+    flex: 1;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 6px;
+    text-align: center;
+    font-size: 0.75rem;
+  }
+  .range-stat .num { font-weight: 700; font-size: 1rem; display: block; }
+  .range-stat.top .num { color: var(--top); }
+  .range-stat.mid .num { color: var(--mid); }
+  .range-stat.std .num { color: var(--std); }
+  .range-stat .label { color: var(--muted); font-size: 0.65rem; }
+
+  /* Filters */
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+    padding: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .filter-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    flex: 1;
+    min-width: 0;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 5px 6px;
+    border-radius: 5px;
+    font-size: 0.72rem;
+    cursor: pointer;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .filter-btn:hover { background: var(--line); color: var(--text); }
+  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--ok) 16%, var(--panel)); }
+  .filter-btn.active.sell-mode { border-color: var(--sell); color: var(--sell); background: var(--sell-bg); }
+  .filter-btn.active.keep-mode { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+  .filter-btn.active.top-f { border-color: var(--top); color: var(--top); background: color-mix(in srgb, var(--bad) 18%, var(--panel)); }
+  .filter-btn.active.mid-f { border-color: var(--mid); color: var(--mid); background: color-mix(in srgb, var(--warn) 18%, var(--panel)); }
+  .filter-btn.active.std-f { border-color: var(--std); color: var(--std); background: color-mix(in srgb, var(--ok) 16%, var(--panel)); }
+  .wh-search {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+  .wh-search:focus { outline: none; border-color: var(--accent); }
+  .filter-info {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+  }
+  .filter-info strong { color: var(--text); }
+
+  .add-form { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+  .add-form input {
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+    padding: 8px 10px; border-radius: 6px; font-size: 0.9rem;
+  }
+  .add-form input:focus { outline: none; border-color: var(--accent); }
+  .add-form button {
+    background: var(--accent); color: var(--sodium-ink); border: none; padding: 9px;
+    border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem;
+  }
+  .add-form button:hover { filter: brightness(1.1); }
+  .suggestions {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px;
+    max-height: 180px; overflow-y: auto; display: none; margin-bottom: 6px;
+  }
+  .suggestions div {
+    padding: 7px 10px; cursor: pointer; font-size: 0.85rem; border-bottom: 1px solid var(--panel-2);
+  }
+  .suggestions div:hover, .suggestions div.active { background: color-mix(in srgb, var(--ok) 16%, var(--panel)); }
+  .suggestions .plate { font-family: monospace; color: var(--accent); }
+  .suggestions .range-tag { font-size: 0.65rem; padding: 1px 4px; border-radius: 3px; margin-left: 4px; }
+  .io-buttons { display: flex; gap: 6px; margin-bottom: 10px; }
+  .io-buttons button {
+    flex: 1; background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    padding: 7px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+  }
+  .io-buttons button:hover { background: var(--steel); }
+  .warehouse-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+  .wh-item {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .wh-item.match { background: var(--green-bg); border-color: var(--green); }
+  .wh-item.sellable { background: var(--sell-bg); border-color: color-mix(in srgb, var(--warn) 18%, var(--panel)); }
+  .wh-item .name { font-weight: 600; font-size: 0.9rem; }
+  .wh-item .plate { font-family: monospace; letter-spacing: 1px; color: var(--text); font-size: 0.88rem; }
+  .wh-item .meta { display: flex; align-items: center; gap: 5px; margin-top: 2px; flex-wrap: wrap; }
+  .wh-item .match-badge {
+    font-size: 0.65rem; background: var(--green); color: var(--panel); padding: 1px 5px;
+    border-radius: 3px; font-weight: 700;
+  }
+  .wh-item .sell-badge {
+    font-size: 0.65rem; background: var(--sell); color: var(--panel); padding: 1px 5px;
+    border-radius: 3px; font-weight: 700;
+  }
+  .wh-item .r-badge {
+    font-size: 0.6rem; padding: 1px 5px; border-radius: 3px; font-weight: 700;
+  }
+  .wh-item .r-badge.top { background: color-mix(in srgb, var(--bad) 18%, var(--panel)); color: var(--top); }
+  .wh-item .r-badge.mid { background: color-mix(in srgb, var(--warn) 18%, var(--panel)); color: var(--mid); }
+  .wh-item .r-badge.std { background: color-mix(in srgb, var(--ok) 16%, var(--panel)); color: var(--std); }
+  .wh-item button { background: transparent; border: none; color: #ff5555; cursor: pointer; font-size: 1rem; padding: 2px 4px; }
+  .main { flex: 1; padding: 20px 24px; overflow-y: auto; }
+  .main h1 { font-size: 1.5rem; color: var(--accent); margin-bottom: 4px; }
+  .subtitle { color: var(--muted); margin-bottom: 16px; font-size: 0.9rem; }
+  .progress { margin-bottom: 18px; font-size: 1rem; }
+  .progress span { color: var(--accent); font-weight: 700; }
+  .collection {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; margin-bottom: 14px;
+  }
+  .collection.done { border-color: var(--accent); background: color-mix(in srgb, var(--ok) 16%, var(--panel)); }
+  .collection-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .collection-header input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+  .collection-title { font-size: 1.1rem; font-weight: 600; }
+  .bonus {
+    margin-left: auto; background: color-mix(in srgb, var(--ok) 16%, var(--panel)); color: var(--accent);
+    padding: 2px 9px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+  }
+  .collector { color: var(--muted); font-size: 0.8rem; margin-bottom: 10px; }
+  .vehicles { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+  .vehicle {
+    background: var(--asphalt); border: 1px solid var(--line); border-radius: 8px;
+    padding: 9px 11px; display: flex; align-items: center; gap: 8px;
+  }
+  .vehicle.match { background: var(--green-bg); border-color: var(--green); }
+  .vehicle.done { opacity: 0.65; }
+  .vehicle input { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
+  .vehicle .info { flex: 1; }
+  .vehicle .name { font-weight: 600; font-size: 0.9rem; }
+  .vehicle .plate { font-family: monospace; letter-spacing: 1px; font-size: 0.85rem; }
+  .range {
+    display: inline-block; font-size: 0.65rem; padding: 1px 5px;
+    border-radius: 3px; margin-top: 2px; font-weight: 600;
+  }
+  .range.top { background: color-mix(in srgb, var(--bad) 18%, var(--panel)); color: var(--top); }
+  .range.mid { background: color-mix(in srgb, var(--warn) 18%, var(--panel)); color: var(--mid); }
+  .range.std { background: color-mix(in srgb, var(--ok) 16%, var(--panel)); color: var(--std); }
+  .actions { margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .actions button {
+    background: var(--panel-2); color: var(--text); border: none; padding: 8px 14px;
+    border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+  }
+  .actions button:hover { background: var(--steel); }
+  @media (max-width: 900px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: relative; max-height: 55vh; }
+  }
+
+  /* project look: tokens come from the shared theme (same as Production Manager) */
+  :root { --bg: var(--asphalt); --card: var(--panel); --sidebar: color-mix(in srgb, var(--panel) 55%, var(--asphalt)); --accent: var(--sodium);
+          --border: var(--line); --green: var(--ok); --green-bg: color-mix(in srgb, var(--ok) 16%, var(--panel)); --top: var(--bad); --mid: var(--warn); --std: var(--ok);
+          --sell: var(--warn); --sell-bg: color-mix(in srgb, var(--warn) 18%, var(--panel)); }
+  h1, h2, .collection-title { font-family: 'Barlow Condensed', Barlow, sans-serif; letter-spacing: .01em; }
+  .tk-bar { display: flex; align-items: center; gap: 8px; margin: -4px 0 16px; flex-wrap: wrap; }
+  .tk-bar .grow { flex: 1; }
+  .tk-bar .tk-title { font: 700 22px/1 'Barlow Condensed', sans-serif; color: var(--title, var(--text)); }
+  .tk-bar select, .tk-btn { height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 600 14px Barlow, sans-serif; cursor: pointer; }
+  .tk-pages { position: relative; }
+  .tk-pages summary { list-style: none; }
+  .tk-pages summary::-webkit-details-marker { display: none; }
+  .tk-pages .list { position: absolute; left: 0; top: calc(100% + 6px); z-index: 50; min-width: 230px; padding: 6px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); box-shadow: 0 16px 40px var(--shadow, rgba(0,0,0,.5)); }
+  .tk-pages a { display: flex; gap: 8px; padding: 8px 10px; border-radius: 6px; color: var(--text); text-decoration: none; font-size: 14px; }
+  .tk-pages a:hover { background: var(--panel-2); }
+  .tk-pages a.here { color: var(--sodium); font-weight: 600; }
+  .tk-pages small { margin-left: auto; color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <h2>Vehicle Warehouse</h2>
+  <div class="count"><span id="whCount">0</span> <span data-i18n="stored">cars stored</span></div>
+
+  <div class="range-stats">
+    <div class="range-stat top">
+      <span class="num" id="countTop">0</span>
+      <span class="label">Top</span>
+    </div>
+    <div class="range-stat mid">
+      <span class="num" id="countMid">0</span>
+      <span class="label">Mid</span>
+    </div>
+    <div class="range-stat std">
+      <span class="num" id="countStd">0</span>
+      <span class="label">Standard</span>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <input type="text" class="wh-search" id="whSearch" data-i18n-ph="searchPh" placeholder="🔍 Search name or plate..." autocomplete="off">
+    <div class="filter-row">
+      <button class="filter-btn active" data-col="all" onclick="setColFilter('all')" data-i18n="all">All</button>
+      <button class="filter-btn keep-mode" data-col="keep" onclick="setColFilter('keep')" data-i18n="collection">Collection</button>
+      <button class="filter-btn sell-mode" data-col="sell" onclick="setColFilter('sell')" data-i18n="toSell">To sell</button>
+    </div>
+    <div class="filter-row">
+      <button class="filter-btn active" data-rng="all" onclick="setRngFilter('all')" data-i18n="all">All</button>
+      <button class="filter-btn top-f" data-rng="Top" onclick="setRngFilter('Top')">Top</button>
+      <button class="filter-btn mid-f" data-rng="Mid" onclick="setRngFilter('Mid')">Mid</button>
+      <button class="filter-btn std-f" data-rng="Standard" onclick="setRngFilter('Standard')">Std</button>
+    </div>
+    <div class="filter-info" id="filterInfo"></div>
+  </div>
+
+  <div class="add-form">
+    <input type="text" id="searchInput" data-i18n-ph="addPh" placeholder="Add: search plate or name..." autocomplete="off">
+    <div class="suggestions" id="suggestions"></div>
+    <input type="text" id="carName" data-i18n-ph="carName" placeholder="Car name" readonly style="opacity:0.7">
+    <input type="text" id="carPlate" data-i18n-ph="plate" placeholder="Plate" readonly style="opacity:0.7; text-transform:uppercase">
+    <input type="text" id="carRange" placeholder="Range" readonly style="opacity:0.7">
+    <button onclick="addCar()" data-i18n="addBtn">+ Add to warehouse</button>
+  </div>
+
+  <div class="io-buttons">
+    <button onclick="exportData()">⬇ Export</button>
+    <button onclick="document.getElementById('importFile').click()">⬆ Import</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+  </div>
+
+  <div class="warehouse-list" id="warehouseList"></div>
+</aside>
+
+<main class="main">
+  <div class="tk-bar">
+    <details class="tk-pages">
+      <summary class="tk-btn" data-i18n-aria="pages" aria-label="Pages"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" style="vertical-align:-3px"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></summary>
+      <div class="list">
+        <a href="../../index.html" data-i18n="pg_home">Home</a>
+        <a href="../../GTA%205%20Car%20Manager/GTA%20Car%20Manager.html">Car Manager</a>
+        <a href="../GTA_Production_Manager.html">Production Manager</a>
+        <a class="here"><span>Vehicle Export Tracker</span><small data-i18n="pg_here">you are here</small></a>
+      </div>
+    </details>
+    <span class="tk-title">Vehicle Export Tracker</span>
+    <span class="grow"></span>
+    <select id="themeSel" data-i18n-aria="theme" aria-label="Theme"></select>
+    <select id="langSel" aria-label="Language / Limbă"><option value="en">EN</option><option value="ro">RO</option></select>
+  </div>
+  <h1>Vehicle Cargo Collections</h1>
+  <p class="subtitle" data-i18n="subtitle">Filter the warehouse by “To sell” to quickly see the cars that aren't part of any collection.</p>
+
+  <div class="progress">
+    <span data-i18n="complete">Collections complete:</span> <span id="doneCount">0</span> / 10
+  </div>
+
+  <div id="collections"></div>
+
+  <div class="actions">
+    <button onclick="resetCollections()" data-i18n="resetCols">Reset collections</button>
+    <button onclick="resetWarehouse()" data-i18n="emptyWh">Empty warehouse</button>
+  </div>
+</main>
+
+<script>
+/* ---------- Language (shared with Production Manager) ---------- */
+const I18N = {
+  en: { stored: "cars stored", searchPh: "🔍 Search name or plate...", all: "All", collection: "Collection", toSell: "To sell", shown: "Shown:",
+    addPh: "Add: search plate or name...", carName: "Car name", plate: "Plate", addBtn: "+ Add to warehouse",
+    subtitle: "Filter the warehouse by “To sell” to quickly see the cars that aren't part of any collection.",
+    complete: "Collections complete:", resetCols: "Reset collections", emptyWh: "Empty warehouse",
+    importOk: "Import done!", error: "Error: ", pickFirst: "Pick a car from the list first!", dupPlate: "This plate is already in the warehouse!",
+    noCars: "No cars added yet.", noResults: "No results for the current filters.", badgeCol: "COLLECTION", badgeSell: "TO SELL", del: "Delete",
+    confirmReset: "Reset all collection ticks?", confirmEmpty: "Empty the warehouse list?", collector: "Collector:",
+    pg_home: "Home", pg_here: "you are here", pages: "Pages", theme: "Theme", customTheme: "Custom (set in Production Manager)" },
+  ro: { stored: "mașini stocate", searchPh: "🔍 Caută nume sau plăcuță...", all: "Toate", collection: "Colecție", toSell: "De vândut", shown: "Afișate:",
+    addPh: "Adaugă: caută plăcuță sau nume...", carName: "Nume mașină", plate: "Plăcuță", addBtn: "+ Adaugă în warehouse",
+    subtitle: "Filtrează warehouse-ul pe „De vândut” ca să vezi rapid mașinile care nu fac parte din nicio colecție.",
+    complete: "Colecții complete:", resetCols: "Resetează colecțiile", emptyWh: "Golește warehouse",
+    importOk: "Import reușit!", error: "Eroare: ", pickFirst: "Selectează mai întâi o mașină din listă!", dupPlate: "Această plăcuță există deja în warehouse!",
+    noCars: "Nicio mașină adăugată încă.", noResults: "Niciun rezultat pentru filtrele curente.", badgeCol: "COLECȚIE", badgeSell: "DE VÂNDUT", del: "Șterge",
+    confirmReset: "Resetezi toate bifările de colecții?", confirmEmpty: "Golești lista de mașini din warehouse?", collector: "Colecționar:",
+    pg_home: "Acasă", pg_here: "ești aici", pages: "Pagini", theme: "Temă", customTheme: "Personalizat (setat în Production Manager)" }
+};
+let lang = "en";
+try { lang = localStorage.getItem("gtaProductionLang") || "en"; } catch (e) {}
+function t(k) { return (I18N[lang] && I18N[lang][k]) ?? I18N.en[k] ?? k; }
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.getElementById("langSel").value = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => el.placeholder = t(el.dataset.i18nPh));
+  document.querySelectorAll("[data-i18n-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nAria)));
+  fillThemeSel();
+}
+function fillThemeSel() {
+  const sel = document.getElementById("themeSel");
+  sel.innerHTML = Object.entries(THEMES).map(([id, th]) => `<option value="${id}">${th.name}</option>`).join("")
+    + (themeCfg.id === "custom" ? `<option value="custom">${t("customTheme")}</option>` : "");
+  sel.value = themeCfg.id;
+}
+document.addEventListener("DOMContentLoaded", () => {
+  applyLang();
+  document.getElementById("langSel").onchange = e => {
+    lang = e.target.value;
+    try { localStorage.setItem("gtaProductionLang", lang); } catch (err) {}
+    applyLang();
+    if (typeof renderWarehouse === "function") renderWarehouse();
+    if (typeof renderCollections === "function") renderCollections();
+  };
+  document.getElementById("themeSel").onchange = e => {
+    if (e.target.value === "custom") return;
+    themeCfg = { id: e.target.value };
+    applyTheme(themeCfg);
+    try { localStorage.setItem(THEME_KEY, JSON.stringify(themeCfg)); } catch (err) {}
+  };
+  document.addEventListener("click", e => { const d = document.querySelector(".tk-pages"); if (d && !d.contains(e.target)) d.open = false; });
+});
+const allCars = [
+  {plate:"B1GMON3Y",range:"Top",name:"Z-Type",collection:"End of Empires"},
+  {plate:"K1NGP1N",range:"Top",name:"Z-Type",collection:""},
+  {plate:"CE0",range:"Top",name:"Z-Type",collection:""},
+  {plate:"B1GB0Y",range:"Top",name:"ETR1",collection:""},
+  {plate:"M0N4RCH",range:"Top",name:"ETR1",collection:""},
+  {plate:"PR3TTY",range:"Top",name:"ETR1",collection:"Pastel Perfection"},
+  {plate:"M1DL1F3",range:"Top",name:"811",collection:""},
+  {plate:"R3G4L",range:"Top",name:"811",collection:""},
+  {plate:"SL1CK",range:"Top",name:"811",collection:"No Direct Sunlight"},
+  {plate:"OH3LL0",range:"Top",name:"Osiris",collection:""},
+  {plate:"PH4R40H",range:"Top",name:"Osiris",collection:""},
+  {plate:"SL33K",range:"Top",name:"Osiris",collection:"Uninsurable"},
+  {plate:"2FA5T4U",range:"Top",name:"Reaper",collection:""},
+  {plate:"D34TH4U",range:"Top",name:"Reaper",collection:"Molten Metal"},
+  {plate:"GR1M",range:"Top",name:"Reaper",collection:""},
+  {plate:"0LDBLU3",range:"Top",name:"Mamba",collection:""},
+  {plate:"BLKM4MB4",range:"Top",name:"Mamba",collection:"Stay Declasse"},
+  {plate:"V1P",range:"Top",name:"Mamba",collection:""},
+  {plate:"C4TCHM3",range:"Top",name:"FMJ",collection:"Birds of Paradise"},
+  {plate:"J0K3R",range:"Top",name:"FMJ",collection:""},
+  {plate:"H0T4U",range:"Top",name:"FMJ",collection:""},
+  {plate:"M4J3ST1C",range:"Top",name:"Stirling GT",collection:""},
+  {plate:"T0UR3R",range:"Top",name:"Stirling GT",collection:""},
+  {plate:"R4LLY",range:"Top",name:"Stirling GT",collection:"Shades of Blue"},
+  {plate:"FUTUR3",range:"Top",name:"X80 Proto",collection:""},
+  {plate:"M4K3B4NK",range:"Top",name:"X80 Proto",collection:"Uninsurable"},
+  {plate:"TURB0",range:"Top",name:"X80 Proto",collection:""},
+  {plate:"C1TRUS",range:"Top",name:"Tyrus",collection:"Birds of Paradise"},
+  {plate:"B35TL4P",range:"Top",name:"Tyrus",collection:""},
+  {plate:"TR3X",range:"Top",name:"Tyrus",collection:""},
+  {plate:"CAR4M3L",range:"Top",name:"T20",collection:""},
+  {plate:"T0PSP33D",range:"Top",name:"T20",collection:""},
+  {plate:"D3V1L",range:"Top",name:"T20",collection:"Uninsurable"},
+  {plate:"L4WLE55",range:"Top",name:"Roosevelt Valor",collection:""},
+  {plate:"0LDT1M3R",range:"Top",name:"Roosevelt Valor",collection:"End of Empires"},
+  {plate:"V4L0R",range:"Top",name:"Roosevelt Valor",collection:""},
+  {plate:"T0PL3SS",range:"Mid",name:"Coquette Classic",collection:"Pastel Perfection"},
+  {plate:"T0FF33",range:"Mid",name:"Coquette Classic",collection:""},
+  {plate:"CL45SY",range:"Mid",name:"Coquette Classic",collection:""},
+  {plate:"PR3C1OUS",range:"Mid",name:"Verlierer",collection:"Pastel Perfection"},
+  {plate:"0UTFR0NT",range:"Mid",name:"Verlierer",collection:""},
+  {plate:"CURV35",range:"Mid",name:"Verlierer",collection:""},
+  {plate:"W1NN1NG",range:"Mid",name:"Zentorno",collection:"Molten Metal"},
+  {plate:"0LDN3W5",range:"Mid",name:"Zentorno",collection:""},
+  {plate:"H3R0",range:"Mid",name:"Zentorno",collection:""},
+  {plate:"1MS0RAD",range:"Mid",name:"Tropos Rallye",collection:""},
+  {plate:"31GHT135",range:"Mid",name:"Tropos Rallye",collection:""},
+  {plate:"1985",range:"Mid",name:"Tropos Rallye",collection:"Hip to be Square"},
+  {plate:"SN0WFLK3",range:"Mid",name:"Sultan RS",collection:"Hip to be Square"},
+  {plate:"F1D3L1TY",range:"Mid",name:"Sultan RS",collection:""},
+  {plate:"5H0W0FF",range:"Mid",name:"Sultan RS",collection:""},
+  {plate:"BUZZ3D",range:"Mid",name:"Cheetah",collection:"Birds of Paradise"},
+  {plate:"M1DN1GHT",range:"Mid",name:"Cheetah",collection:""},
+  {plate:"B1GC4T",range:"Mid",name:"Cheetah",collection:""},
+  {plate:"FRU1TY",range:"Mid",name:"Seven-70",collection:""},
+  {plate:"4LLOY5",range:"Mid",name:"Seven-70",collection:"Shades of Blue"},
+  {plate:"SP33DY",range:"Mid",name:"Seven-70",collection:""},
+  {plate:"0BEYM3",range:"Mid",name:"Omnis",collection:""},
+  {plate:"W1D3B0D",range:"Mid",name:"Omnis",collection:"Hip to be Square"},
+  {plate:"D1RTY",range:"Mid",name:"Omnis",collection:""},
+  {plate:"IML4TE",range:"Mid",name:"Entity XF",collection:""},
+  {plate:"0V3RFL0D",range:"Mid",name:"Entity XF",collection:"Birds of Paradise"},
+  {plate:"W1DEB0Y",range:"Mid",name:"Entity XF",collection:""},
+  {plate:"V1NT4G3",range:"Mid",name:"Coquette BlackFin",collection:"Fading Power"},
+  {plate:"W1P3OUT",range:"Mid",name:"Coquette BlackFin",collection:""},
+  {plate:"BLKF1N",range:"Mid",name:"Coquette BlackFin",collection:""},
+  {plate:"IN4H4ZE",range:"Standard",name:"Turismo R",collection:""},
+  {plate:"M1LKYW4Y",range:"Standard",name:"Turismo R",collection:""},
+  {plate:"TPD4WG",range:"Standard",name:"Turismo R",collection:"Shades of Blue"},
+  {plate:"CH4RG3D",range:"Standard",name:"Tampa",collection:"Stay Declasse"},
+  {plate:"CRU151N",range:"Standard",name:"Tampa",collection:""},
+  {plate:"MU5CL3",range:"Standard",name:"Tampa",collection:""},
+  {plate:"GUNZ0UT",range:"Standard",name:"Sabre Turbo Custom",collection:""},
+  {plate:"0R1G1N4L",range:"Standard",name:"Sabre Turbo Custom",collection:""},
+  {plate:"B0UNC3",range:"Standard",name:"Sabre Turbo Custom",collection:"Stay Declasse"},
+  {plate:"DE4DLY",range:"Standard",name:"Nightshade",collection:""},
+  {plate:"TH37OS",range:"Standard",name:"Nightshade",collection:"Fading Power"},
+  {plate:"E4TM3",range:"Standard",name:"Nightshade",collection:""},
+  {plate:"TR0P1CAL",range:"Standard",name:"Massacro",collection:""},
+  {plate:"B4N4N4",range:"Standard",name:"Massacro",collection:""},
+  {plate:"B055",range:"Standard",name:"Massacro",collection:"Molten Metal"},
+  {plate:"H0TP1NK",range:"Standard",name:"Jester",collection:""},
+  {plate:"T0PCL0WN",range:"Standard",name:"Jester",collection:""},
+  {plate:"NOF00L",range:"Standard",name:"Jester",collection:"Hip to be Square"},
+  {plate:"P0W3RFUL",range:"Standard",name:"Feltzer",collection:"No Direct Sunlight"},
+  {plate:"K3YL1M3",range:"Standard",name:"Feltzer",collection:""},
+  {plate:"R4C3R",range:"Standard",name:"Feltzer",collection:""},
+  {plate:"BE4STY",range:"Standard",name:"Bestia GTS",collection:"No Direct Sunlight"},
+  {plate:"5T34LTH",range:"Standard",name:"Bestia GTS",collection:""},
+  {plate:"5M00TH",range:"Standard",name:"Bestia GTS",collection:""},
+  {plate:"V1S10NRY",range:"Standard",name:"Alpha",collection:"Molten Metal"},
+  {plate:"L0NG80Y",range:"Standard",name:"Alpha",collection:""},
+  {plate:"R31GN",range:"Standard",name:"Alpha",collection:""},
+  {plate:"DR1FT3R",range:"Standard",name:"Banshee 900R",collection:"Shades of Blue"},
+  {plate:"D0M1N0",range:"Standard",name:"Banshee 900R",collection:""},
+  {plate:"H0WL3R",range:"Standard",name:"Banshee 900R",collection:""}
+];
+
+const collections = [
+  { id:"uninsurable", name:"Uninsurable", collector:"Jay Norris", bonus:"$35,000",
+    vehicles:[{name:"X80 Proto",plate:"M4K3B4NK",range:"Top"},{name:"T20",plate:"D3V1L",range:"Top"},{name:"Osiris",plate:"SL33K",range:"Top"}] },
+  { id:"birds", name:"Birds of Paradise", collector:"Curtis Cray Esq", bonus:"$50,000",
+    vehicles:[{name:"Tyrus",plate:"C1TRUS",range:"Top"},{name:"Cheetah",plate:"BUZZ3D",range:"Mid"},{name:"FMJ",plate:"C4TCHM3",range:"Top"},{name:"Entity XF",plate:"0V3RFL0D",range:"Mid"}] },
+  { id:"fading", name:"Fading Power", collector:"Keith Collins MD", bonus:"$20,000",
+    vehicles:[{name:"Coquette BlackFin",plate:"V1NT4G3",range:"Mid"},{name:"Nightshade",plate:"TH37OS",range:"Standard"}] },
+  { id:"nodirect", name:"No Direct Sunlight", collector:"DJ Playlist", bonus:"$35,000",
+    vehicles:[{name:"Bestia GTS",plate:"BE4STY",range:"Standard"},{name:"Feltzer",plate:"P0W3RFUL",range:"Standard"},{name:"811",plate:"SL1CK",range:"Top"}] },
+  { id:"stay", name:"Stay Declasse", collector:"Ms. M Schultz", bonus:"$35,000",
+    vehicles:[{name:"Sabre Turbo Custom",plate:"B0UNC3",range:"Standard"},{name:"Tampa",plate:"CH4RG3D",range:"Standard"},{name:"Mamba",plate:"BLKM4MB4",range:"Top"}] },
+  { id:"molten", name:"Molten Metal", collector:"Ronnie Bonelli", bonus:"$50,000",
+    vehicles:[{name:"Alpha",plate:"V1S10NRY",range:"Standard"},{name:"Reaper",plate:"D34TH4U",range:"Top"},{name:"Massacro",plate:"B055",range:"Standard"},{name:"Zentorno",plate:"W1NN1NG",range:"Mid"}] },
+  { id:"pastel", name:"Pastel Perfection", collector:"Cloe Parker", bonus:"$35,000",
+    vehicles:[{name:"Coquette Classic",plate:"T0PL3SS",range:"Mid"},{name:"Verlierer",plate:"PR3C1OUS",range:"Mid"},{name:"ETR1",plate:"PR3TTY",range:"Top"}] },
+  { id:"hip", name:"Hip to be Square", collector:"Tao Cheng", bonus:"$50,000",
+    vehicles:[{name:"Omnis",plate:"W1D3B0D",range:"Mid"},{name:"Tropos Rallye",plate:"1985",range:"Mid"},{name:"Jester",plate:"NOF00L",range:"Standard"},{name:"Sultan RS",plate:"SN0WFLK3",range:"Mid"}] },
+  { id:"shades", name:"Shades of Blue", collector:"Cris Formage", bonus:"$50,000",
+    vehicles:[{name:"Banshee 900R",plate:"DR1FT3R",range:"Standard"},{name:"Stirling GT",plate:"R4LLY",range:"Top"},{name:"Seven-70",plate:"4LLOY5",range:"Mid"},{name:"Turismo R",plate:"TPD4WG",range:"Standard"}] },
+  { id:"empires", name:"End of Empires", collector:"The Sultan of Amir", bonus:"$20,000",
+    vehicles:[{name:"Roosevelt Valor",plate:"0LDT1M3R",range:"Top"},{name:"Z-Type",plate:"B1GMON3Y",range:"Top"}] }
+];
+
+const plateToRange = {};
+const plateToCollection = {};
+allCars.forEach(c => {
+  plateToRange[c.plate] = c.range;
+  if (c.collection) plateToCollection[c.plate] = c.collection;
+});
+
+function loadWarehouse(){try{return JSON.parse(localStorage.getItem("gtaWarehouse")||"[]");}catch{return[];}}
+function saveWarehouse(list){localStorage.setItem("gtaWarehouse",JSON.stringify(list));saveSummary(list);}
+// a small summary Production Manager reads for the Vehicle Warehouse pin (same site, same browser)
+function saveSummary(list){
+  list = list || loadWarehouse();
+  const rangeOf = c => c.range || (allCars.find(a => a.plate === c.plate) || {}).range || "";
+  const n = r => list.filter(c => rangeOf(c) === r).length;
+  try { localStorage.setItem("gtaWarehouseSummary", JSON.stringify({ count: list.length, top: n("Top"), mid: n("Mid"), std: n("Standard"), at: Date.now() })); } catch (e) {}
+}
+function loadChecks(){try{return JSON.parse(localStorage.getItem("gtaChecks")||"{}");}catch{return{};}}
+function saveChecks(obj){localStorage.setItem("gtaChecks",JSON.stringify(obj));}
+
+const collectionPlates = new Set();
+collections.forEach(c => c.vehicles.forEach(v => collectionPlates.add(v.plate.toUpperCase())));
+
+/* ===== FILTER STATE ===== */
+let colFilter = "all";   // all | keep | sell
+let rngFilter = "all";   // all | Top | Mid | Standard
+
+function setColFilter(f) {
+  colFilter = f;
+  document.querySelectorAll("[data-col]").forEach(b => {
+    b.classList.toggle("active", b.dataset.col === f);
+  });
+  renderWarehouse();
+}
+function setRngFilter(f) {
+  rngFilter = f;
+  document.querySelectorAll("[data-rng]").forEach(b => {
+    b.classList.toggle("active", b.dataset.rng === f);
+  });
+  renderWarehouse();
+}
+
+document.getElementById("whSearch").addEventListener("input", () => renderWarehouse());
+
+/* ===== AUTOCOMPLETE (add car) ===== */
+const searchInput = document.getElementById("searchInput");
+const suggestionsEl = document.getElementById("suggestions");
+let selectedIdx = -1, currentMatches = [];
+
+searchInput.addEventListener("input", () => {
+  const q = searchInput.value.trim().toUpperCase();
+  selectedIdx = -1;
+  if (q.length < 1) { suggestionsEl.style.display = "none"; return; }
+  currentMatches = allCars.filter(c =>
+    c.plate.includes(q) || c.name.toUpperCase().includes(q)
+  ).slice(0, 12);
+  if (!currentMatches.length) { suggestionsEl.style.display = "none"; return; }
+  suggestionsEl.innerHTML = currentMatches.map((c, i) => {
+    const rc = c.range === "Top" ? "top" : c.range === "Mid" ? "mid" : "std";
+    const col = c.collection ? ` · <span style="color:var(--green)">${c.collection}</span>` : "";
+    return `<div data-idx="${i}" class="${i===0?"active":""}"><span class="plate">${c.plate}</span><span class="range-tag range ${rc}">${c.range}</span> — ${c.name}${col}</div>`;
+  }).join("");
+  suggestionsEl.style.display = "block";
+});
+
+suggestionsEl.addEventListener("click", e => {
+  const div = e.target.closest("div[data-idx]");
+  if (!div) return;
+  selectCar(currentMatches[+div.dataset.idx]);
+});
+
+searchInput.addEventListener("keydown", e => {
+  if (suggestionsEl.style.display !== "block") return;
+  if (e.key === "ArrowDown") { e.preventDefault(); selectedIdx = Math.min(selectedIdx + 1, currentMatches.length - 1); updateActive(); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); selectedIdx = Math.max(selectedIdx - 1, 0); updateActive(); }
+  else if (e.key === "Enter") { e.preventDefault(); if (selectedIdx >= 0) selectCar(currentMatches[selectedIdx]); else if (currentMatches.length === 1) selectCar(currentMatches[0]); }
+  else if (e.key === "Escape") suggestionsEl.style.display = "none";
+});
+
+function updateActive() {
+  [...suggestionsEl.children].forEach((el, i) => el.classList.toggle("active", i === selectedIdx));
+}
+function selectCar(car) {
+  document.getElementById("carName").value = car.name;
+  document.getElementById("carPlate").value = car.plate;
+  document.getElementById("carRange").value = car.range + (car.collection ? " · " + car.collection : "");
+  searchInput.value = "";
+  suggestionsEl.style.display = "none";
+}
+
+/* ===== IMPORT / EXPORT ===== */
+function exportData() {
+  const data = { version: 3, exportedAt: new Date().toISOString(), warehouse: loadWarehouse(), checks: loadChecks() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `gta-vehicle-cargo-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.warehouse) {
+        data.warehouse.forEach(c => { if (!c.id) c.id = Date.now() + Math.random(); });
+        saveWarehouse(data.warehouse);
+      }
+      if (data.checks) saveChecks(data.checks);
+      render();
+      alert(t("importOk"));
+    } catch (err) { alert(t("error") + err.message); }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
+}
+
+function addCar() {
+  const name = document.getElementById("carName").value.trim();
+  const plate = document.getElementById("carPlate").value.trim().toUpperCase();
+  if (!name || !plate) { alert(t("pickFirst")); return; }
+  const list = loadWarehouse();
+  if (list.some(c => c.plate === plate)) { alert(t("dupPlate")); return; }
+  list.push({ name, plate, id: Date.now() });
+  saveWarehouse(list);
+  document.getElementById("carName").value = "";
+  document.getElementById("carPlate").value = "";
+  document.getElementById("carRange").value = "";
+  render();
+}
+function removeCar(id) {
+  saveWarehouse(loadWarehouse().filter(c => c.id !== id));
+  render();
+}
+
+function renderWarehouse() {
+  const list = loadWarehouse();
+  const container = document.getElementById("warehouseList");
+  document.getElementById("whCount").textContent = list.length;
+
+  let top = 0, mid = 0, std = 0;
+  list.forEach(car => {
+    const r = plateToRange[car.plate] || "";
+    if (r === "Top") top++;
+    else if (r === "Mid") mid++;
+    else if (r === "Standard") std++;
+  });
+  document.getElementById("countTop").textContent = top;
+  document.getElementById("countMid").textContent = mid;
+  document.getElementById("countStd").textContent = std;
+
+  const q = document.getElementById("whSearch").value.trim().toUpperCase();
+
+  const filtered = list.filter(car => {
+    const isCol = collectionPlates.has(car.plate);
+    const range = plateToRange[car.plate] || "";
+    if (colFilter === "keep" && !isCol) return false;
+    if (colFilter === "sell" && isCol) return false;
+    if (rngFilter !== "all" && range !== rngFilter) return false;
+    if (q) {
+      const name = (car.name || "").toUpperCase();
+      const plate = (car.plate || "").toUpperCase();
+      if (!name.includes(q) && !plate.includes(q)) return false;
+    }
+    return true;
+  });
+
+  // Sort: collection cars first when showing all, then by name
+  filtered.sort((a, b) => {
+    const aCol = collectionPlates.has(a.plate) ? 0 : 1;
+    const bCol = collectionPlates.has(b.plate) ? 0 : 1;
+    if (aCol !== bCol) return aCol - bCol;
+    return (a.name || "").localeCompare(b.name || "");
+  });
+
+  document.getElementById("filterInfo").innerHTML = `${t("shown")} <strong>${filtered.length}</strong> / ${list.length}`;
+
+  if (list.length === 0) {
+    container.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;padding:8px 0">${t("noCars")}</div>`;
+    return;
+  }
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;padding:8px 0">${t("noResults")}</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(car => {
+    const isMatch = collectionPlates.has(car.plate);
+    const range = plateToRange[car.plate] || "";
+    const rc = range === "Top" ? "top" : range === "Mid" ? "mid" : "std";
+    const colName = plateToCollection[car.plate] || "";
+    return `
+      <div class="wh-item ${isMatch ? "match" : "sellable"}">
+        <div>
+          <div class="name">${car.name}</div>
+          <div class="plate">${car.plate}</div>
+          <div class="meta">
+            ${range ? `<span class="r-badge ${rc}">${range}</span>` : ""}
+            ${isMatch
+              ? `<span class="match-badge">${t("badgeCol")}${colName ? ": " + colName : ""}</span>`
+              : `<span class="sell-badge">${t("badgeSell")}</span>`}
+          </div>
+        </div>
+        <button onclick="removeCar(${car.id})" title="${t("del")}">✕</button>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderCollections() {
+  const checks = loadChecks();
+  const warehouse = loadWarehouse();
+  const warehousePlates = new Set(warehouse.map(c => c.plate));
+  const container = document.getElementById("collections");
+  container.innerHTML = "";
+  let done = 0;
+
+  collections.forEach(col => {
+    const colDone = checks[col.id] === true;
+    if (colDone) done++;
+    const div = document.createElement("div");
+    div.className = "collection" + (colDone ? " done" : "");
+    div.innerHTML = `
+      <div class="collection-header">
+        <input type="checkbox" id="col_${col.id}" ${colDone ? "checked" : ""}>
+        <div class="collection-title">${col.name}</div>
+        <div class="bonus">${col.bonus}</div>
+      </div>
+      <div class="collector">${t("collector")} ${col.collector}</div>
+      <div class="vehicles">
+        ${col.vehicles.map((v, i) => {
+          const vid = col.id + "_" + i;
+          const vDone = checks[vid] === true;
+          const hasInWarehouse = warehousePlates.has(v.plate);
+          return `
+            <div class="vehicle ${hasInWarehouse ? "match" : ""} ${vDone ? "done" : ""}">
+              <input type="checkbox" id="${vid}" ${vDone ? "checked" : ""}>
+              <div class="info">
+                <div class="name">${v.name}</div>
+                <div class="plate">${v.plate}</div>
+                <span class="range ${v.range.toLowerCase()}">${v.range}</span>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+    container.appendChild(div);
+
+    document.getElementById("col_" + col.id).addEventListener("change", e => {
+      checks[col.id] = e.target.checked;
+      if (e.target.checked) col.vehicles.forEach((_, i) => checks[col.id + "_" + i] = true);
+      saveChecks(checks);
+      render();
+    });
+    col.vehicles.forEach((_, i) => {
+      const vid = col.id + "_" + i;
+      document.getElementById(vid).addEventListener("change", e => {
+        checks[vid] = e.target.checked;
+        checks[col.id] = col.vehicles.every((_, j) => checks[col.id + "_" + j]);
+        saveChecks(checks);
+        render();
+      });
+    });
+  });
+  document.getElementById("doneCount").textContent = done;
+}
+
+function render() { renderWarehouse(); renderCollections(); }
+function resetCollections() {
+  if (confirm(t("confirmReset"))) {
+    localStorage.removeItem("gtaChecks");
+    render();
+  }
+}
+function resetWarehouse() {
+  if (confirm(t("confirmEmpty"))) {
+    localStorage.removeItem("gtaWarehouse");
+    render();
+  }
+}
+
+document.addEventListener("click", e => {
+  if (!e.target.closest(".add-form")) suggestionsEl.style.display = "none";
+});
+
+render();
+saveSummary();
+</script>
+</body>
+</html>
