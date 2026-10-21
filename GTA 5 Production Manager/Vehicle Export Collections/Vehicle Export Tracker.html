@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vehicle Export Tracker</title>
+<link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32.png">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Russo+One&family=Orbitron&family=Audiowide&family=Black+Ops+One&family=Monoton&family=Pacifico&family=Righteous&family=Racing+Sans+One&family=Bungee&family=Rubik+Mono+One&family=Permanent+Marker&family=Rye&display=swap">
 <script>
 // ---------- Themes (same set as Car Manager, plus "Dispatch"), applied before the page draws ----------
@@ -346,7 +348,10 @@ applyTheme(themeCfg);
   .actions button:hover { background: var(--steel); }
   @media (max-width: 900px) {
     body { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; position: relative; max-height: 55vh; }
+    /* phones: the sidebar becomes a normal section (no fixed height, nothing overlapping) */
+    .sidebar { width: 100%; min-width: 0; height: auto; max-height: none; position: static; overflow: visible; }
+    .warehouse-list { max-height: 50vh; overflow-y: auto; }
+    .tk-bar.top { margin: 0; padding: 10px 12px; border-bottom: 1px solid var(--line); background: var(--asphalt); position: sticky; top: 0; z-index: 30; }
   }
 
   /* project look: tokens come from the shared theme (same as Production Manager) */
@@ -357,8 +362,17 @@ applyTheme(themeCfg);
   .tk-bar { display: flex; align-items: center; gap: 8px; margin: -4px 0 16px; flex-wrap: wrap; }
   .tk-bar .grow { flex: 1; }
   .tk-bar .tk-title { font: 700 22px/1 'Barlow Condensed', sans-serif; color: var(--title, var(--text)); }
+  .tk-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; }
+  summary.tk-btn { padding: 0; width: 40px; }
+  summary.tk-btn svg { display: block; }
   .tk-bar select, .tk-btn { height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 600 14px Barlow, sans-serif; cursor: pointer; }
   .tk-pages { position: relative; }
+  .auth-form label { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; font-size: 13px; color: var(--muted); }
+  .auth-form input { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--asphalt); color: var(--text); font-size: 15px; }
+  .auth-err { min-height: 1.2em; color: var(--bad); font-size: 13px; margin: 4px 0; }
+  .auth-setup summary { cursor: pointer; color: var(--muted); font-size: 13px; margin-top: 12px; }
+  .btn { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); cursor: pointer; font-weight: 600; }
+  .btn.primary { background: var(--sodium); border-color: var(--sodium); color: var(--sodium-ink); }
   .tk-pages summary { list-style: none; }
   .tk-pages summary::-webkit-details-marker { display: none; }
   .tk-pages .list { position: absolute; left: 0; top: calc(100% + 6px); z-index: 50; min-width: 230px; padding: 6px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); box-shadow: 0 16px 40px var(--shadow, rgba(0,0,0,.5)); }
@@ -439,6 +453,7 @@ applyTheme(themeCfg);
     <span class="grow"></span>
     <select id="themeSel" data-i18n-aria="theme" aria-label="Theme"></select>
     <select id="langSel" aria-label="Language / Limbă"><option value="en">EN</option><option value="ro">RO</option></select>
+    <button class="tk-btn" id="tkLogin" title="Login">🔑</button>
   </div>
   <h1>Vehicle Cargo Collections</h1>
   <p class="subtitle" data-i18n="subtitle">Filter the warehouse by “To sell” to quickly see the cars that aren't part of any collection.</p>
@@ -454,6 +469,11 @@ applyTheme(themeCfg);
     <button onclick="resetWarehouse()" data-i18n="emptyWh">Empty warehouse</button>
   </div>
 </main>
+<dialog id="tkAuth" style="max-width:420px;width:calc(100vw - 32px);border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:18px">
+  <div style="display:flex;align-items:center"><h2 style="margin:0;flex:1" id="tkAuthTitle"></h2><button class="tk-btn" onclick="this.closest('dialog').close()">✕</button></div>
+  <p id="tkAuthState" style="color:var(--muted);font-size:14px"></p>
+  <div id="tkAuthBody"></div>
+</dialog>
 
 <script>
 /* ---------- Language (shared with Production Manager) ---------- */
@@ -639,7 +659,7 @@ allCars.forEach(c => {
 });
 
 function loadWarehouse(){try{return JSON.parse(localStorage.getItem("gtaWarehouse")||"[]");}catch{return[];}}
-function saveWarehouse(list){localStorage.setItem("gtaWarehouse",JSON.stringify(list));saveSummary(list);}
+function saveWarehouse(list){localStorage.setItem("gtaWarehouse",JSON.stringify(list));saveSummary(list);tkMarkDirty();}
 // a small summary Production Manager reads for the Vehicle Warehouse pin (same site, same browser)
 function saveSummary(list){
   list = list || loadWarehouse();
@@ -648,7 +668,7 @@ function saveSummary(list){
   try { localStorage.setItem("gtaWarehouseSummary", JSON.stringify({ count: list.length, top: n("Top"), mid: n("Mid"), std: n("Standard"), at: Date.now() })); } catch (e) {}
 }
 function loadChecks(){try{return JSON.parse(localStorage.getItem("gtaChecks")||"{}");}catch{return{};}}
-function saveChecks(obj){localStorage.setItem("gtaChecks",JSON.stringify(obj));}
+function saveChecks(obj){localStorage.setItem("gtaChecks",JSON.stringify(obj));tkMarkDirty();}
 
 const collectionPlates = new Set();
 collections.forEach(c => c.vehicles.forEach(v => collectionPlates.add(v.plate.toUpperCase())));
@@ -757,7 +777,8 @@ function addCar() {
   if (!name || !plate) { alert(t("pickFirst")); return; }
   const list = loadWarehouse();
   if (list.some(c => c.plate === plate)) { alert(t("dupPlate")); return; }
-  list.push({ name, plate, id: Date.now() });
+  const rng = (allCars.find(c => c.plate === plate) || {}).range || "";
+  list.push({ name, plate, range: rng, id: Date.now() });
   saveWarehouse(list);
   document.getElementById("carName").value = "";
   document.getElementById("carPlate").value = "";
@@ -922,6 +943,188 @@ document.addEventListener("click", e => {
 
 render();
 saveSummary();
+/* ======================================================================
+   Login (user + password) on top of GitHub, shared by every page.
+   The GitHub token is encrypted with your password and stored in the repo as auth.json;
+   on any device, user + password decrypt it in the browser. Nothing else leaves the page.
+   ====================================================================== */
+const AUTH_KEY = "gtaAuth";
+const AUTH_DEF = (() => {
+  const m = location.hostname.match(/^([^.]+)\.github\.io$/i);
+  const repo = m ? location.pathname.split("/").filter(Boolean)[0] : null;
+  return { owner: m ? m[1] : "Yogi4x4", repo: repo ? decodeURIComponent(repo) : "GTAManager", branch: "main" };
+})();
+function authGet() { try { return { ...AUTH_DEF, ...(JSON.parse(localStorage.getItem(AUTH_KEY) || "{}") || {}) }; } catch (e) { return { ...AUTH_DEF }; } }
+function authSet(a) { try { localStorage.setItem(AUTH_KEY, JSON.stringify(a)); } catch (e) {} }
+function authLogout() { const a = authGet(); delete a.token; delete a.user; authSet(a); }
+const loggedIn = () => !!authGet().token;
+const b64e = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const b64d = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const utf8 = s => new TextEncoder().encode(s);
+function ghUrlFor(a, path) {
+  return `https://api.github.com/repos/${encodeURIComponent(a.owner)}/${encodeURIComponent(a.repo)}/contents/${path.split("/").map(encodeURIComponent).join("/")}`;
+}
+function ghHdr(accept, token) {
+  const h = { Accept: accept, "X-GitHub-Api-Version": "2022-11-28" };
+  if (token) h.Authorization = "Bearer " + token;
+  return h;
+}
+async function ghGetText(path, a = authGet()) {
+  const r = await fetch(ghUrlFor(a, path) + "?ref=" + encodeURIComponent(a.branch), { headers: ghHdr("application/vnd.github.raw+json", a.token), cache: "no-store" });
+  if (r.status === 404) return null;
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.text();
+}
+const ghShas = {};
+async function ghPutText(path, text, a = authGet(), retry = true) {
+  if (ghShas[path] === undefined) {
+    const r = await fetch(ghUrlFor(a, path) + "?ref=" + encodeURIComponent(a.branch), { headers: ghHdr("application/vnd.github.object+json", a.token), cache: "no-store" });
+    ghShas[path] = r.status === 404 ? null : r.ok ? (await r.json()).sha : undefined;
+    if (ghShas[path] === undefined) throw new Error(r.status === 401 || r.status === 403 ? "token" : "HTTP " + r.status);
+  }
+  const bytes = utf8(text); let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  const body = { message: `Update ${path.split("/").pop()} (GTA Manager)`, content: btoa(bin), branch: a.branch };
+  if (ghShas[path]) body.sha = ghShas[path];
+  const r = await fetch(ghUrlFor(a, path), { method: "PUT", headers: { ...ghHdr("application/vnd.github+json", a.token), "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  if ((r.status === 409 || r.status === 422) && retry) { delete ghShas[path]; return ghPutText(path, text, a, false); }
+  if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? "token" : "HTTP " + r.status);
+  ghShas[path] = (await r.json()).content.sha;
+}
+async function authKey(user, pass, salt, iter) {
+  const base = await crypto.subtle.importKey("raw", utf8(pass), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt: utf8(user.trim().toLowerCase() + ":" + salt), iterations: iter, hash: "SHA-256" },
+    base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+// owner, once: encrypt the token with user + password and publish auth.json
+async function authSetup({ owner, repo, branch, token, user, pass }) {
+  const a = { owner, repo, branch: branch || "main", token };
+  const check = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`, { headers: ghHdr("application/vnd.github+json", token) });
+  if (!check.ok || !((await check.json()).permissions || {}).push) throw new Error("token");
+  const salt = b64e(crypto.getRandomValues(new Uint8Array(16))), iv = crypto.getRandomValues(new Uint8Array(12)), iter = 310000;
+  const key = await authKey(user, pass, salt, iter);
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, utf8(JSON.stringify({ token, owner, repo, branch: a.branch })));
+  await ghPutText("auth.json", JSON.stringify({ v: 1, user: user.trim().toLowerCase(), salt, iv: b64e(iv), iter, ct: b64e(ct) }, null, 1), a);
+  authSet({ ...a, user: user.trim() });
+}
+// any device: user + password -> token
+async function authLogin(user, pass) {
+  const a = authGet();
+  const raw = await ghGetText("auth.json", { ...a, token: null });
+  if (!raw) throw new Error("nosetup");
+  const j = JSON.parse(raw);
+  if (j.user !== user.trim().toLowerCase()) throw new Error("bad");
+  try {
+    const key = await authKey(user, pass, j.salt, j.iter);
+    const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64d(j.iv) }, key, b64d(j.ct));
+    const p = JSON.parse(new TextDecoder().decode(plain));
+    authSet({ owner: p.owner, repo: p.repo, branch: p.branch, token: p.token, user: user.trim() });
+  } catch (e) { throw new Error("bad"); }
+}
+/* the login / setup form, rendered into any container */
+function authFormHtml(T) {
+  return `<div class="auth-form">
+    <label>${T.user}<input id="auUser" autocomplete="username"></label>
+    <label>${T.pass}<input id="auPass" type="password" autocomplete="current-password"></label>
+    <p class="auth-err" id="auErr"></p>
+    <div class="auth-btns"><button class="btn primary" id="auGo">${T.login}</button></div>
+    <details class="auth-setup"><summary>${T.setup}</summary>
+      <p class="hint">${T.setupHint}</p>
+      <label>GitHub token<input id="auTok" type="password" autocomplete="off" placeholder="github_pat_..."></label>
+      <label>${T.owner}<input id="auOwner" value="${AUTH_DEF.owner}"></label>
+      <label>${T.repo}<input id="auRepo" value="${AUTH_DEF.repo}"></label>
+      <label>${T.pass2}<input id="auPass2" type="password" autocomplete="new-password"></label>
+      <div class="auth-btns"><button class="btn" id="auSetup">${T.setupBtn}</button></div>
+    </details>
+  </div>`;
+}
+function bindAuthForm(root, T, onDone) {
+  const $ = s => root.querySelector(s), err = $("#auErr");
+  const fail = e => { err.textContent = e.message === "nosetup" ? T.errNoSetup : e.message === "token" ? T.errToken : e.message === "bad" ? T.errBad : T.errNet; };
+  $("#auGo").onclick = async () => {
+    err.textContent = T.checking;
+    try { await authLogin($("#auUser").value, $("#auPass").value); err.textContent = ""; onDone(); } catch (e) { fail(e); }
+  };
+  $("#auPass").onkeydown = e => { if (e.key === "Enter") $("#auGo").click(); };
+  $("#auSetup").onclick = async () => {
+    const user = $("#auUser").value.trim(), pass = $("#auPass").value;
+    if (!user || pass.length < 8) { err.textContent = T.errShort; return; }
+    if (pass !== $("#auPass2").value) { err.textContent = T.errMatch; return; }
+    err.textContent = T.checking;
+    try { await authSetup({ owner: $("#auOwner").value.trim(), repo: $("#auRepo").value.trim(), branch: "main", token: $("#auTok").value.trim(), user, pass }); err.textContent = ""; onDone(); }
+    catch (e) { fail(e); }
+  };
+}
+const AUTH_T = {
+  en: { user: "User", pass: "Password", login: "Log in", setup: "First time: set up the login (owner)", setupHint: "Create a fine-grained GitHub token for this repository with Contents: Read and write. It is encrypted with your password and saved as auth.json; after that, user and password are enough on any device.",
+    owner: "GitHub owner", repo: "Repository", pass2: "Repeat the password", setupBtn: "Save login", checking: "Checking…",
+    errNoSetup: "No login set up yet: use “First time” below.", errToken: "The token can't write to this repository.", errBad: "Wrong user or password.", errNet: "GitHub didn't answer. Try again.",
+    errShort: "Choose a user and a password of at least 8 characters.", errMatch: "The passwords don't match." },
+  ro: { user: "Utilizator", pass: "Parolă", login: "Intră", setup: "Prima dată: configurează login-ul (proprietar)", setupHint: "Creează un token GitHub fine-grained pentru acest repository cu Contents: Read and write. E criptat cu parola ta și salvat ca auth.json; apoi utilizatorul și parola ajung pe orice dispozitiv.",
+    owner: "Proprietar GitHub", repo: "Repository", pass2: "Repetă parola", setupBtn: "Salvează login-ul", checking: "Se verifică…",
+    errNoSetup: "Login-ul nu e configurat încă: folosește „Prima dată” de mai jos.", errToken: "Token-ul nu poate scrie în acest repository.", errBad: "Utilizator sau parolă greșită.", errNet: "GitHub nu a răspuns. Încearcă din nou.",
+    errShort: "Alege un utilizator și o parolă de minim 8 caractere.", errMatch: "Parolele nu se potrivesc." }
+};
+
+/* Warehouse.json on GitHub when logged in (same login as the other pages) */
+const WH_FILE = "GTA 5 Production Manager/Vehicle Export Collections/Warehouse.json";
+let tkTimer = null;
+function tkMarkDirty() {
+  try { localStorage.setItem("gtaWarehouseSavedAt", String(Date.now())); } catch (e) {}
+  if (!loggedIn()) return;
+  clearTimeout(tkTimer);
+  tkTimer = setTimeout(tkPush, 2500);
+}
+async function tkPush() {
+  try {
+    await ghPutText(WH_FILE, JSON.stringify({ warehouse: loadWarehouse(), checks: loadChecks(), savedAt: +localStorage.getItem("gtaWarehouseSavedAt") || Date.now() }));
+  } catch (e) { alert(lang === "ro" ? "Nu s-a putut salva în GitHub." : "Couldn't save to GitHub."); }
+}
+async function tkPull() {
+  if (!loggedIn()) return;
+  try {
+    const raw = await ghGetText(WH_FILE);
+    const local = +localStorage.getItem("gtaWarehouseSavedAt") || 0;
+    if (!raw) { if (local) tkPush(); return; }
+    const r = JSON.parse(raw);
+    if ((r.savedAt || 0) > local) {
+      localStorage.setItem("gtaWarehouse", JSON.stringify(r.warehouse || []));
+      localStorage.setItem("gtaChecks", JSON.stringify(r.checks || {}));
+      localStorage.setItem("gtaWarehouseSavedAt", String(r.savedAt));
+      saveSummary(r.warehouse || []);
+      render();
+    } else if ((r.savedAt || 0) < local) tkPush();
+  } catch (e) {}
+}
+function openTkAuth() {
+  const d = document.getElementById("tkAuth"), T = AUTH_T[lang] || AUTH_T.en, a = authGet();
+  document.getElementById("tkAuthTitle").textContent = a.token ? (lang === "ro" ? "Cont" : "Account") : T.login;
+  document.getElementById("tkAuthState").innerHTML = a.token
+    ? (lang === "ro" ? `Conectat ca <b>${a.user || a.owner}</b>. Datele se salvează în GitHub.` : `Logged in as <b>${a.user || a.owner}</b>. Your data is saved to GitHub.`)
+    : (lang === "ro" ? "Intră în cont ca să ai aceleași date pe orice dispozitiv." : "Log in to keep the same data on every device.");
+  const body = document.getElementById("tkAuthBody");
+  if (a.token) {
+    body.innerHTML = `<button class="btn" id="tkOut">${lang === "ro" ? "Ieși din cont" : "Log out"}</button>`;
+    document.getElementById("tkOut").onclick = () => { authLogout(); d.close(); };
+  } else {
+    body.innerHTML = authFormHtml(T);
+    bindAuthForm(body, T, async () => { d.close(); await tkPull(); });
+  }
+  d.showModal();
+}
+document.getElementById("tkLogin").onclick = openTkAuth;
+// another tab (Production Manager) added a car: show it here too
+addEventListener("storage", e => { if (e.key === "gtaWarehouse" || e.key === "gtaChecks") render(); });
+// phones: the bar with pages / theme / language goes to the very top
+const tkBar = document.querySelector(".tk-bar"), tkMain = document.querySelector("main.main");
+function placeBar() {
+  const phone = matchMedia("(max-width: 900px)").matches;
+  if (phone && tkBar.parentElement !== document.body) { document.body.prepend(tkBar); tkBar.classList.add("top"); }
+  if (!phone && tkBar.parentElement !== tkMain) { tkMain.prepend(tkBar); tkBar.classList.remove("top"); }
+}
+placeBar();
+addEventListener("resize", placeBar);
+tkPull();
 </script>
 </body>
 </html>
