@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Production Manager</title>
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Russo+One&family=Orbitron&family=Audiowide&family=Black+Ops+One&family=Monoton&family=Pacifico&family=Righteous&family=Racing+Sans+One&family=Bungee&family=Rubik+Mono+One&family=Permanent+Marker&family=Rye&display=swap">
@@ -308,6 +310,14 @@ header h1 {
 .pages-list a:hover { background: var(--panel-2); }
 .pages-list a.here { color: var(--sodium); cursor: default; font-weight: 600; }
 .pages-list a.here:hover { background: none; }
+.pages-list a:not(.here) small { display: none; }
+.login-state { padding: 6px 10px 2px; font-size: 12px; color: var(--muted); }
+.auth-form label { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; font-size: 13px; color: var(--muted); }
+.auth-form input { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--asphalt); color: var(--text); font-size: 15px; }
+.auth-err { min-height: 1.2em; color: var(--bad); font-size: 13px; margin: 4px 0; }
+.auth-btns { display: flex; gap: 8px; }
+.auth-setup { margin-top: 14px; }
+.auth-setup summary { cursor: pointer; color: var(--muted); font-size: 13px; }
 .pages-list small { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: auto; }
 .menu-list button, .menu-list label {
   display: flex;
@@ -550,6 +560,56 @@ body.side-closed #map { left: 0; }
 #map.dragging { cursor: grabbing; }
 #map.placing { cursor: crosshair; }
 #map:focus-visible { outline: 2px solid var(--sodium); outline-offset: -2px; }
+.val-in { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; color: var(--muted); }
+.val-in span:first-child { margin-right: auto; }
+.val-in input { width: 130px; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--asphalt); color: var(--text); text-align: right; }
+.veh-add { margin-top: 10px; }
+.veh-add .veh-q { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--asphalt); color: var(--text); }
+.veh-sug { display: flex; flex-direction: column; gap: 2px; margin: 4px 0; }
+.veh-sug button { text-align: left; padding: 6px 8px; border-radius: 6px; border: 1px solid transparent; background: var(--panel-2); font-size: 13px; }
+.veh-sug button.on { border-color: var(--sodium); }
+.veh-add .veh-go { width: 100%; }
+/* advanced Nightclub + focus pages */
+#win.wide { width: min(1120px, calc(100vw - var(--side-w) - 36px)); }
+body.side-closed #win.wide { width: min(1120px, calc(100vw - 36px)); }
+.adv-grid2 { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(0, 2.2fr); gap: 14px; }
+.adv-card { padding: 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel-2); min-width: 0; }
+.adv-card.wide { grid-row: span 2; }
+.adv-card h4 { margin: 0 0 8px; font: 600 17px/1.2 var(--display); }
+.adv-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.adv-head h4 { margin: 0 auto 0 0; }
+.mixer { display: grid; grid-template-columns: repeat(7, minmax(84px, 1fr)); gap: 8px; overflow-x: auto; }
+.ch { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 4px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); }
+.ch.full { border-color: var(--bad); }
+.ch.off { opacity: .45; }
+.ch-name { font: 600 14px/1.1 var(--display); text-align: center; min-height: 46px; display: flex; align-items: center; }
+.ch-val, .ch-eta { font-size: 11px; color: var(--muted); text-align: center; }
+.ch-num { font: 700 16px/1 var(--display); }
+.fader { position: relative; width: 30px; height: 170px; border-radius: 8px; border: 1px solid var(--line); background: var(--asphalt); overflow: hidden; touch-action: none; cursor: ns-resize; }
+.fader i { position: absolute; left: 0; right: 0; bottom: 0; background: var(--full); }
+.ch.full .fader i { background: var(--bad); }
+.tech { width: 100%; padding: 4px 2px; border-radius: 999px; border: 1px dashed var(--line); background: none; font-size: 11px; color: var(--muted); }
+.tech.on { border-style: solid; border-color: var(--sodium); background: var(--sodium); color: var(--sodium-ink); font-weight: 600; }
+.adv-alerts { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.adv-alerts > div { display: flex; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 8px; background: var(--panel); }
+.adv-alerts .nbar { width: 4px; align-self: stretch; border-radius: 2px; background: var(--c); }
+.adv-range { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+.adv-range input { flex: 1; accent-color: var(--sodium); }
+.win-mode { margin-left: auto; }
+body.focus #map, body.focus #sidebar, body.focus #flyout, body.focus #sideBtn, body.focus .head-stat { display: none !important; }
+#focus { display: none; position: fixed; top: var(--head-h); left: 0; right: 0; bottom: 0; overflow-y: auto; padding: 18px; }
+body.focus #focus { display: block; }
+.focus-head { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.focus-head img { height: 74px; }
+.focus-head h2 { margin: 0; font: 700 30px/1 var(--display); }
+.mcb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.mcb { border-radius: 12px; border: 1px solid var(--line); background: var(--panel); overflow: hidden; }
+.mcb-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: #fff; }
+.mcb-head .ico { width: 34px; height: 34px; }
+.mcb-head b { font: 700 19px/1.1 var(--display); margin-right: auto; }
+.mcb-body { padding: 4px 12px 12px; }
+.mcb-body .q-label { font: 600 14px/1 var(--display); margin: 12px 0 6px; }
+@media (max-width: 760px) { .adv-grid2 { grid-template-columns: 1fr; } #focus { padding: 12px; } }
 .box10 { display: flex; gap: 3px; }
 .box10 button { flex: 1; height: 24px; padding: 0; border-radius: 4px; border: 1px solid var(--line); background: var(--asphalt); cursor: pointer; }
 .nc-vals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
@@ -889,6 +949,9 @@ a.btn.primary { color: var(--sodium-ink); }
 .segbar.stock { --seg-c: var(--full); }
 .segbar.supplies { --seg-c: var(--ok); }
 .segbar.supplies.low { --seg-c: var(--warn); }
+.segbar.ncgoods { --seg-c: var(--full); }
+.segbar.pop, .segbar.ncgoods { gap: 3px; }
+.segbar.big .seg { height: 30px; }
 .segbar.supplies.empty .seg { border-color: color-mix(in srgb, var(--bad) 55%, var(--line)); }
 .segbar.small .seg { height: 18px; border-radius: 4px; }
 .segbar:focus-visible { outline: 2px solid var(--sodium); outline-offset: 3px; }
@@ -1226,7 +1289,9 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 14px; }
     <div class="menu-list pages-list">
       <a href="../index.html" data-i18n="pg_home">Home</a>
       <a href="../GTA%205%20Car%20Manager/GTA%20Car%20Manager.html" data-i18n="pg_car">Car Manager</a>
-      <a aria-current="page" class="here"><span data-i18n="pg_prod">Production Manager</span><small data-i18n="pg_here">you are here</small></a>
+      <a href="GTA_Production_Manager.html" class="pg-map"><span data-i18n="pg_prod">Production Manager</span><small data-i18n="pg_here">you are here</small></a>
+      <a href="GTA_Production_Manager.html?view=mc" class="pg-mc">MC Business</a>
+      <a href="GTA_Production_Manager.html?view=night" class="pg-night">Nightclub</a>
       <a href="Vehicle%20Export%20Collections/Vehicle%20Export%20Tracker.html" data-i18n="pg_export">Vehicle Export Tracker</a>
     </div>
   </div>
@@ -1274,6 +1339,9 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 14px; }
       <button id="impBtn" data-i18n="import">📥 Import Production.json</button>
       <input type="file" id="impFile" accept=".json" hidden>
       <hr>
+      <div class="login-state" id="loginState"></div>
+      <button id="loginBtn">🔑 Log in</button>
+      <hr>
       <button id="tourMenuBtn" data-i18n="tourMenu">🧭 Guided tour</button>
       <button id="helpBtn" data-i18n="help">❓ Help</button>
       <button id="menuEditBtn" data-i18n="menuEdit">👁 Show / hide in the menu</button>
@@ -1317,6 +1385,7 @@ details.adv summary { cursor: pointer; color: var(--muted); font-size: 14px; }
 </main>
 
 <section id="win" aria-live="polite"></section>
+<div id="focus"></div>
 <div id="toast" role="status"><span id="toastText"></span><button id="toastAct" class="btn ghost" hidden></button></div>
 <dialog id="tourLayer" aria-labelledby="tourTitle">
   <div class="tour-hole" id="tourHole"></div>
@@ -1462,6 +1531,14 @@ const I18N = {
     timers: "Timer settings (minutes)", barCdSet: "Bar resupply cooldown", barStockSet: "Bar stays stocked for", shopCdSet: "Bike Shop cooldown",
     timersNote: "Bar: 48 min cooldown, about 4 in-game days of stock, $5,000 per in-game day into the office bag (up to $100,000), about $25,000 per restock. The Bike Shop has no fixed cooldown in the game; 48 min is a common estimate.",
     sub_barReady: "Bar: resupply ready", sub_barIn: t => `Bar: ${t}`, sub_shopReady: "Bike ready",
+    valueIn: "Value", vehAddPh: "Plate, car or type (Top / Mid / Standard)", vehAddBtn: "Add to warehouse", vehAdded: v => `Added: ${v}`, vehDup: "That plate is already in the warehouse",
+    modeAdvanced: "Advanced", modeSimple: "Simple", advAttention: "Needs attention", advAllGood: "All good", advMixer: "Warehouse", advCrates: "crates", advTechs: "technicians",
+    advOptimize: "Optimize", advOff: "no technician", advFull: "FULL", advTechOn: "✓ Tech", advTechOff: "+ Tech", advSale: "Sale",
+    advGross: "Goods value", advNet: "After Tony", advPublic: n => `Public lobby, ${n} players`, advVehicle: "Delivery vehicle", advPlayers: "Players in the lobby",
+    focusNightSub: "Advanced view, synced with the map page", focusMcSub: "All MC businesses on one page, synced with the map page",
+    login: "🔑 Log in", logout: "⏏ Log out", loginLocal: "Saved in this browser only", loginAs: u => `Logged in as <b>${u}</b>`, savedAt: v => `saved ${v}`,
+    loginIntro: "Log in to keep the same data on every device. It is saved to the project on GitHub.", logoutAsk: "Log out on this device? Your data stays saved.",
+    loggedIn: "Logged in", loggedOut: "Logged out", ghTokenBad: "GitHub refused the save: log in again", ghSaveFail: "Couldn't save to GitHub, will retry", ghLoadFail: "Couldn't load from GitHub", ghLoadedPM: "Loaded your data from GitHub",
     ncSubtitle: "Club + warehouse", ncPop: "Popularity", ncPopShort: "Popularity", ncGoods: "Sell goods value", ncGoodsShort: "Goods",
     ncPriv: "Private / Invite Only", ncPub: "Full public lobby (+50%)", ncSafe: "Office safe",
     ncPopMax: "The safe gets the maximum payout", ncPopLess: v => `Below 95%: ${v} per in-game day instead of $50,000`,
@@ -1559,6 +1636,14 @@ const I18N = {
     timers: "Setări timere (minute)", barCdSet: "Cooldown aprovizionare bar", barStockSet: "Barul ține marfă", shopCdSet: "Cooldown Bike Shop",
     timersNote: "Bar: cooldown de 48 min, marfă pentru aprox. 4 zile din joc, $5,000 pe zi din joc în sacul din birou (maxim $100,000), aprox. $25,000 pe aprovizionare. Bike Shop nu are cooldown fix în joc; 48 min e o estimare frecventă.",
     sub_barReady: "Bar: gata de aprovizionare", sub_barIn: t => `Bar: ${t}`, sub_shopReady: "Motocicletă gata",
+    valueIn: "Valoare", vehAddPh: "Plăcuță, mașină sau tip (Top / Mid / Standard)", vehAddBtn: "Adaugă în depozit", vehAdded: v => `Adăugată: ${v}`, vehDup: "Plăcuța e deja în depozit",
+    modeAdvanced: "Avansat", modeSimple: "Simplu", advAttention: "Ce cere atenție", advAllGood: "Totul e în regulă", advMixer: "Depozitul", advCrates: "lăzi", advTechs: "tehnicieni",
+    advOptimize: "Optimizează", advOff: "fără tehnician", advFull: "PLIN", advTechOn: "✓ Tehn.", advTechOff: "+ Tehn.", advSale: "Vânzare",
+    advGross: "Valoare marfă", advNet: "După Tony", advPublic: n => `Lobby public, ${n} jucători`, advVehicle: "Vehicul de livrare", advPlayers: "Jucători în lobby",
+    focusNightSub: "Vizualizare avansată, sincronizată cu pagina hărții", focusMcSub: "Toate afacerile MC pe o pagină, sincronizate cu pagina hărții",
+    login: "🔑 Intră în cont", logout: "⏏ Ieși din cont", loginLocal: "Salvat doar în acest browser", loginAs: u => `Conectat ca <b>${u}</b>`, savedAt: v => `salvat ${v}`,
+    loginIntro: "Intră în cont ca să ai aceleași date pe orice dispozitiv. Se salvează în proiectul de pe GitHub.", logoutAsk: "Ieși din cont pe acest dispozitiv? Datele rămân salvate.",
+    loggedIn: "Ai intrat în cont", loggedOut: "Ai ieșit din cont", ghTokenBad: "GitHub a refuzat salvarea: intră din nou în cont", ghSaveFail: "Nu s-a putut salva în GitHub, reîncerc", ghLoadFail: "Nu s-a putut încărca din GitHub", ghLoadedPM: "Datele tale au fost încărcate din GitHub",
     ncSubtitle: "Club + depozit", ncPop: "Popularitate", ncPopShort: "Popularitate", ncGoods: "Valoare sell goods", ncGoodsShort: "Goods",
     ncPriv: "Privat / Invite Only", ncPub: "Lobby public plin (+50%)", ncSafe: "Seiful din birou",
     ncPopMax: "Seiful primește plata maximă", ncPopLess: v => `Sub 95%: ${v} pe zi din joc în loc de $50,000`,
@@ -1649,6 +1734,7 @@ function load() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
     if (raw) S = mergeState(JSON.parse(raw));
+    baseRev = +localStorage.getItem(STORE_KEY + ":rev") || 0;
     lang = localStorage.getItem("gtaProductionLang") || "en";
   } catch (e) { console.warn(e); }
 }
@@ -1683,11 +1769,43 @@ function mergeState(data) {
   out.bizOrder = fixOrder(data.bizOrder, MC.map(d => d.id));
   return out;
 }
-let saveTimer = null;
+/* Several tabs (map, Nightclub page, MC page) share the same data: each save carries a revision;
+   if another tab saved something newer, this tab takes it instead of overwriting it.
+   Only one tab (the "clock") advances production, so nothing is counted twice. */
+const REV_KEY = STORE_KEY + ":rev", CLOCK_KEY = "gtaProductionClock", TAB_ID = Math.random().toString(36).slice(2);
+let baseRev = 0, saveTimer = null;
+function storedRev() { try { return +localStorage.getItem(REV_KEY) || 0; } catch (e) { return 0; } }
+function adoptStored() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return;
+    S = mergeState(JSON.parse(raw));
+    baseRev = storedRev();
+    syncStatus();
+    renderTiles(); renderPins(); renderAll(); renderWin(); renderQuick(); renderFocus();
+  } catch (e) {}
+}
 function save(now = false) {
   clearTimeout(saveTimer);
-  const write = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) {} };
+  const write = () => {
+    try {
+      const r = storedRev();
+      if (r > baseRev) { adoptStored(); return; }
+      baseRev = r + 1;
+      S.rev = baseRev;
+      localStorage.setItem(STORE_KEY, JSON.stringify(S));
+      localStorage.setItem(REV_KEY, String(baseRev));
+    } catch (e) {}
+  };
   if (now) write(); else saveTimer = setTimeout(write, 400);
+}
+addEventListener("storage", e => { if (e.key === REV_KEY && +e.newValue > baseRev) adoptStored(); });
+function isClock() {
+  try {
+    const c = JSON.parse(localStorage.getItem(CLOCK_KEY) || "null"), now = Date.now();
+    if (!c || c.id === TAB_ID || now - c.at > 3500) { localStorage.setItem(CLOCK_KEY, JSON.stringify({ id: TAB_ID, at: now })); return true; }
+    return false;
+  } catch (e) { return true; }
 }
 
 /* ======================================================================
@@ -2015,8 +2133,8 @@ function bindBoxes(root, after) {
 function ncValuesHtml() {
   const tt = ncTotals();
   return `<div class="nc-vals">
-    <div><small>${t("ncPriv")}</small><b>${money(tt.net)}</b></div>
-    <div><small>${t("ncPub")}</small><b class="hot">${money(tt.pub)}</b></div>
+    <div><small>${t("ncPriv")}</small><b data-live="ncnet">${money(tt.net)}</b></div>
+    <div><small>${t("ncPub")}</small><b class="hot" data-live="ncpub">${money(tt.pub)}</b></div>
   </div>`;
 }
 function popColor(p) { return p >= 95 ? "var(--ok)" : p >= 85 ? "var(--warn)" : "var(--bad)"; }
@@ -2024,39 +2142,22 @@ function popColor(p) { return p >= 95 ? "var(--ok)" : p >= 85 ? "var(--warn)" : 
 function nightQuickHtml() {
   const n = S.biz.night, tt = ncTotals();
   return `
-    <div class="q-label">${t("ncPop")} · <b style="color:${popColor(n.pop)}">${Math.round(n.pop)}%</b></div>
-    ${boxes10("pop", n.pop / 100, popColor(n.pop))}
-    <div class="q-label">${t("ncGoods")} · <span class="muted">${Math.round(tt.frac * 100)}%</span></div>
-    ${boxes10("goods", tt.frac, "var(--full)")}
+    <div class="q-label">${t("ncPop")} · <b data-live="ncpop" style="color:${popColor(n.pop)}">${Math.round(n.pop)}%</b></div>
+    ${segBarHtml("pop", "night", "small")}
+    <div class="q-label">${t("ncGoods")} · <span class="muted" data-live="ncpct">${Math.round(tt.frac * 100)}%</span></div>
+    ${segBarHtml("ncgoods", "night", "small")}
     ${ncValuesHtml()}
+    ${valueInputHtml("night")}
     <div class="bar-cap"><span>${t("ncSafe")}</span><b>${money(n.safe)} / ${money(NC_SAFE_CAP)}</b></div>
     <p class="q-note">${t("qMore")}</p>`;
 }
-function nightWinHtml() {
-  const n = S.biz.night, tt = ncTotals(), f = ncForecast();
+function nightSettingsHtml() {
+  const n = S.biz.night;
   const chip = (k, label) => `<button class="chip ${n[k] ? "on" : ""}" data-chip="${k}">${n[k] ? "✓ " : ""}${label}</button>`;
   const nums = (k, val) => `<div class="num5" data-num="${k}">${[1, 2, 3, 4, 5].map(i => `<button type="button" class="${i <= val ? "on" : ""}" data-v="${i}">${i}</button>`).join("")}</div>`;
-  const working = ncWorking(n).map(g => g.id);
-  const used = working.length;
+  const working = ncWorking(n).map(g => g.id), used = working.length;
   return `
-    <div class="sect"><h4>${t("ncPop")} <span style="color:${popColor(n.pop)}">${Math.round(n.pop)}%</span></h4>
-      ${boxes10("pop", n.pop / 100, popColor(n.pop))}
-      <div class="row" style="margin-top:8px"><span class="grow hint" style="margin:0">${n.pop >= 95 ? t("ncPopMax") : t("ncPopLess", money(ncPay(n.pop)))}</span>
-      <button class="btn small" id="ncDj">${t("ncDj")}</button></div>
-    </div>
-    <div class="sect"><h4>${t("ncGoods")} <span class="muted">${Math.round(tt.frac * 100)}%</span></h4>
-      ${boxes10("goods", tt.frac, "var(--full)")}
-      ${ncValuesHtml()}
-      <p class="hint">${f.idle ? `<b style="color:var(--bad)">${t("ncIdle", t("g_" + f.idle))}</b>` : isFinite(f.firstFull) ? t("ncFirstFull", { g: t("g_" + f.firstName), m: fmtTime(f.firstFull) }) : t("ncNoTech")}</p>
-      <div class="btn-row"><button class="btn primary" id="ncSold">${t("ncSold")}</button></div>
-    </div>
-    <div class="sect"><h4>${t("ncSafe")}</h4>
-      <div class="bag-line"><b class="bag-sum ${n.safe >= NC_SAFE_CAP - 1 ? "full" : ""}">${money(n.safe)} / ${money(NC_SAFE_CAP)}</b><button class="btn small" id="ncCollect">${t("bagCollect")}</button></div>
-      <p class="hint">${n.safe >= NC_SAFE_CAP - 1 ? t("ncSafeFullHint") : t("ncSafeLeft", fmtTime(f.safeLeft))}</p>
-    </div>
-    <div class="sect"><h4>${t("ncUpgrades")}</h4>
-      <div class="chip-row">${chip("bed", t("ncBed"))}${chip("security", "Security")}${chip("equipment", "Equipment")}</div>
-    </div>
+    <div class="chip-row">${chip("bed", t("ncBed"))}${chip("security", "Security")}${chip("equipment", "Equipment")}</div>
     <div class="sect"><h4>${t("ncFloors")}</h4>${nums("floors", n.floors)}</div>
     <div class="sect"><h4>${t("ncTechs")}</h4>${nums("hired", n.hired)}</div>
     <div class="sect"><h4>${t("ncAssign")} <span class="muted" style="font-size:13px">${used} / ${n.hired}</span></h4>
@@ -2068,25 +2169,56 @@ function nightWinHtml() {
       }).join("")}</div>
     </div>`;
 }
-function bindNightWin(rerender) {
-  const n = S.biz.night, $ = s => win.querySelector(s);
-  const done = () => { checkNight(false); save(true); rerender(); renderAll(); };
-  bindBoxes(win, rerender);
-  $("#ncDj").onclick = () => { n.pop = Math.min(100, n.pop + 10); n.alert = null; done(); };
-  $("#ncSold").onclick = () => { NC_GOODS.forEach(g => n.crates[g.id] = 0); n.alert = null; done(); toast(t("ncSoldToast")); };
-  $("#ncCollect").onclick = () => { const had = n.safe; n.safe = 0; n.alert = null; done();
-    toast(t("bagCollected", money(had)), { label: t("undo"), run: () => { n.safe = had; done(); } }); };
-  win.querySelectorAll("[data-chip]").forEach(b => b.onclick = () => { n[b.dataset.chip] = !n[b.dataset.chip]; done(); });
-  win.querySelectorAll("[data-num] button").forEach(b => b.onclick = () => {
+function bindNightSettings(root, rerender) {
+  const n = S.biz.night;
+  const done = () => { checkNight(false); save(true); ghMarkDirty(); rerender(); renderAll(); };
+  root.querySelectorAll("[data-chip]").forEach(b => b.onclick = () => { n[b.dataset.chip] = !n[b.dataset.chip]; done(); });
+  root.querySelectorAll("[data-num] button").forEach(b => b.onclick = () => {
     const k = b.closest("[data-num]").dataset.num, v = +b.dataset.v;
     n[k] = n[k] === v && v > 1 ? v - 1 : v;
     if (k === "floors") NC_GOODS.forEach(g => n.crates[g.id] = Math.min(ncCap(g, n), n.crates[g.id] || 0));
     done();
   });
-  win.querySelectorAll("[data-good]").forEach(c => c.onchange = () => { n.assign[c.dataset.good] = c.checked; done(); });
+  root.querySelectorAll("[data-good]").forEach(c => c.onchange = () => { n.assign[c.dataset.good] = c.checked; done(); });
+}
+function nightWinHtml() {
+  const n = S.biz.night, tt = ncTotals(), f = ncForecast();
+  if (S.ncAdvanced && !isPhone()) return nightAdvancedHtml() + `<div class="sect"><h4>${t("ncUpgrades")}</h4>${nightSettingsHtml()}</div>`;
+  return `
+    <div class="sect"><h4>${t("ncPop")} <span data-live="ncpop" style="color:${popColor(n.pop)}">${Math.round(n.pop)}%</span></h4>
+      ${segBarHtml("pop", "night")}
+      <div class="row" style="margin-top:8px"><span class="grow hint" style="margin:0">${n.pop >= 95 ? t("ncPopMax") : t("ncPopLess", money(ncPay(n.pop)))}</span>
+      <button class="btn small" id="ncDj">${t("ncDj")}</button></div>
+    </div>
+    <div class="sect"><h4>${t("ncGoods")} <span class="muted" data-live="ncpct">${Math.round(tt.frac * 100)}%</span></h4>
+      ${segBarHtml("ncgoods", "night")}
+      ${ncValuesHtml()}
+      ${valueInputHtml("night")}
+      <p class="hint">${f.idle ? `<b style="color:var(--bad)">${t("ncIdle", t("g_" + f.idle))}</b>` : isFinite(f.firstFull) ? t("ncFirstFull", { g: t("g_" + f.firstName), m: fmtTime(f.firstFull) }) : t("ncNoTech")}</p>
+      <div class="btn-row"><button class="btn primary" id="ncSold">${t("ncSold")}</button></div>
+    </div>
+    <div class="sect"><h4>${t("ncSafe")}</h4>
+      <div class="bag-line"><b class="bag-sum ${n.safe >= NC_SAFE_CAP - 1 ? "full" : ""}">${money(n.safe)} / ${money(NC_SAFE_CAP)}</b><button class="btn small" id="ncCollect">${t("bagCollect")}</button></div>
+      <p class="hint">${n.safe >= NC_SAFE_CAP - 1 ? t("ncSafeFullHint") : t("ncSafeLeft", fmtTime(f.safeLeft))}</p>
+    </div>
+    <div class="sect"><h4>${t("ncUpgrades")}</h4>${nightSettingsHtml()}</div>`;
+}
+function bindNightWin(rerender) {
+  const n = S.biz.night, $ = sel => win.querySelector(sel);
+  const done = () => { checkNight(false); save(true); ghMarkDirty(); rerender(); renderAll(); };
+  if (S.ncAdvanced && !isPhone()) { bindNightAdvanced(win, rerender); bindNightSettings(win, rerender); return; }
+  $("#ncDj").onclick = () => { n.pop = Math.min(100, n.pop + 10); n.alert = null; done(); };
+  $("#ncSold").onclick = () => { NC_GOODS.forEach(g => n.crates[g.id] = 0); n.alert = null; done(); toast(t("ncSoldToast")); };
+  $("#ncCollect").onclick = () => { const had = n.safe; n.safe = 0; n.alert = null; done();
+    toast(t("bagCollected", money(had)), { label: t("undo"), run: () => { n.safe = had; done(); } }); };
+  bindValueInputs(win, done);
+  bindNightSettings(win, rerender);
 }
 function vehQuickHtml() {
   const v = vehData();
+  return vehStatsHtml(v) + vehAddHtml();
+}
+function vehStatsHtml(v) {
   return `<div class="bar-cap" style="margin-top:6px"><span>${t("vehCars")}</span><b>${v.count} / ${VEH_CAP}</b></div>
     <div class="thin"><i style="width:${Math.min(100, v.count / VEH_CAP * 100)}%"></i></div>
     <div class="bar-cap"><span>Top ${v.top} · Mid ${v.mid} · Std ${v.std}</span></div>
@@ -2095,21 +2227,34 @@ function vehQuickHtml() {
 function vehWinHtml() {
   return `<div class="sect"><h4>${t("vehStock")}</h4>${vehQuickHtml()}<p class="hint">${t("vehNote")}</p></div>`;
 }
+// update just the numbers while a bar is being dragged
+function liveNightBits() {
+  const n = S.biz.night, tt = ncTotals();
+  document.querySelectorAll('[data-live="ncpop"]').forEach(el => { el.textContent = Math.round(n.pop) + "%"; el.style.color = popColor(n.pop); });
+  document.querySelectorAll('[data-live="ncpct"]').forEach(el => el.textContent = Math.round(tt.frac * 100) + "%");
+  document.querySelectorAll('[data-live="ncnet"]').forEach(el => el.textContent = money(tt.net));
+  document.querySelectorAll('[data-live="ncpub"]').forEach(el => el.textContent = money(tt.pub));
+  document.querySelectorAll('[data-val="night"]').forEach(el => { if (el !== document.activeElement) el.value = Math.round(tt.total); });
+  document.querySelectorAll('.segbar[data-id="night"]').forEach(updateSegBar);
+}
 
 /* ======================================================================
    Clock: only advances while "In game" is on
    ====================================================================== */
 function tick() {
-  const now = Date.now();
-  if (S.inGame) {
-    const dt = (now - S.lastTick) / 60000;
-    MC.filter(d => d.production).forEach(d => advance(d.id, dt));
-    advanceNight(dt);
+  const now = Date.now(), clock = isClock();
+  if (clock) {
+    if (S.inGame) {
+      const dt = (now - S.lastTick) / 60000;
+      MC.filter(d => d.production).forEach(d => advance(d.id, dt));
+      advanceNight(dt);
+    }
+    S.lastTick = now;
   }
-  S.lastTick = now;
-  checkAlerts(S.inGame);
+  checkAlerts(S.inGame && clock);
   renderLive();
-  save();
+  liveFocus();
+  if (clock) { save(); ghTick(); }
 }
 
 /* ======================================================================
@@ -2744,7 +2889,8 @@ function openQuick(id, tabEl) {
   flyout.querySelectorAll(".tab").forEach(x => x.classList.toggle("hot", x === tabEl));
   renderQuick();
   const r = tabEl.getBoundingClientRect();
-  quick.style.left = r.right + 10 + "px";
+  const qw = quick.offsetWidth || 260;
+  quick.style.left = (r.right + 10 + qw < innerWidth - 8 ? r.right + 10 : Math.max(8, r.left - qw - 10)) + "px";
   const h = quick.offsetHeight;
   quick.style.top = Math.max(document.querySelector("header").offsetHeight + 6, Math.min(r.top - 4, innerHeight - h - 10)) + "px";
   quick.classList.add("show");
@@ -2875,7 +3021,8 @@ function renderQuick() {
     quick.innerHTML = html;
     const own = quick.querySelector("#qOwn");
     if (own) own.onclick = () => { b.owned = true; save(true); renderPins(); renderAll(); renderQuick(); };
-    if (kd === "night" && b.owned) bindBoxes(quick, renderQuick);
+    if (kd === "night" && b.owned) bindValueInputs(quick, () => { checkNight(false); save(true); ghMarkDirty(); renderQuick(); renderAll(); });
+    if (kd === "veh" && b.owned) bindVehAdd(quick, renderQuick);
     return;
   }
   if (!defOf(id).production) {
@@ -2900,6 +3047,7 @@ function renderQuick() {
       <div class="q-label">${t("stock")}</div>
       ${segBarHtml("stock", id, "small")}
       <div class="bar-cap" id="qStockCap"></div>
+      ${valueInputHtml(id)}
       <div class="btn-row">
         <button class="btn primary" id="qResupply">${t("qResupply")}</button>
         <button class="btn" id="qSold">${t("qSold")}</button>
@@ -2909,6 +3057,7 @@ function renderQuick() {
   quick.innerHTML = html;
   const $ = sel => quick.querySelector(sel);
   if ($("#qOwn")) $("#qOwn").onclick = () => { b.owned = true; syncStatus(); save(true); renderPins(); renderAll(); renderQuick(); };
+  bindValueInputs(quick, () => afterEdit());
   if ($("#qResupply")) $("#qResupply").onclick = () => { b.supplies = 1; ackAlerts(id); afterEdit(); };
   if ($("#qSold")) $("#qSold").onclick = () => { b.stock = 0; ackAlerts(id); afterEdit(); };
   liveQuick();
@@ -2916,7 +3065,11 @@ function renderQuick() {
 let liveCount = 0;
 function liveQuick() {
   if (!quickId || !S.biz[quickId].owned) return;
-  if (defOf(quickId).kind) { if (!quick.matches(":active")) renderQuick(); return; }
+  if (defOf(quickId).kind) {
+    if (segDrag || quick.matches(":active") || quick.contains(document.activeElement) && document.activeElement.matches("input")) return;
+    if (++liveCount % 3 === 0) renderQuick();
+    return;
+  }
   if (!defOf(quickId).production) { liveClub(quick, "q"); return; }
   const id = quickId, b = S.biz[id], n = numbers(id), f = forecast(id), st = status(id);
   const q = sel => quick.querySelector(sel);
@@ -2933,24 +3086,32 @@ function liveQuick() {
    Segment bars (supplies & stock), shared by the quick panel and the window
    Stock snaps to whole units, like the game; supplies snap to quarter boxes.
    ====================================================================== */
+const segCount = kind => kind === "pop" || kind === "ncgoods" ? 10 : 5;
 function barValue(kind, id) {
   const b = S.biz[id];
+  if (kind === "pop") return b.pop / 100;
+  if (kind === "ncgoods") return Math.min(1, ncTotals().frac);
   return kind === "stock" ? Math.min(1, b.stock / numbers(id).cap) : b.supplies;
 }
 function barTicks(kind, id) {
+  if (kind === "pop") return 2;              // each box = 10%, filled in 5% steps
+  if (kind === "ncgoods") return 1;
   if (kind === "supplies") return 4;
   const per = numbers(id).cap / 5;           // units in one box: coke 2, meth 4, cash 8, docs 12, weed 16
   return per <= 8 ? per : 4;                 // too many lines get noisy: show quarters
 }
 function segBarHtml(kind, id, extra = "") {
-  const label = t(kind === "stock" ? "stock" : "supplies");
+  const label = t({ stock: "stock", supplies: "supplies", pop: "ncPop", ncgoods: "ncGoods" }[kind]);
   return `<div class="segbar ${kind} ${extra}" data-kind="${kind}" data-id="${id}" role="slider" tabindex="0" aria-label="${label}">
-    ${[0, 1, 2, 3, 4].map(() => `<div class="seg" style="--ticks:${barTicks(kind, id)}"><i></i></div>`).join("")}
+    ${Array.from({ length: segCount(kind) }, () => `<div class="seg" style="--ticks:${barTicks(kind, id)}"><i></i></div>`).join("")}
   </div>`;
 }
 function updateSegBar(el) {
   const kind = el.dataset.kind, id = el.dataset.id, v = barValue(kind, id);
-  el.querySelectorAll(".seg i").forEach((i, k) => { i.style.width = Math.max(0, Math.min(1, v * 5 - k)) * 100 + "%"; });
+  const cnt = segCount(kind);
+  el.querySelectorAll(".seg i").forEach((i, k) => { i.style.width = Math.max(0, Math.min(1, v * cnt - k)) * 100 + "%"; });
+  if (kind === "pop") el.style.setProperty("--seg-c", popColor(S.biz.night.pop));
+  if (kind === "pop" || kind === "ncgoods") { el.setAttribute("aria-valuenow", Math.round(v * 100)); return; }
   if (kind === "supplies") {
     const st = status(id);
     el.classList.toggle("low", st === "low");
@@ -2964,9 +3125,12 @@ function updateSegBar(el) {
 function setBar(kind, id, v) {
   const b = S.biz[id];
   v = Math.max(0, Math.min(1, v));
-  if (kind === "stock") b.stock = Math.round(v * numbers(id).cap);
-  else b.supplies = Math.round(v * 20) / 20;
+  if (kind === "pop") { b.pop = Math.round(v * 20) * 5; b.alert = null; checkNight(false); }
+  else if (kind === "ncgoods") { ncSetGoods(Math.round(v * 100) / 100); b.alert = null; checkNight(false); }
+  else if (kind === "stock") b.stock = Math.round(v * numbers(id).cap);
+  else b.supplies = Math.round(v * 100) / 100;   // 1% steps
   afterEdit(false);
+  liveNightBits();
 }
 // pointer x -> 0..1 across the 5 boxes (the gaps belong to the box on their left)
 function barFromX(el, x) {
@@ -2976,7 +3140,7 @@ function barFromX(el, x) {
     const next = segs[k + 1] ? segs[k + 1].getBoundingClientRect().left : r.right;
     if (x < next || k === segs.length - 1) {
       const f = Math.max(0, Math.min(1, (x - r.left) / r.width));
-      return (k + f) / 5;
+      return (k + f) / segs.length;
     }
   }
   return 0;
@@ -3010,7 +3174,7 @@ document.addEventListener("keydown", e => {
   const el = e.target.closest && e.target.closest(".segbar");
   if (!el) return;
   const kind = el.dataset.kind, id = el.dataset.id;
-  const step = kind === "stock" ? 1 / numbers(id).cap : 0.05;
+  const step = kind === "stock" ? 1 / numbers(id).cap : kind === "pop" ? 0.05 : 0.01;
   const v = barValue(kind, id);
   const map = { ArrowRight: v + step, ArrowUp: v + step, ArrowLeft: v - step, ArrowDown: v - step, Home: 0, End: 1 };
   if (e.key in map) { e.preventDefault(); setBar(kind, id, map[e.key]); save(true); }
@@ -3039,6 +3203,7 @@ function openWin(id, fly = true) {
   save();
 }
 function closeWin() {
+  win.classList.remove("wide");
   openId = null;
   win.classList.remove("open");
   document.body.classList.remove("win-open");
@@ -3093,6 +3258,7 @@ function renderWin() {
         ${segBarHtml("stock", id)}
         <p class="hint" id="wStockHint">${b.stock >= n.cap ? t("st_full") : isFinite(f.minToFull) ? t("toFull", fmtTime(f.minToFull)) : t("needsSupplies")}</p>
       </div>
+      ${valueInputHtml(id)}
       <div class="sect"><h4>${t("value")}</h4>
         <div class="kv" id="wValue"><span>${t("local")}</span><b>${money(Math.floor(b.stock + 1e-6) * n.value)}</b><span>${t("far")}</span><b>${money(Math.floor(b.stock + 1e-6) * n.value * FAR_BONUS)}</b></div>
       </div>
@@ -3115,6 +3281,7 @@ function renderWin() {
     <div class="win-head ${d.cls}">
       <span class="ico">${ICON[d.icon]}</span>
       <div><h3>${bizName(id)}${nameMarks(id)}</h3><small>${t(d.kind === "night" ? "ncSubtitle" : d.kind === "veh" ? "cat_veh" : "cat_mc")}</small></div>
+      ${d.kind === "night" && b.owned && !isPhone() ? `<button class="btn small win-mode" id="wMode">${S.ncAdvanced ? t("modeSimple") : t("modeAdvanced")}</button>` : ""}
       <button class="icon-btn" id="wClose" aria-label="${t("close")}">✕</button>
     </div>
     <div class="win-body">${body}</div>`;
@@ -3125,10 +3292,13 @@ function bindWin(id) {
   const b = S.biz[id], $ = s => win.querySelector(s);
   const changed = (full = true) => { syncStatus(); save(true); if (full) renderWin(); renderAll(); };
   $("#wClose").onclick = closeWin;
+  win.classList.toggle("wide", id === "night" && !!S.ncAdvanced && !isPhone() && b.owned);
+  if ($("#wMode")) $("#wMode").onclick = () => { S.ncAdvanced = !S.ncAdvanced; save(true); renderWin(); };
   $("#wOwned").onchange = e => { b.owned = e.target.checked; if (!b.owned) b.pin = b.pin || null; changed(); renderPins(); };
   if ($("#wPin")) $("#wPin").onclick = () => startPlacing(id);
   if ($("#wPinDel")) $("#wPinDel").onclick = () => { b.pin = null; changed(); renderPins(); };
   win.querySelectorAll("[data-layer]").forEach(x => x.onclick = () => { b.layer = x.dataset.layer; save(true); renderWin(); updatePinStates(); });
+  if (defOf(id).kind === "veh" && b.owned) bindVehAdd(win, () => renderWin());
   if (defOf(id).kind) { if (defOf(id).kind === "night" && b.owned) bindNightWin(() => { const sc = win.querySelector(".win-body").scrollTop; renderWin(); win.querySelector(".win-body").scrollTop = sc; }); return; }
   if (!defOf(id).production) {
     if (!b.owned) return;
@@ -3157,6 +3327,7 @@ function bindWin(id) {
   if (!b.owned) return;
   $("#wEquip").onclick = () => { b.equip = !b.equip; changed(); };
   $("#wStaff").onclick = () => { b.staff = !b.staff; changed(); };
+  bindValueInputs(win, () => changed());
   $("#wResupply").onclick = () => { b.supplies = 1; ackAlerts(id); changed(); };
   $("#wSold").onclick = () => { b.stock = 0; ackAlerts(id); changed(); };
   $("#wAlert").onchange = e => { b.alertMin = Math.max(1, Math.min(240, +e.target.value || 15)); changed(); };
@@ -3168,7 +3339,7 @@ function bindWin(id) {
 function liveWin() {
   if (openId && defOf(openId).kind) {
     // nightclub / vehicle warehouse: refresh every few seconds, keeping the scroll position
-    if (++liveCount % 5 || win.matches(":active")) return;
+    if (++liveCount % 5 || win.matches(":active") || segDrag || faderDrag || win.contains(document.activeElement) && document.activeElement.matches("input")) return;
     const wb = win.querySelector(".win-body"), sc = wb ? wb.scrollTop : 0;
     renderWin();
     const nb = win.querySelector(".win-body"); if (nb) nb.scrollTop = sc;
@@ -3527,7 +3698,7 @@ const TOUR = [
   { k: 2, target: () => qs("#ingame") },
   { k: 3, side: true, target: () => qs('.tile[data-cat="mc"]') },
   { k: 4, side: true, prep: () => { const tl = qs('.tile[data-cat="mc"]'); openFlyout(tl, CATEGORIES[0]); }, target: () => qs("#flyout") },
-  { k: 5, side: true, prep: () => { const tl = qs('.tile[data-cat="mc"]'); openFlyout(tl, CATEGORIES[0]); const tb = qs('.tab[data-id="coke"]'); if (tb) openQuick("coke", tb); }, target: () => qs("#quick") },
+  { k: 5, desk: true, side: true, prep: () => { const tl = qs('.tile[data-cat="mc"]'); openFlyout(tl, CATEGORIES[0]); const tb = qs('.tab[data-id="coke"]'); if (tb) openQuick("coke", tb); }, target: () => qs("#quick") },
   { k: 6, prep: () => openWin("coke", false), target: () => qs("#win") },
   { k: 7, prep: () => openWin("coke", false), target: () => { const bars = [...document.querySelectorAll("#win .segbar")]; return bars.length ? bars : document.querySelector("#win"); } },
   { k: 8, target: () => qs(".map-tools") },
@@ -3546,9 +3717,10 @@ function rectOf(tg) {
   const rt = Math.max(...rs.map(r => r.right)), b = Math.max(...rs.map(r => r.bottom));
   return { left: l - 6, top: tp - 6, width: rt - l + 12, height: b - tp + 12 };
 }
-function tourTarget() { const st = TOUR[tourI]; return st.target ? st.target() : null; }
+function tourTarget() { const st = tourSteps()[tourI]; return st.target ? st.target() : null; }
+function tourSteps() { return TOUR.filter(st => !(st.desk && isPhone())); }
 function showTourStep() {
-  const st = TOUR[tourI], n = TOUR.length;
+  const steps = tourSteps(), st = steps[tourI], n = steps.length;
   tourReset();
   if (st.side && !S.sideOpen) setSide(true);
   if (st.prep) st.prep();
@@ -3557,12 +3729,12 @@ function showTourStep() {
   document.getElementById("tourStep").textContent = t("tourOf", [tourI + 1, n]);
   document.getElementById("tourTitle").textContent = t(`pt${st.k}t`);
   document.getElementById("tourBody").innerHTML = t(`pt${st.k}b`);
-  document.getElementById("tourDots").innerHTML = TOUR.map((_, i) => `<i class="${i === tourI ? "on" : ""}"></i>`).join("");
+  document.getElementById("tourDots").innerHTML = steps.map((_, i) => `<i class="${i === tourI ? "on" : ""}"></i>`).join("");
   const back = document.getElementById("tourBack"), next = document.getElementById("tourNext"), skip = document.getElementById("tourSkip");
   back.textContent = t("tourBack"); back.style.visibility = tourI ? "visible" : "hidden";
   next.textContent = tourI === n - 1 ? t("tourDone") : t("tourNext");
   skip.textContent = t("tourSkip"); skip.style.visibility = tourI === n - 1 ? "hidden" : "visible";
-  setTimeout(() => placeTour(tourTarget()), 260);   // let windows finish sliding in
+  setTimeout(() => placeTour(tourTarget()), 320);   // let windows finish sliding in
   next.focus({ preventScroll: true });
 }
 function placeTour(tg) {
@@ -3591,7 +3763,7 @@ function endTour() {
   if (tourLayer.open) tourLayer.close();
   try { localStorage.setItem(TOUR_KEY, "1"); } catch (e) {}
 }
-document.getElementById("tourNext").onclick = () => { if (tourI === TOUR.length - 1) endTour(); else { tourI++; showTourStep(); } };
+document.getElementById("tourNext").onclick = () => { if (tourI === tourSteps().length - 1) endTour(); else { tourI++; showTourStep(); } };
 document.getElementById("tourBack").onclick = () => { if (tourI) { tourI--; showTourStep(); } };
 document.getElementById("tourSkip").onclick = endTour;
 tourLayer.addEventListener("cancel", e => { e.preventDefault(); endTour(); });
@@ -3615,6 +3787,419 @@ function openMenuEditor() {
 
 document.getElementById("tourMenuBtn").onclick = () => startTour();
 document.getElementById("menuEditBtn").onclick = () => openMenuEditor();
+
+const VEH_CARS = [["B1GMON3Y","Top","Z-Type"],["K1NGP1N","Top","Z-Type"],["CE0","Top","Z-Type"],["B1GB0Y","Top","ETR1"],["M0N4RCH","Top","ETR1"],["PR3TTY","Top","ETR1"],["M1DL1F3","Top","811"],["R3G4L","Top","811"],["SL1CK","Top","811"],["OH3LL0","Top","Osiris"],["PH4R40H","Top","Osiris"],["SL33K","Top","Osiris"],["2FA5T4U","Top","Reaper"],["D34TH4U","Top","Reaper"],["GR1M","Top","Reaper"],["0LDBLU3","Top","Mamba"],["BLKM4MB4","Top","Mamba"],["V1P","Top","Mamba"],["C4TCHM3","Top","FMJ"],["J0K3R","Top","FMJ"],["H0T4U","Top","FMJ"],["M4J3ST1C","Top","Stirling GT"],["T0UR3R","Top","Stirling GT"],["R4LLY","Top","Stirling GT"],["FUTUR3","Top","X80 Proto"],["M4K3B4NK","Top","X80 Proto"],["TURB0","Top","X80 Proto"],["C1TRUS","Top","Tyrus"],["B35TL4P","Top","Tyrus"],["TR3X","Top","Tyrus"],["CAR4M3L","Top","T20"],["T0PSP33D","Top","T20"],["D3V1L","Top","T20"],["L4WLE55","Top","Roosevelt Valor"],["0LDT1M3R","Top","Roosevelt Valor"],["V4L0R","Top","Roosevelt Valor"],["T0PL3SS","Mid","Coquette Classic"],["T0FF33","Mid","Coquette Classic"],["CL45SY","Mid","Coquette Classic"],["PR3C1OUS","Mid","Verlierer"],["0UTFR0NT","Mid","Verlierer"],["CURV35","Mid","Verlierer"],["W1NN1NG","Mid","Zentorno"],["0LDN3W5","Mid","Zentorno"],["H3R0","Mid","Zentorno"],["1MS0RAD","Mid","Tropos Rallye"],["31GHT135","Mid","Tropos Rallye"],["1985","Mid","Tropos Rallye"],["SN0WFLK3","Mid","Sultan RS"],["F1D3L1TY","Mid","Sultan RS"],["5H0W0FF","Mid","Sultan RS"],["BUZZ3D","Mid","Cheetah"],["M1DN1GHT","Mid","Cheetah"],["B1GC4T","Mid","Cheetah"],["FRU1TY","Mid","Seven-70"],["4LLOY5","Mid","Seven-70"],["SP33DY","Mid","Seven-70"],["0BEYM3","Mid","Omnis"],["W1D3B0D","Mid","Omnis"],["D1RTY","Mid","Omnis"],["IML4TE","Mid","Entity XF"],["0V3RFL0D","Mid","Entity XF"],["W1DEB0Y","Mid","Entity XF"],["V1NT4G3","Mid","Coquette BlackFin"],["W1P3OUT","Mid","Coquette BlackFin"],["BLKF1N","Mid","Coquette BlackFin"],["IN4H4ZE","Standard","Turismo R"],["M1LKYW4Y","Standard","Turismo R"],["TPD4WG","Standard","Turismo R"],["CH4RG3D","Standard","Tampa"],["CRU151N","Standard","Tampa"],["MU5CL3","Standard","Tampa"],["GUNZ0UT","Standard","Sabre Turbo Custom"],["0R1G1N4L","Standard","Sabre Turbo Custom"],["B0UNC3","Standard","Sabre Turbo Custom"],["DE4DLY","Standard","Nightshade"],["TH37OS","Standard","Nightshade"],["E4TM3","Standard","Nightshade"],["TR0P1CAL","Standard","Massacro"],["B4N4N4","Standard","Massacro"],["B055","Standard","Massacro"],["H0TP1NK","Standard","Jester"],["T0PCL0WN","Standard","Jester"],["NOF00L","Standard","Jester"],["P0W3RFUL","Standard","Feltzer"],["K3YL1M3","Standard","Feltzer"],["R4C3R","Standard","Feltzer"],["BE4STY","Standard","Bestia GTS"],["5T34LTH","Standard","Bestia GTS"],["5M00TH","Standard","Bestia GTS"],["V1S10NRY","Standard","Alpha"],["L0NG80Y","Standard","Alpha"],["R31GN","Standard","Alpha"],["DR1FT3R","Standard","Banshee 900R"],["D0M1N0","Standard","Banshee 900R"],["H0WL3R","Standard","Banshee 900R"]];  // [plate, range, name] from Vehicle Export Tracker
+/* ======================================================================
+   Advanced Nightclub, MC board (?view=night / ?view=mc) and quick add for the Vehicle Warehouse
+   ====================================================================== */
+const VIEW = new URLSearchParams(location.search).get("view");   // "night" | "mc" | null
+const NC_RANK = [...NC_GOODS].sort((a, b) => b.perHour - a.perHour).map(g => g.id);
+function ncOptimize() {
+  const n = S.biz.night;
+  n.assign = {};
+  NC_RANK.filter(id => ncAvail(NC_GOODS.find(g => g.id === id))).slice(0, n.hired).forEach(id => n.assign[id] = true);
+}
+function ncCratesTotal() { const n = S.biz.night; return NC_GOODS.reduce((s, g) => s + (n.crates[g.id] || 0), 0); }
+function ncVehicle(c) { return c < 1 ? "—" : c < 90 ? "Speedo Custom" : c < 180 ? "Mule Custom" : "Pounder Custom"; }
+
+function nightAdvancedHtml() {
+  const n = S.biz.night, tt = ncTotals(), f = ncForecast(), crates = Math.floor(ncCratesTotal());
+  const working = ncWorking(n).map(g => g.id);
+  const players = n.lobby || 0, bonus = players * 0.025;
+  const states = [];
+  if (n.pop < 95) states.push(["warn", t("ncAlPop", Math.round(n.pop))]);
+  if (f.idle) states.push(["bad", t("ncIdle", t("g_" + f.idle))]);
+  if (n.safe >= NC_SAFE_CAP - 1) states.push(["ok", t("ncAlSafeFull")]);
+  else if (isFinite(f.safeLeft)) states.push(["ok", t("ncSafeLeft", fmtTime(f.safeLeft))]);
+  return `
+  <div class="adv-grid2">
+    <section class="adv-card">
+      <h4>${t("ncPop")} <b style="color:${popColor(n.pop)}">${Math.round(n.pop)}%</b></h4>
+      ${segBarHtml("pop", "night", "big")}
+      <p class="hint">${n.pop >= 95 ? t("ncPopMax") : t("ncPopLess", money(ncPay(n.pop)))}</p>
+      <div class="btn-row"><button class="btn small" data-a="dj">${t("ncDj")}</button></div>
+      <h4 style="margin-top:16px">${t("ncSafe")}</h4>
+      <div class="bag-line"><b class="bag-sum ${n.safe >= NC_SAFE_CAP - 1 ? "full" : ""}">${money(n.safe)} / ${money(NC_SAFE_CAP)}</b><button class="btn small" data-a="collect">${t("bagCollect")}</button></div>
+      <h4 style="margin-top:16px">${t("advAttention")}</h4>
+      <div class="adv-alerts">${states.map(([k, m]) => `<div class="k-${k}"><span class="nbar"></span>${m}</div>`).join("") || `<div class="muted">${t("advAllGood")}</div>`}</div>
+    </section>
+    <section class="adv-card wide">
+      <div class="adv-head"><h4>${t("advMixer")}</h4><span class="muted">${crates} / ${NC_GOODS.reduce((s, g) => s + ncCap(g, n), 0)} ${t("advCrates")} · ${working.length} / ${n.hired} ${t("advTechs")}</span>
+        <button class="btn small" data-a="opt">${t("advOptimize")}</button></div>
+      <div class="mixer">${NC_GOODS.map(g => {
+        const av = ncAvail(g), on = working.includes(g.id), cap = ncCap(g, n), c = n.crates[g.id] || 0, full = c >= cap - 1e-6;
+        const eta = !on ? t("advOff") : full ? t("advFull") : fmtTime((cap - c) / ncRate(g, n));
+        return `<div class="ch ${av ? "" : "off"} ${full ? "full" : ""}">
+          <div class="ch-name">${t("g_" + g.id)}</div>
+          <div class="ch-val">${money(g.value)}</div>
+          <div class="fader" data-fader="${g.id}" role="slider" tabindex="0" aria-label="${t("g_" + g.id)}" aria-valuenow="${Math.floor(c)}" aria-valuemax="${cap}"><i style="height:${cap ? c / cap * 100 : 0}%"></i></div>
+          <div class="ch-num">${Math.floor(c)} / ${cap}</div>
+          <div class="ch-eta">${eta}</div>
+          <button class="tech ${on ? "on" : ""}" data-tech="${g.id}" ${!av || (!on && working.length >= n.hired) ? "disabled" : ""}>${on ? t("advTechOn") : t("advTechOff")}</button>
+        </div>`;
+      }).join("")}</div>
+    </section>
+    <section class="adv-card">
+      <h4>${t("advSale")}</h4>
+      <div class="kv"><span>${t("advGross")}</span><b>${money(tt.total)}</b><span>${t("advNet")}</span><b>${money(tt.net)}</b>
+        <span>${t("advPublic", players)}</span><b style="color:var(--sodium)">${money(tt.net * (1 + bonus))}</b><span>${t("advVehicle")}</span><b>${ncVehicle(crates)}</b></div>
+      <label class="adv-range"><span>${t("advPlayers")}</span><input type="range" min="0" max="20" value="${players}" data-a="lobby"><b>${players}</b></label>
+      <div class="btn-row"><button class="btn primary" data-a="sold">${t("ncSold")}</button></div>
+    </section>
+  </div>`;
+}
+function bindNightAdvanced(root, rerender) {
+  const n = S.biz.night;
+  const done = () => { checkNight(false); save(true); ghMarkDirty(); rerender(); renderAll(); };
+  root.querySelectorAll("[data-a]").forEach(el => {
+    const a = el.dataset.a;
+    if (a === "lobby") { el.oninput = () => { n.lobby = +el.value; el.nextElementSibling.textContent = el.value; }; el.onchange = done; return; }
+    el.onclick = () => {
+      if (a === "dj") n.pop = Math.min(100, n.pop + 10);
+      if (a === "collect") n.safe = 0;
+      if (a === "opt") ncOptimize();
+      if (a === "sold") NC_GOODS.forEach(g => n.crates[g.id] = 0);
+      n.alert = null;
+      done();
+    };
+  });
+  root.querySelectorAll("[data-tech]").forEach(b => b.onclick = () => { n.assign[b.dataset.tech] = !b.classList.contains("on"); done(); });
+}
+/* vertical faders: press and drag up / down */
+let faderDrag = null;
+document.addEventListener("pointerdown", e => {
+  const fd = e.target.closest(".fader");
+  if (!fd || (e.pointerType === "mouse" && e.button !== 0)) return;
+  e.preventDefault();
+  fd.setPointerCapture(e.pointerId);
+  faderDrag = { fd, pid: e.pointerId };
+  setFader(fd, e.clientY);
+});
+document.addEventListener("pointermove", e => { if (faderDrag && e.pointerId === faderDrag.pid) setFader(faderDrag.fd, e.clientY); });
+document.addEventListener("pointerup", e => { if (faderDrag && e.pointerId === faderDrag.pid) { faderDrag = null; save(true); ghMarkDirty(); rerenderNightViews(); } });
+function setFader(fd, y) {
+  const n = S.biz.night, g = NC_GOODS.find(x => x.id === fd.dataset.fader), cap = ncCap(g, n);
+  const r = fd.getBoundingClientRect(), v = Math.max(0, Math.min(1, (r.bottom - y) / r.height));
+  n.crates[g.id] = Math.round(v * cap);
+  fd.querySelector("i").style.height = v * 100 + "%";
+  const ch = fd.closest(".ch"); ch.querySelector(".ch-num").textContent = `${n.crates[g.id]} / ${cap}`;
+  renderAll();
+}
+function rerenderNightViews() {
+  if (VIEW === "night") renderFocus();
+  else if (openId === "night") { const wb = win.querySelector(".win-body"), sc = wb ? wb.scrollTop : 0; renderWin(); const nb = win.querySelector(".win-body"); if (nb) nb.scrollTop = sc; }
+}
+
+/* MC board: every MC business on one page */
+function mcBoardHtml() {
+  const cards = MC.filter(d => d.production).map(d => {
+    const b = S.biz[d.id];
+    const head = `<div class="mcb-head ${d.cls}"><span class="ico">${ICON[d.icon]}</span><b>${bizName(d.id)}</b>${b.owned ? `<span class="state-badge st-${status(d.id)}">${t("st_" + status(d.id))}</span>` : ""}</div>`;
+    if (!b.owned) return `<section class="mcb">${head}<div class="mcb-body"><p class="muted">${t("notOwned")}</p><button class="btn primary" data-own="${d.id}">${t("qOwn")}</button></div></section>`;
+    const n = numbers(d.id), f = forecast(d.id), units = Math.floor(b.stock + 1e-6);
+    return `<section class="mcb">${head}<div class="mcb-body">
+      <div class="q-label">${t("supplies")}</div>${segBarHtml("supplies", d.id)}
+      <div class="bar-cap"><span>${b.supplies > 0 && f.suppliesOutFirst ? t("suppliesLeft", fmtTime(f.minToEmpty)) : b.supplies <= 0 ? t("suppliesStop") : ""}</span><b>${Math.round(b.supplies * 100)}%</b></div>
+      <div class="q-label">${t("stock")}</div>${segBarHtml("stock", d.id)}
+      <div class="bar-cap"><span>${b.stock >= n.cap ? t("st_full") : isFinite(f.minToFull) ? t("toFull", fmtTime(f.minToFull)) : ""}</span><b>${units} / ${n.cap}</b></div>
+      ${valueInputHtml(d.id)}
+      <div class="chip-row" style="margin-top:8px"><button class="chip ${b.equip ? "on" : ""}" data-up="equip:${d.id}">${b.equip ? "✓ " : ""}${t("equipment")}</button><button class="chip ${b.staff ? "on" : ""}" data-up="staff:${d.id}">${b.staff ? "✓ " : ""}${t("staff")}</button></div>
+      <div class="btn-row"><button class="btn primary" data-res="${d.id}">${t("qResupply")}</button><button class="btn" data-sold="${d.id}">${t("qSold")}</button></div>
+    </div></section>`;
+  }).join("");
+  const c = S.biz.club;
+  const club = `<section class="mcb"><div class="mcb-head c-club"><span class="ico">${ICON.club}</span><b>${bizName("club")}</b>${nameMarks("club")}</div><div class="mcb-body">
+    ${c.owned ? clubHtml("fc") : `<p class="muted">${t("notOwned")}</p><button class="btn primary" data-own="club">${t("qOwn")}</button>`}</div></section>`;
+  return `<div class="mcb-grid">${club}${cards}</div>`;
+}
+function bindMcBoard(root) {
+  const re = () => { syncStatus(); save(true); ghMarkDirty(); renderFocus(); renderAll(); };
+  root.querySelectorAll("[data-own]").forEach(b => b.onclick = () => { S.biz[b.dataset.own].owned = true; re(); });
+  root.querySelectorAll("[data-up]").forEach(b => b.onclick = () => { const [k, id] = b.dataset.up.split(":"); S.biz[id][k] = !S.biz[id][k]; re(); });
+  root.querySelectorAll("[data-res]").forEach(b => b.onclick = () => { const x = S.biz[b.dataset.res]; x.supplies = 1; x.alert = null; re(); });
+  root.querySelectorAll("[data-sold]").forEach(b => b.onclick = () => { const x = S.biz[b.dataset.sold]; x.stock = 0; x.alert = null; re(); });
+  bindValueInputs(root, re);
+  if (S.biz.club.owned) { bindClub(root, renderFocus); liveClub(root, "fc"); }
+}
+
+/* type an exact value for the goods / stock */
+function valueInputHtml(id) {
+  const tot = id === "night" ? ncTotals().total : Math.floor(S.biz[id].stock + 1e-6) * numbers(id).value;
+  return `<label class="val-in"><span>${t("valueIn")}</span><span class="dollar">$</span><input type="number" min="0" step="1000" inputmode="numeric" data-val="${id}" value="${Math.round(tot)}"></label>`;
+}
+function bindValueInputs(root, after) {
+  root.querySelectorAll("[data-val]").forEach(inp => inp.onchange = () => {
+    const id = inp.dataset.val, v = Math.max(0, parseFloat(inp.value) || 0);
+    if (id === "night") ncSetGoods(Math.min(1, v / ncTotals().max));
+    else { const n = numbers(id); S.biz[id].stock = Math.min(n.cap, Math.round(v / n.value)); }
+    S.biz[id].alert = null;
+    after();
+  });
+}
+
+/* focus pages */
+const focusEl = document.getElementById("focus");
+let focusCount = 0;
+function renderFocus() {
+  if (!VIEW) return;
+  if (VIEW === "night") {
+    const n = S.biz.night;
+    focusEl.innerHTML = `<div class="focus-head"><img src="${EMB.night}" alt=""><div><h2>Nightclub</h2>
+      <p class="muted">${n.owned ? t("focusNightSub") : t("notOwned")}</p></div>
+      ${n.owned ? "" : `<button class="btn primary" data-own="night">${t("qOwn")}</button>`}</div>
+      ${n.owned ? nightAdvancedHtml() + `<div class="adv-card" style="margin-top:14px"><h4>${t("ncUpgrades")}</h4>${nightSettingsHtml()}</div>` : ""}`;
+    const own = focusEl.querySelector("[data-own]");
+    if (own) own.onclick = () => { n.owned = true; save(true); renderFocus(); };
+    if (n.owned) { bindNightAdvanced(focusEl, renderFocus); bindNightSettings(focusEl, renderFocus); }
+  } else {
+    focusEl.innerHTML = `<div class="focus-head"><img src="${EMB.mc}" alt=""><div><h2>MC Business</h2><p class="muted">${t("focusMcSub")}</p></div></div>${mcBoardHtml()}`;
+    bindMcBoard(focusEl);
+  }
+}
+function liveFocus() {
+  if (!VIEW || segDrag || faderDrag || focusEl.contains(document.activeElement) && document.activeElement.matches("input")) return;
+  if (++focusCount % 3) { focusEl.querySelectorAll(".segbar").forEach(updateSegBar); return; }
+  const sc = document.scrollingElement.scrollTop, fs = focusEl.scrollTop;
+  renderFocus();
+  focusEl.scrollTop = fs; document.scrollingElement.scrollTop = sc;
+}
+
+/* Vehicle Warehouse: add a car without leaving the map */
+function vehFind(q) {
+  q = q.trim().toLowerCase();
+  if (!q) return [];
+  return VEH_CARS.filter(([p, r, n]) => p.toLowerCase().includes(q) || n.toLowerCase().includes(q) || r.toLowerCase() === q).slice(0, 6);
+}
+function vehAdd(plate) {
+  const car = VEH_CARS.find(c => c[0] === plate);
+  if (!car) return false;
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem("gtaWarehouse") || "[]") || []; } catch (e) {}
+  if (list.some(c => c.plate === plate)) { toast(t("vehDup")); return false; }
+  list.push({ name: car[2], plate: car[0], range: car[1], id: Date.now() });
+  const n = r => list.filter(c => (c.range || (VEH_CARS.find(x => x[0] === c.plate) || [])[1]) === r).length;
+  try {
+    localStorage.setItem("gtaWarehouse", JSON.stringify(list));
+    localStorage.setItem("gtaWarehouseSummary", JSON.stringify({ count: list.length, top: n("Top"), mid: n("Mid"), std: n("Standard"), at: Date.now() }));
+  } catch (e) {}
+  try { localStorage.setItem("gtaWarehouseSavedAt", String(Date.now())); } catch (e) {}
+  if (loggedIn()) whPush();
+  toast(t("vehAdded", `${car[2]} · ${car[0]}`));
+  return true;
+}
+function vehAddHtml() {
+  return `<div class="veh-add"><input type="text" class="veh-q" autocomplete="off" placeholder="${t("vehAddPh")}"><div class="veh-sug"></div>
+    <button class="btn primary veh-go" disabled>${t("vehAddBtn")}</button></div>`;
+}
+function bindVehAdd(root, after) {
+  const q = root.querySelector(".veh-q"); if (!q) return;
+  const sug = root.querySelector(".veh-sug"), go = root.querySelector(".veh-go");
+  let pick = null;
+  const show = () => {
+    const m = vehFind(q.value);
+    pick = m.length === 1 ? m[0][0] : pick && m.some(c => c[0] === pick) ? pick : null;
+    sug.innerHTML = m.map(([p, r, n]) => `<button type="button" class="${p === pick ? "on" : ""}" data-p="${p}"><b>${p}</b> <span class="muted">${n} · ${r}</span></button>`).join("");
+    sug.querySelectorAll("button").forEach(b => b.onclick = () => { pick = b.dataset.p; q.value = b.dataset.p; show(); go.focus(); });
+    go.disabled = !pick;
+  };
+  q.oninput = show;
+  q.onkeydown = e => { if (e.key === "Enter" && pick) go.click(); };
+  go.onclick = () => { if (pick && vehAdd(pick)) { q.value = ""; pick = null; show(); renderAll(); after && after(); } };
+}
+/* ======================================================================
+   Login (user + password) on top of GitHub, shared by every page.
+   The GitHub token is encrypted with your password and stored in the repo as auth.json;
+   on any device, user + password decrypt it in the browser. Nothing else leaves the page.
+   ====================================================================== */
+const AUTH_KEY = "gtaAuth";
+const AUTH_DEF = (() => {
+  const m = location.hostname.match(/^([^.]+)\.github\.io$/i);
+  const repo = m ? location.pathname.split("/").filter(Boolean)[0] : null;
+  return { owner: m ? m[1] : "Yogi4x4", repo: repo ? decodeURIComponent(repo) : "GTAManager", branch: "main" };
+})();
+function authGet() { try { return { ...AUTH_DEF, ...(JSON.parse(localStorage.getItem(AUTH_KEY) || "{}") || {}) }; } catch (e) { return { ...AUTH_DEF }; } }
+function authSet(a) { try { localStorage.setItem(AUTH_KEY, JSON.stringify(a)); } catch (e) {} }
+function authLogout() { const a = authGet(); delete a.token; delete a.user; authSet(a); }
+const loggedIn = () => !!authGet().token;
+const b64e = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const b64d = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const utf8 = s => new TextEncoder().encode(s);
+function ghUrlFor(a, path) {
+  return `https://api.github.com/repos/${encodeURIComponent(a.owner)}/${encodeURIComponent(a.repo)}/contents/${path.split("/").map(encodeURIComponent).join("/")}`;
+}
+function ghHdr(accept, token) {
+  const h = { Accept: accept, "X-GitHub-Api-Version": "2022-11-28" };
+  if (token) h.Authorization = "Bearer " + token;
+  return h;
+}
+async function ghGetText(path, a = authGet()) {
+  const r = await fetch(ghUrlFor(a, path) + "?ref=" + encodeURIComponent(a.branch), { headers: ghHdr("application/vnd.github.raw+json", a.token), cache: "no-store" });
+  if (r.status === 404) return null;
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.text();
+}
+const ghShas = {};
+async function ghPutText(path, text, a = authGet(), retry = true) {
+  if (ghShas[path] === undefined) {
+    const r = await fetch(ghUrlFor(a, path) + "?ref=" + encodeURIComponent(a.branch), { headers: ghHdr("application/vnd.github.object+json", a.token), cache: "no-store" });
+    ghShas[path] = r.status === 404 ? null : r.ok ? (await r.json()).sha : undefined;
+    if (ghShas[path] === undefined) throw new Error(r.status === 401 || r.status === 403 ? "token" : "HTTP " + r.status);
+  }
+  const bytes = utf8(text); let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  const body = { message: `Update ${path.split("/").pop()} (GTA Manager)`, content: btoa(bin), branch: a.branch };
+  if (ghShas[path]) body.sha = ghShas[path];
+  const r = await fetch(ghUrlFor(a, path), { method: "PUT", headers: { ...ghHdr("application/vnd.github+json", a.token), "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  if ((r.status === 409 || r.status === 422) && retry) { delete ghShas[path]; return ghPutText(path, text, a, false); }
+  if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? "token" : "HTTP " + r.status);
+  ghShas[path] = (await r.json()).content.sha;
+}
+async function authKey(user, pass, salt, iter) {
+  const base = await crypto.subtle.importKey("raw", utf8(pass), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt: utf8(user.trim().toLowerCase() + ":" + salt), iterations: iter, hash: "SHA-256" },
+    base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+// owner, once: encrypt the token with user + password and publish auth.json
+async function authSetup({ owner, repo, branch, token, user, pass }) {
+  const a = { owner, repo, branch: branch || "main", token };
+  const check = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`, { headers: ghHdr("application/vnd.github+json", token) });
+  if (!check.ok || !((await check.json()).permissions || {}).push) throw new Error("token");
+  const salt = b64e(crypto.getRandomValues(new Uint8Array(16))), iv = crypto.getRandomValues(new Uint8Array(12)), iter = 310000;
+  const key = await authKey(user, pass, salt, iter);
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, utf8(JSON.stringify({ token, owner, repo, branch: a.branch })));
+  await ghPutText("auth.json", JSON.stringify({ v: 1, user: user.trim().toLowerCase(), salt, iv: b64e(iv), iter, ct: b64e(ct) }, null, 1), a);
+  authSet({ ...a, user: user.trim() });
+}
+// any device: user + password -> token
+async function authLogin(user, pass) {
+  const a = authGet();
+  const raw = await ghGetText("auth.json", { ...a, token: null });
+  if (!raw) throw new Error("nosetup");
+  const j = JSON.parse(raw);
+  if (j.user !== user.trim().toLowerCase()) throw new Error("bad");
+  try {
+    const key = await authKey(user, pass, j.salt, j.iter);
+    const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64d(j.iv) }, key, b64d(j.ct));
+    const p = JSON.parse(new TextDecoder().decode(plain));
+    authSet({ owner: p.owner, repo: p.repo, branch: p.branch, token: p.token, user: user.trim() });
+  } catch (e) { throw new Error("bad"); }
+}
+/* the login / setup form, rendered into any container */
+function authFormHtml(T) {
+  return `<div class="auth-form">
+    <label>${T.user}<input id="auUser" autocomplete="username"></label>
+    <label>${T.pass}<input id="auPass" type="password" autocomplete="current-password"></label>
+    <p class="auth-err" id="auErr"></p>
+    <div class="auth-btns"><button class="btn primary" id="auGo">${T.login}</button></div>
+    <details class="auth-setup"><summary>${T.setup}</summary>
+      <p class="hint">${T.setupHint}</p>
+      <label>GitHub token<input id="auTok" type="password" autocomplete="off" placeholder="github_pat_..."></label>
+      <label>${T.owner}<input id="auOwner" value="${AUTH_DEF.owner}"></label>
+      <label>${T.repo}<input id="auRepo" value="${AUTH_DEF.repo}"></label>
+      <label>${T.pass2}<input id="auPass2" type="password" autocomplete="new-password"></label>
+      <div class="auth-btns"><button class="btn" id="auSetup">${T.setupBtn}</button></div>
+    </details>
+  </div>`;
+}
+function bindAuthForm(root, T, onDone) {
+  const $ = s => root.querySelector(s), err = $("#auErr");
+  const fail = e => { err.textContent = e.message === "nosetup" ? T.errNoSetup : e.message === "token" ? T.errToken : e.message === "bad" ? T.errBad : T.errNet; };
+  $("#auGo").onclick = async () => {
+    err.textContent = T.checking;
+    try { await authLogin($("#auUser").value, $("#auPass").value); err.textContent = ""; onDone(); } catch (e) { fail(e); }
+  };
+  $("#auPass").onkeydown = e => { if (e.key === "Enter") $("#auGo").click(); };
+  $("#auSetup").onclick = async () => {
+    const user = $("#auUser").value.trim(), pass = $("#auPass").value;
+    if (!user || pass.length < 8) { err.textContent = T.errShort; return; }
+    if (pass !== $("#auPass2").value) { err.textContent = T.errMatch; return; }
+    err.textContent = T.checking;
+    try { await authSetup({ owner: $("#auOwner").value.trim(), repo: $("#auRepo").value.trim(), branch: "main", token: $("#auTok").value.trim(), user, pass }); err.textContent = ""; onDone(); }
+    catch (e) { fail(e); }
+  };
+}
+const AUTH_T = {
+  en: { user: "User", pass: "Password", login: "Log in", setup: "First time: set up the login (owner)", setupHint: "Create a fine-grained GitHub token for this repository with Contents: Read and write. It is encrypted with your password and saved as auth.json; after that, user and password are enough on any device.",
+    owner: "GitHub owner", repo: "Repository", pass2: "Repeat the password", setupBtn: "Save login", checking: "Checking…",
+    errNoSetup: "No login set up yet: use “First time” below.", errToken: "The token can't write to this repository.", errBad: "Wrong user or password.", errNet: "GitHub didn't answer. Try again.",
+    errShort: "Choose a user and a password of at least 8 characters.", errMatch: "The passwords don't match." },
+  ro: { user: "Utilizator", pass: "Parolă", login: "Intră", setup: "Prima dată: configurează login-ul (proprietar)", setupHint: "Creează un token GitHub fine-grained pentru acest repository cu Contents: Read and write. E criptat cu parola ta și salvat ca auth.json; apoi utilizatorul și parola ajung pe orice dispozitiv.",
+    owner: "Proprietar GitHub", repo: "Repository", pass2: "Repetă parola", setupBtn: "Salvează login-ul", checking: "Se verifică…",
+    errNoSetup: "Login-ul nu e configurat încă: folosește „Prima dată” de mai jos.", errToken: "Token-ul nu poate scrie în acest repository.", errBad: "Utilizator sau parolă greșită.", errNet: "GitHub nu a răspuns. Încearcă din nou.",
+    errShort: "Alege un utilizator și o parolă de minim 8 caractere.", errMatch: "Parolele nu se potrivesc." }
+};
+
+/* emblems for the focus pages, taken from the menu artwork */
+const EMB = {};
+["night", "mc"].forEach(k => { const el = document.createElement("div"); el.className = "art-" + k; el.style.display = "none"; document.body.appendChild(el);
+  EMB[k] = (getComputedStyle(el).getPropertyValue("--emb").match(/url\("?(.*?)"?\)$/) || [])[1] || ""; el.remove(); });
+
+/* Production.json on GitHub when logged in */
+const PM_FILE = "GTA 5 Production Manager/Production.json";
+let ghTimerPM = null, ghLastPush = 0, ghBusyPM = false;
+function ghMarkDirty() { if (!loggedIn()) return; clearTimeout(ghTimerPM); ghTimerPM = setTimeout(ghPushPM, 3000); }
+function ghTick() { if (loggedIn() && S.inGame && Date.now() - ghLastPush > 5 * 60000) ghMarkDirty(); }
+async function ghPushPM() {
+  if (ghBusyPM) { ghMarkDirty(); return; }
+  ghBusyPM = true;
+  try {
+    S.savedAt = Date.now();
+    await ghPutText(PM_FILE, JSON.stringify(S));
+    ghLastPush = Date.now();
+    renderLoginState();
+  } catch (e) {
+    notify(e.message === "token" ? t("ghTokenBad") : t("ghSaveFail"), "bad");
+  } finally { ghBusyPM = false; }
+}
+const WH_FILE = "GTA 5 Production Manager/Vehicle Export Collections/Warehouse.json";
+async function whPush() {
+  try {
+    await ghPutText(WH_FILE, JSON.stringify({ warehouse: JSON.parse(localStorage.getItem("gtaWarehouse") || "[]"),
+      checks: JSON.parse(localStorage.getItem("gtaChecks") || "{}"), savedAt: +localStorage.getItem("gtaWarehouseSavedAt") || Date.now() }));
+  } catch (e) { notify(t("ghSaveFail"), "bad"); }
+}
+async function whPull() {
+  try {
+    const raw = await ghGetText(WH_FILE); if (!raw) return;
+    const r = JSON.parse(raw), local = +localStorage.getItem("gtaWarehouseSavedAt") || 0;
+    if ((r.savedAt || 0) <= local) return;
+    const list = r.warehouse || [];
+    const n = rg => list.filter(c => (c.range || (VEH_CARS.find(x => x[0] === c.plate) || [])[1]) === rg).length;
+    localStorage.setItem("gtaWarehouse", JSON.stringify(list));
+    localStorage.setItem("gtaChecks", JSON.stringify(r.checks || {}));
+    localStorage.setItem("gtaWarehouseSavedAt", String(r.savedAt));
+    localStorage.setItem("gtaWarehouseSummary", JSON.stringify({ count: list.length, top: n("Top"), mid: n("Mid"), std: n("Standard"), at: Date.now() }));
+    renderAll();
+  } catch (e) {}
+}
+async function ghPullPM() {
+  if (!loggedIn()) return;
+  whPull();
+  try {
+    const raw = await ghGetText(PM_FILE);
+    if (!raw) { ghMarkDirty(); return; }
+    const remote = JSON.parse(raw);
+    if ((remote.savedAt || 0) > (S.savedAt || 0)) {
+      S = mergeState(remote); save(true);
+      syncStatus(); renderTiles(); renderPins(); renderAll(); renderFocus();
+      toast(t("ghLoadedPM"));
+    } else if ((remote.savedAt || 0) < (S.savedAt || 0)) ghMarkDirty();
+  } catch (e) { notify(t("ghLoadFail"), "warn"); }
+}
+function renderLoginState() {
+  const a = authGet(), el = document.getElementById("loginState");
+  if (!el) return;
+  el.innerHTML = a.token ? t("loginAs", escapeHtml(a.user || a.owner)) + (ghLastPush ? ` · ${t("savedAt", new Date(ghLastPush).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }))}` : "") : t("loginLocal");
+  document.getElementById("loginBtn").textContent = a.token ? t("logout") : t("login");
+}
+function openLogin() {
+  if (loggedIn()) { if (confirm(t("logoutAsk"))) { authLogout(); renderLoginState(); toast(t("loggedOut")); } return; }
+  const T = AUTH_T[lang] || AUTH_T.en;
+  openModal(t("login").replace(/^\S+\s/, ""), `<p>${t("loginIntro")}</p>` + authFormHtml(T));
+  bindAuthForm(document.getElementById("modalBody"), T, async () => { modal.close(); renderLoginState(); toast(t("loggedIn")); await ghPullPM(); });
+}
+document.getElementById("loginBtn").onclick = () => { menu.classList.remove("open"); openLogin(); };
+addEventListener("visibilitychange", () => { if (document.hidden && ghTimerPM) { clearTimeout(ghTimerPM); ghPushPM(); } });
 
 /* bell + notification cards */
 const bellBtn = document.getElementById("bellBtn"), bellWrap = document.getElementById("bellWrap");
@@ -3717,8 +4302,23 @@ function applyLang() {
 /* ======================================================================
    About, changelog, help
    ====================================================================== */
-const APP_VERSION = "0.11";
+const APP_VERSION = "0.12";
 const CHANGELOG = [
+  { v: "0.12", date: "2026-10-21",
+    en: ["Log in with user and password to keep the same data on every device (saved to GitHub)",
+         "Nightclub: Advanced mode in the window (mixer with draggable faders, technicians, Optimize, sale planner) and its own page",
+         "MC Business page with every business on one screen",
+         "Type an exact value for goods and stock; all bars can be dragged, with finer steps; Nightclub popularity in 5% steps",
+         "Vehicle Warehouse: add a car straight from its quick window",
+         "Phones: the tour skips what only works with a mouse, and windows always stay on screen",
+         "Several open tabs share one clock, so nothing is counted twice"],
+    ro: ["Intri în cont cu utilizator și parolă ca să ai aceleași date pe orice dispozitiv (salvate în GitHub)",
+         "Nightclub: modul Avansat în fereastră (mixer cu fadere trase, tehnicieni, Optimizează, planificator de vânzare) și pagină proprie",
+         "Pagina MC Business, cu toate afacerile pe un ecran",
+         "Scrii o valoare exactă pentru marfă și stoc; toate barele se pot trage, cu pași mai fini; popularitatea Nightclub din 5 în 5",
+         "Vehicle Warehouse: adaugi o mașină direct din fereastra rapidă",
+         "Telefon: turul sare peste ce merge doar cu mouse-ul, iar ferestrele rămân mereu în ecran",
+         "Mai multe tab-uri deschise folosesc un singur ceas, deci nimic nu se numără de două ori"] },
   { v: "0.11", date: "2026-10-20",
     en: ["Nightclub: popularity and sell-goods value set with a click (private and full public lobby values), office safe, upgrades, floors, technicians and what each one works on, plus alerts for a full safe, a full warehouse and low popularity",
          "Vehicle Warehouse: reads the Vehicle Export Tracker, with the ring on its pin showing how full it is",
@@ -3964,8 +4564,19 @@ document.getElementById("aboutBtn").onclick = () => {
    Start
    ====================================================================== */
 function boot() {
+  if (VIEW) {
+    document.body.classList.add("focus");
+    document.querySelectorAll(".pages-list a").forEach(a => a.classList.remove("here"));
+    const cur = document.querySelector(VIEW === "night" ? ".pg-night" : ".pg-mc");
+    if (cur) { cur.classList.add("here"); cur.removeAttribute("href"); }
+    document.title = (VIEW === "night" ? "Nightclub" : "MC Business") + " · Production Manager";
+  } else {
+    const cur = document.querySelector(".pg-map"); if (cur) { cur.classList.add("here"); cur.removeAttribute("href"); }
+  }
   syncStatus();
-  if (!imgW) setMapStyle(S.mapStyle, true); else renderStyleList();
+  if (!VIEW) { if (!imgW) setMapStyle(S.mapStyle, true); else renderStyleList(); }
+  renderFocus();
+  renderLoginState();
   renderBell();
   optSound.checked = S.sound;
   optNotify.checked = S.notify;
@@ -3983,7 +4594,8 @@ if (S.inGame) {
 boot();
 syncStatus();
 tick();
-try { if (!localStorage.getItem(TOUR_KEY)) setTimeout(startTour, 900); } catch (e) {}
+try { if (!VIEW && !localStorage.getItem(TOUR_KEY)) setTimeout(startTour, 900); } catch (e) {}
+ghPullPM();
 setInterval(tick, 1000);
 window.addEventListener("beforeunload", () => { S.lastTick = Date.now(); save(true); });
 </script>
