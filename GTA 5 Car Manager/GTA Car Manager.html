@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GTA Garage Manager</title>
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Orbitron&family=Audiowide&family=Black+Ops+One&family=Monoton&family=Pacifico&family=Righteous&family=Racing+Sans+One&family=Bungee&family=Rubik+Mono+One&family=Permanent+Marker&family=Rye&display=swap">
@@ -409,6 +411,32 @@ body.readonly .garage-table th:last-child { display: none !important; }
 @media (max-width: 600px) {
   .tour-card { left: 12px !important; right: 12px; top: auto !important; bottom: 12px; width: auto; }
 }
+/* notifications (same as Production Manager) */
+.bell { position: relative; }
+.bell .dot { position: absolute; top: 4px; right: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--bg2); display: none; }
+.bell.unread { color: var(--accent); border-color: var(--accent); }
+.bell.unread .dot { display: block; animation: breathe 2.6s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+.notes-panel { width: 320px; max-height: 60vh; overflow-y: auto; }
+.notes-head { display: flex; align-items: center; gap: 6px; padding: 2px 4px 8px; }
+.notes-head b { margin-right: auto; font-size: 15px; }
+.notes-head button { padding: 4px 8px; font-size: 12px; color: var(--muted); }
+.nitem { display: flex; gap: 10px; padding: 8px; border-radius: 8px; font-size: 13px; white-space: normal; }
+.nitem .nbar { width: 3px; flex: 0 0 3px; border-radius: 2px; background: var(--c, var(--muted)); }
+.nitem small { display: block; color: var(--muted); font-size: 11px; }
+.nitem.unread { background: var(--accent-soft); }
+.notes-empty { color: var(--muted); font-size: 13px; padding: 10px 6px; }
+.k-warn { --c: var(--warn); } .k-bad { --c: var(--bad); } .k-ok { --c: var(--ok); } .k-info { --c: var(--muted); }
+#noteStack { position: fixed; top: 70px; right: 12px; z-index: 900; width: 300px; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.note { pointer-events: auto; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); border-left: 3px solid var(--c); background: color-mix(in srgb, var(--bg2) 76%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--text); font-size: 14px; box-shadow: 0 10px 28px rgba(0,0,0,.3);
+  opacity: 0; transform: translateY(-8px); transition: opacity .5s ease, transform .5s ease; }
+.note.show { opacity: 1; transform: none; }
+@media (max-width: 600px) { #noteStack { left: 10px; right: 10px; width: auto; } }
+.auth-form label { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; font-size: 13px; color: var(--muted); }
+.auth-form input { padding: 8px 10px; }
+.auth-err { min-height: 1.2em; color: var(--bad); font-size: 13px; margin: 4px 0; }
+.auth-setup summary { cursor: pointer; color: var(--muted); font-size: 13px; margin-top: 12px; }
 .mode-banner {
   display: flex;
   align-items: center;
@@ -889,6 +917,12 @@ body.filters-open .filter-toggle .chev { transform: rotate(180deg); }
   <h1><span class="logo">🚗</span>GTA Garage Manager</h1>
   <div class="header-right">
     <span class="badge-db" id="dbStatus"></span>
+    <div class="data-menu" id="bellMenu">
+      <button class="ghost bell" id="bellBtn" onclick="togglePop('bellMenu', event); renderNotesPanel()" aria-haspopup="true" data-i18n-title="notifications" title="Notifications">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 2h16z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span class="dot"></span>
+      </button>
+      <div class="data-menu-list notes-panel" id="notesPanel"></div>
+    </div>
     <div class="data-menu" id="themeMenu">
       <button class="ghost theme-btn" id="themeBtn" onclick="togglePop('themeMenu', event)" aria-haspopup="true" aria-expanded="false" data-i18n-title="themeTitle"><span class="swatch" id="themeSwatch"></span></button>
       <div class="data-menu-list theme-panel">
@@ -923,6 +957,7 @@ body.filters-open .filter-toggle .chev { transform: rotate(180deg); }
         <button role="menuitem" class="owner-only" onclick="dataMenuAction(ghReloadFromMenu)" data-i18n="ghReload">🔄 Reload from GitHub</button>
         <button role="menuitem" id="modeLocalItem" onclick="dataMenuAction(goLocal)" data-i18n="modeLocal">✏️ Use my own copy</button>
         <button role="menuitem" id="modeViewItem" onclick="dataMenuAction(goView)" data-i18n="modeView">👁 View the published data</button>
+        <button role="menuitem" id="loginItem" onclick="dataMenuAction(openLogin)" data-i18n="loginBtn">🔑 Log in</button>
         <button role="menuitem" id="ghConnectItem" onclick="dataMenuAction(openGhDialog)" data-i18n="ghConnect">🔑 Connect GitHub</button>
         <button role="menuitem" class="owner-only" onclick="dataMenuAction(ghDisconnect)" data-i18n="ghDisconnect">⏏ Disconnect</button>
       </div>
@@ -1007,6 +1042,11 @@ body.filters-open .filter-toggle .chev { transform: rotate(180deg); }
     </div>
   </div>
 </dialog>
+<dialog id="loginDlg">
+  <div class="dlg-header"><h3 data-i18n="loginTitle">Log in</h3><button class="ghost" onclick="loginDlg.close()" style="padding:4px 10px">✕</button></div>
+  <div class="dlg-body"><p class="hint" data-i18n="loginIntro">Log in to keep the same data on every device.</p><div id="loginBody"></div></div>
+</dialog>
+<div id="noteStack" aria-live="polite"></div>
 <dialog id="modeDlg">
   <div class="dlg-header">
     <h3 data-i18n="modeTitle">Use your own copy</h3>
@@ -1229,6 +1269,9 @@ const I18N = {
     modeCopyBtn: "Copy this data", modeEmptyBtn: "Start empty", modeKeepBtn: "Continue my saved copy",
     modeNowLocal: "You're now editing your own copy",
     bannerText: "You're viewing the published garage. To keep your own list, make your own copy; it stays in your browser.",
+    notifications: "Notifications", markRead: "Mark all read", clearAll: "Clear", noNotes: "No notifications yet",
+    loginBtn: "🔑 Log in", loginTitle: "Log in", loginIntro: "Log in to keep the same data on every device. It is saved to the project on GitHub.",
+    loginAs: u => `Logged in as <b>${u}</b>.`, logoutBtn: "Log out", loggedIn: "Logged in", garageNowFull: g => `Garage “${g}” is now full`,
     tourBtn: "Guided tour", tourNext: "Next", tourBack: "Back", tourSkip: "Skip", tourDone: "Done", tourOf: v => `Step ${v[0]} of ${v[1]}`,
     tourViewNote: "You're viewing the published data, so this is read-only. Press “Use my own copy” to do it yourself.",
     t1t: "Welcome to GTA Garage Manager", t1b: "Keep track of every car you own in GTA Online: which garage it's in, its spot, upgrades and photo. This short tour shows you around. Use the arrow keys or the buttons below.",
@@ -1309,6 +1352,9 @@ const I18N = {
     modeCopyBtn: "Copiază aceste date", modeEmptyBtn: "Pornește gol", modeKeepBtn: "Continuă copia mea",
     modeNowLocal: "Acum editezi copia ta",
     bannerText: "Vezi garajul publicat. Ca să-ți ții propria listă, fă-ți o copie; rămâne în browserul tău.",
+    notifications: "Notificări", markRead: "Marchează citite", clearAll: "Șterge", noNotes: "Nicio notificare încă",
+    loginBtn: "🔑 Intră în cont", loginTitle: "Intră în cont", loginIntro: "Intră în cont ca să ai aceleași date pe orice dispozitiv. Se salvează în proiectul de pe GitHub.",
+    loginAs: u => `Conectat ca <b>${u}</b>.`, logoutBtn: "Ieși din cont", loggedIn: "Ai intrat în cont", garageNowFull: g => `Garajul „${g}” s-a umplut`,
     tourBtn: "Tur ghidat", tourNext: "Înainte", tourBack: "Înapoi", tourSkip: "Sari peste", tourDone: "Gata", tourOf: v => `Pasul ${v[0]} din ${v[1]}`,
     tourViewNote: "Vezi datele publicate, deci totul e doar în citire. Apasă „Folosește copia mea” ca să faci asta tu.",
     t1t: "Bun venit în GTA Garage Manager", t1b: "Ține evidența fiecărei mașini din GTA Online: în ce garaj e, pe ce loc, ce upgrade-uri are și cum arată. Turul ăsta scurt îți arată tot. Folosește săgețile sau butoanele de jos.",
@@ -1775,6 +1821,8 @@ async function saveCar() {
   render();
   carDlg.close();
   showStatus(editCarId != null ? t("updated") : t("added"));
+  { const gn = document.getElementById("garage").value.trim(), o = gn ? garageOccupancy(gn) : null;
+    if (o && o.slots != null && o.occ >= o.slots) notify(t("garageNowFull", gn), "warn"); }
 }
 
 async function delCar(id) {
@@ -2249,6 +2297,7 @@ async function impCars(e) {
       fillFilters();
       render();
       showStatus(t("carsImported", cars.length));
+      notify(t("carsImported", cars.length), "ok");
     } catch (err) {
       alert(t("importError") + err.message);
     }
@@ -2277,6 +2326,7 @@ async function impGarages(e) {
       fillFilters();
       updateGarageStats();
       showStatus(t("garagesImported", garages.length));
+      notify(t("garagesImported", garages.length), "ok");
     } catch (err) {
       alert(t("garagesInvalid") + err.message);
     }
@@ -2461,6 +2511,7 @@ async function ghFlush() {
 }
 
 function ghToast(msg, kind = "", ms = 3500) {
+  if (kind === "err") notify(msg, "bad");
   const el = document.getElementById("ghToast");
   document.getElementById("ghToastText").textContent = msg;
   el.className = "gh-toast show " + kind;
@@ -2651,6 +2702,7 @@ async function ghConnect() {
 
 function ghDisconnect() {
   if (!confirm(t("ghDisconnectConfirm"))) return;
+  authLogout();
   gh = { ...gh, token: "" };
   try { localStorage.setItem(GH_KEY, JSON.stringify({ ...gh, token: undefined })); } catch (e) {}
   setMode(/\.github\.io$/i.test(location.hostname) ? "view" : "local");
@@ -2767,6 +2819,188 @@ tourLayer.addEventListener("keydown", e => {
   if (e.key === "ArrowLeft") { e.preventDefault(); document.getElementById("tourBack").click(); }
 });
 addEventListener("resize", () => { if (tourLayer.open) placeTour(tourTarget()); });
+
+/* ======================================================================
+   Login (user + password) on top of GitHub, shared by every page.
+   The GitHub token is encrypted with your password and stored in the repo as auth.json;
+   on any device, user + password decrypt it in the browser. Nothing else leaves the page.
+   ====================================================================== */
+const AUTH_KEY = "gtaAuth";
+const AUTH_DEF = (() => {
+  const m = location.hostname.match(/^([^.]+)\.github\.io$/i);
+  const repo = m ? location.pathname.split("/").filter(Boolean)[0] : null;
+  return { owner: m ? m[1] : "Yogi4x4", repo: repo ? decodeURIComponent(repo) : "GTAManager", branch: "main" };
+})();
+function authGet() { try { return { ...AUTH_DEF, ...(JSON.parse(localStorage.getItem(AUTH_KEY) || "{}") || {}) }; } catch (e) { return { ...AUTH_DEF }; } }
+function authSet(a) { try { localStorage.setItem(AUTH_KEY, JSON.stringify(a)); } catch (e) {} }
+function authLogout() { const a = authGet(); delete a.token; delete a.user; authSet(a); }
+const loggedIn = () => !!authGet().token;
+const b64e = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const b64d = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const utf8 = s => new TextEncoder().encode(s);
+function ghUrlFor(a, path) {
+  return `https://api.github.com/repos/${encodeURIComponent(a.owner)}/${encodeURIComponent(a.repo)}/contents/${path.split("/").map(encodeURIComponent).join("/")}`;
+}
+function ghHdr(accept, token) {
+  const h = { Accept: accept, "X-GitHub-Api-Version": "2022-11-28" };
+  if (token) h.Authorization = "Bearer " + token;
+  return h;
+}
+async function ghGetText(path, a = authGet()) {
+  const r = await fetch(ghUrlFor(a, path) + "?ref=" + encodeURIComponent(a.branch), { headers: ghHdr("application/vnd.github.raw+json", a.token), cache: "no-store" });
+  if (r.status === 404) return null;
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.text();
+}
+const ghShas = {};
+async function ghPutText(path, text, a = authGet(), retry = true) {
+  if (ghShas[path] === undefined) {
+    const r = await fetch(ghUrlFor(a, path) + "?ref=" + encodeURIComponent(a.branch), { headers: ghHdr("application/vnd.github.object+json", a.token), cache: "no-store" });
+    ghShas[path] = r.status === 404 ? null : r.ok ? (await r.json()).sha : undefined;
+    if (ghShas[path] === undefined) throw new Error(r.status === 401 || r.status === 403 ? "token" : "HTTP " + r.status);
+  }
+  const bytes = utf8(text); let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  const body = { message: `Update ${path.split("/").pop()} (GTA Manager)`, content: btoa(bin), branch: a.branch };
+  if (ghShas[path]) body.sha = ghShas[path];
+  const r = await fetch(ghUrlFor(a, path), { method: "PUT", headers: { ...ghHdr("application/vnd.github+json", a.token), "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  if ((r.status === 409 || r.status === 422) && retry) { delete ghShas[path]; return ghPutText(path, text, a, false); }
+  if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? "token" : "HTTP " + r.status);
+  ghShas[path] = (await r.json()).content.sha;
+}
+async function authKey(user, pass, salt, iter) {
+  const base = await crypto.subtle.importKey("raw", utf8(pass), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt: utf8(user.trim().toLowerCase() + ":" + salt), iterations: iter, hash: "SHA-256" },
+    base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+// owner, once: encrypt the token with user + password and publish auth.json
+async function authSetup({ owner, repo, branch, token, user, pass }) {
+  const a = { owner, repo, branch: branch || "main", token };
+  const check = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`, { headers: ghHdr("application/vnd.github+json", token) });
+  if (!check.ok || !((await check.json()).permissions || {}).push) throw new Error("token");
+  const salt = b64e(crypto.getRandomValues(new Uint8Array(16))), iv = crypto.getRandomValues(new Uint8Array(12)), iter = 310000;
+  const key = await authKey(user, pass, salt, iter);
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, utf8(JSON.stringify({ token, owner, repo, branch: a.branch })));
+  await ghPutText("auth.json", JSON.stringify({ v: 1, user: user.trim().toLowerCase(), salt, iv: b64e(iv), iter, ct: b64e(ct) }, null, 1), a);
+  authSet({ ...a, user: user.trim() });
+}
+// any device: user + password -> token
+async function authLogin(user, pass) {
+  const a = authGet();
+  const raw = await ghGetText("auth.json", { ...a, token: null });
+  if (!raw) throw new Error("nosetup");
+  const j = JSON.parse(raw);
+  if (j.user !== user.trim().toLowerCase()) throw new Error("bad");
+  try {
+    const key = await authKey(user, pass, j.salt, j.iter);
+    const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64d(j.iv) }, key, b64d(j.ct));
+    const p = JSON.parse(new TextDecoder().decode(plain));
+    authSet({ owner: p.owner, repo: p.repo, branch: p.branch, token: p.token, user: user.trim() });
+  } catch (e) { throw new Error("bad"); }
+}
+/* the login / setup form, rendered into any container */
+function authFormHtml(T) {
+  return `<div class="auth-form">
+    <label>${T.user}<input id="auUser" autocomplete="username"></label>
+    <label>${T.pass}<input id="auPass" type="password" autocomplete="current-password"></label>
+    <p class="auth-err" id="auErr"></p>
+    <div class="auth-btns"><button class="btn primary" id="auGo">${T.login}</button></div>
+    <details class="auth-setup"><summary>${T.setup}</summary>
+      <p class="hint">${T.setupHint}</p>
+      <label>GitHub token<input id="auTok" type="password" autocomplete="off" placeholder="github_pat_..."></label>
+      <label>${T.owner}<input id="auOwner" value="${AUTH_DEF.owner}"></label>
+      <label>${T.repo}<input id="auRepo" value="${AUTH_DEF.repo}"></label>
+      <label>${T.pass2}<input id="auPass2" type="password" autocomplete="new-password"></label>
+      <div class="auth-btns"><button class="btn" id="auSetup">${T.setupBtn}</button></div>
+    </details>
+  </div>`;
+}
+function bindAuthForm(root, T, onDone) {
+  const $ = s => root.querySelector(s), err = $("#auErr");
+  const fail = e => { err.textContent = e.message === "nosetup" ? T.errNoSetup : e.message === "token" ? T.errToken : e.message === "bad" ? T.errBad : T.errNet; };
+  $("#auGo").onclick = async () => {
+    err.textContent = T.checking;
+    try { await authLogin($("#auUser").value, $("#auPass").value); err.textContent = ""; onDone(); } catch (e) { fail(e); }
+  };
+  $("#auPass").onkeydown = e => { if (e.key === "Enter") $("#auGo").click(); };
+  $("#auSetup").onclick = async () => {
+    const user = $("#auUser").value.trim(), pass = $("#auPass").value;
+    if (!user || pass.length < 8) { err.textContent = T.errShort; return; }
+    if (pass !== $("#auPass2").value) { err.textContent = T.errMatch; return; }
+    err.textContent = T.checking;
+    try { await authSetup({ owner: $("#auOwner").value.trim(), repo: $("#auRepo").value.trim(), branch: "main", token: $("#auTok").value.trim(), user, pass }); err.textContent = ""; onDone(); }
+    catch (e) { fail(e); }
+  };
+}
+const AUTH_T = {
+  en: { user: "User", pass: "Password", login: "Log in", setup: "First time: set up the login (owner)", setupHint: "Create a fine-grained GitHub token for this repository with Contents: Read and write. It is encrypted with your password and saved as auth.json; after that, user and password are enough on any device.",
+    owner: "GitHub owner", repo: "Repository", pass2: "Repeat the password", setupBtn: "Save login", checking: "Checking…",
+    errNoSetup: "No login set up yet: use “First time” below.", errToken: "The token can't write to this repository.", errBad: "Wrong user or password.", errNet: "GitHub didn't answer. Try again.",
+    errShort: "Choose a user and a password of at least 8 characters.", errMatch: "The passwords don't match." },
+  ro: { user: "Utilizator", pass: "Parolă", login: "Intră", setup: "Prima dată: configurează login-ul (proprietar)", setupHint: "Creează un token GitHub fine-grained pentru acest repository cu Contents: Read and write. E criptat cu parola ta și salvat ca auth.json; apoi utilizatorul și parola ajung pe orice dispozitiv.",
+    owner: "Proprietar GitHub", repo: "Repository", pass2: "Repetă parola", setupBtn: "Salvează login-ul", checking: "Se verifică…",
+    errNoSetup: "Login-ul nu e configurat încă: folosește „Prima dată” de mai jos.", errToken: "Token-ul nu poate scrie în acest repository.", errBad: "Utilizator sau parolă greșită.", errNet: "GitHub nu a răspuns. Încearcă din nou.",
+    errShort: "Alege un utilizator și o parolă de minim 8 caractere.", errMatch: "Parolele nu se potrivesc." }
+};
+
+/* ---------- notifications ---------- */
+const NOTES_KEY = "gtaGarageNotes";
+let notes = [];
+try { notes = JSON.parse(localStorage.getItem(NOTES_KEY) || "[]") || []; } catch (e) {}
+function saveNotes() { try { localStorage.setItem(NOTES_KEY, JSON.stringify(notes.slice(0, 60))); } catch (e) {} }
+function notify(msg, kind = "info") {
+  notes.unshift({ id: Date.now() + Math.random(), at: Date.now(), msg, kind, read: false });
+  notes.length = Math.min(notes.length, 60);
+  saveNotes(); renderBell();
+  if (document.getElementById("bellMenu").classList.contains("open")) { renderNotesPanel(); return; }
+  const stack = document.getElementById("noteStack"), el = document.createElement("div");
+  el.className = `note k-${kind}`; el.textContent = msg;
+  stack.prepend(el);
+  while (stack.children.length > 4) stack.lastChild.remove();
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("show")));
+  let left = 6500, last = performance.now(), hov = false;
+  el.onmouseenter = () => hov = true; el.onmouseleave = () => { hov = false; last = performance.now(); };
+  const iv = setInterval(() => { const now = performance.now(); if (!hov) left -= now - last; last = now;
+    if (left <= 0) { clearInterval(iv); el.classList.remove("show"); setTimeout(() => el.remove(), 550); } }, 200);
+}
+function renderBell() {
+  const unread = notes.filter(n => !n.read).length;
+  document.getElementById("bellBtn").classList.toggle("unread", unread > 0);
+}
+function renderNotesPanel() {
+  const ago = m => lang === "ro" ? (m < 1 ? "acum" : m < 60 ? `acum ${m} min` : `acum ${Math.floor(m / 60)} h`) : (m < 1 ? "just now" : m < 60 ? `${m} min ago` : `${Math.floor(m / 60)} h ago`);
+  const items = notes.map(n => `<div class="nitem k-${n.kind} ${n.read ? "" : "unread"}"><span class="nbar"></span><span>${escapeHtml(n.msg)}<small>${ago(Math.floor((Date.now() - n.at) / 60000))}</small></span></div>`).join("");
+  const p = document.getElementById("notesPanel");
+  p.innerHTML = `<div class="notes-head"><b>${t("notifications")}</b><button class="ghost" id="nRead">${t("markRead")}</button><button class="ghost" id="nClear">${t("clearAll")}</button></div>${items || `<div class="notes-empty">${t("noNotes")}</div>`}`;
+  p.querySelector("#nRead").onclick = e => { e.stopPropagation(); notes.forEach(n => n.read = true); saveNotes(); renderBell(); renderNotesPanel(); };
+  p.querySelector("#nClear").onclick = e => { e.stopPropagation(); notes = []; saveNotes(); renderBell(); renderNotesPanel(); };
+  document.getElementById("noteStack").innerHTML = "";
+}
+/* ---------- login (user + password) feeds the existing GitHub connection ---------- */
+const loginDlg = document.getElementById("loginDlg");
+function adoptLogin() {
+  const a = authGet();
+  if (!a.token) return false;
+  gh = { ...gh, owner: a.owner, repo: a.repo, branch: a.branch, token: a.token };
+  try { localStorage.setItem(GH_KEY, JSON.stringify(gh)); } catch (e) {}
+  return true;
+}
+function openLogin() {
+  const T = AUTH_T[lang] || AUTH_T.en, body = document.getElementById("loginBody");
+  if (isOwner()) {
+    body.innerHTML = `<p>${t("loginAs", escapeHtml(authGet().user || gh.owner))}</p><button class="ghost" id="loOut">${t("logoutBtn")}</button>`;
+    body.querySelector("#loOut").onclick = () => { authLogout(); loginDlg.close(); ghDisconnect(); };
+  } else {
+    body.innerHTML = authFormHtml(T);
+    bindAuthForm(body, T, async () => {
+      loginDlg.close(); adoptLogin(); ghUpdateUi();
+      await ghLoadAll(); refreshAll(); notify(t("loggedIn"), "ok");
+    });
+  }
+  loginDlg.showModal();
+}
+if (!gh.token) adoptLogin();
+renderBell();
 
 // ---------- Init ----------
 (async function init() {
