@@ -159,7 +159,23 @@ jobs:
           if not data:
               # red X in Actions, so a failed week is visible; data/weekly.json stays as it was
               print("::error::No source answered this time; data/weekly.json stays as it was."); raise SystemExit(1)
-          for s in data["sections"]: s["items"] = s["items"][:20]
+          # 3X / 2X GTA$ and RP blocks become their own sections, at the top (highest first); the subreddit's link lists are dropped
+          def tidy(secs):
+              mult, rest = [], []
+              is_mult = lambda x: len(x) < 40 and re.match(r"^\d+\s*X\s+(GTA\$|RP)", x, re.I)
+              for sec in secs:
+                  if re.search(r"resources|thanks to|useful links", sec["title"], re.I): continue
+                  if is_mult(sec["title"]): mult.append(sec); continue
+                  keep, cur = [], None
+                  for it in sec["items"]:
+                      if is_mult(it): cur = {"title": it, "items": []}; mult.append(cur); continue
+                      (cur["items"] if cur is not None else keep).append(it)
+                  if keep: rest.append({"title": sec["title"], "items": keep})
+              mult = [m for m in mult if m["items"]]
+              mult.sort(key=lambda m: -int(re.match(r"\d+", m["title"]).group()))
+              return mult + rest
+          data["sections"] = tidy(data["sections"])
+          for s in data["sections"]: s["items"] = [re.sub(r"Â(?=\s)", "", i).strip() for i in s["items"][:20]]
           data["fetched"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ")
           old = {}
           try: old = json.load(open("data/weekly.json"))
