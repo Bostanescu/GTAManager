@@ -38,6 +38,44 @@ jobs:
               s = html.unescape(re.sub(r"<[^>]+>", "", s))
               return re.sub(r"\s+", " ", s).strip(" -:|")
 
+          # ---- generic HTML reader: headings (h2-h4, or a paragraph that is all bold) and list items / table rows ----
+          class Page(HTMLParser):
+              def __init__(self):
+                  super().__init__(); self.secs = []; self.tag = None; self.buf = ""; self.bold = ""; self.inb = 0; self.cells = None
+              def handle_starttag(self, tag, attrs):
+                  if tag in ("strong", "b"): self.inb += 1
+                  if tag == "tr": self.cells = []
+                  if tag in ("td", "th") and self.cells is not None: self.tag, self.buf = tag, ""
+                  if tag in ("h1", "h2", "h3", "h4", "h5", "h6", "li", "p"):
+                      if tag == "p" and self.tag == "li": return       # a paragraph inside a list item belongs to the item
+                      self.tag, self.buf, self.bold = tag, "", ""
+              def handle_endtag(self, tag):
+                  if tag in ("strong", "b"): self.inb = max(0, self.inb - 1)
+                  if tag in ("td", "th") and self.cells is not None:
+                      self.cells.append(clean(self.buf)); self.tag = None; return
+                  if tag == "tr" and self.cells is not None:
+                      cells = [c for c in self.cells if c]; self.cells = None
+                      if cells and self.secs and cells[0].lower() not in ("vehicle", "item", "name", "discount"):
+                          self.secs[-1]["items"].append(" — ".join(cells))
+                      return
+                  if tag != self.tag and not (tag == "li" and self.tag == "p"): return
+                  text = clean(self.buf); self.tag = None
+                  if not text: return
+                  if tag in ("h1", "h2", "h3", "h4", "h5", "h6") or (tag == "p" and len(text) < 80 and clean(self.bold) == text):
+                      self.secs.append({"title": text.rstrip(":"), "items": []})
+                  elif tag == "p" and self.secs and clean(self.bold) and text.startswith(clean(self.bold)) and len(text) < 160:
+                      self.secs[-1]["items"].append(text)          # "Podium Vehicle: Annis Savestra"
+                  elif tag == "li" and self.secs and len(text) < 220:
+                      self.secs[-1]["items"].append(text)
+                  elif tag == "p" and self.secs and len(text) < 160:
+                      self.secs[-1]["items"].append(text)          # a plain line under a heading
+              def handle_data(self, d):
+                  if self.tag: self.buf += d
+                  if self.tag and self.inb: self.bold += d
+          def sections_of(html_text):
+              pg = Page(); pg.feed(html_text)
+              return [s for s in pg.secs if s["items"] and not re.search(r"comment|related|newsletter|follow us|share|read more|latest news", s["title"], re.I)][:14]
+
           # ---- 1. r/gtaonline weekly post (markdown) ----
           def from_reddit():
               for host in ("https://www.reddit.com", "https://old.reddit.com"):
@@ -47,11 +85,16 @@ jobs:
                       posts = [p for p in posts if "weekly bonuses" in p["title"].lower() and p.get("selftext")]
                       if not posts: continue
                       p = max(posts, key=lambda p: p["created_utc"])
+                      meta = {"source": "r/gtaonline", "title": clean(p["title"]), "url": "https://www.reddit.com" + p["permalink"],
+                              "posted": datetime.datetime.utcfromtimestamp(p["created_utc"]).strftime("%Y-%m-%dT%H:%MZ")}
+                      if p.get("selftext_html"):
+                          secs = sections_of(html.unescape(p["selftext_html"]))
+                          if len(secs) >= 2: return {**meta, "sections": secs}
                       secs, cur = [], None
                       for line in p["selftext"].splitlines():
                           raw = line.strip()
                           if not raw or set(raw) <= set("-|: "): continue
-                          head = re.match(r"^#{1,6}\s*(.+)$", raw) or re.match(r"^\*\*(.+?)\*\*:?$", raw)
+                          head = re.match(r"^#{1,6}\s*(.+)$", raw) or re.match(r"^\*{2,3}(.+?)\*{2,3}:?$", raw)
                           if head:
                               cur = {"title": clean(head.group(1)), "items": []}; secs.append(cur); continue
                           if raw.startswith("|"):
@@ -76,40 +119,6 @@ jobs:
                   except Exception as e:
                       print("reddit failed:", host, e)
               return None
-
-          # ---- generic HTML reader: headings (h2-h4, or a paragraph that is all bold) and list items / table rows ----
-          class Page(HTMLParser):
-              def __init__(self):
-                  super().__init__(); self.secs = []; self.tag = None; self.buf = ""; self.bold = ""; self.inb = 0; self.cells = None
-              def handle_starttag(self, tag, attrs):
-                  if tag in ("strong", "b"): self.inb += 1
-                  if tag == "tr": self.cells = []
-                  if tag in ("td", "th") and self.cells is not None: self.tag, self.buf = tag, ""
-                  if tag in ("h2", "h3", "h4", "li", "p"): self.tag, self.buf, self.bold = tag, "", ""
-              def handle_endtag(self, tag):
-                  if tag in ("strong", "b"): self.inb = max(0, self.inb - 1)
-                  if tag in ("td", "th") and self.cells is not None:
-                      self.cells.append(clean(self.buf)); self.tag = None; return
-                  if tag == "tr" and self.cells is not None:
-                      cells = [c for c in self.cells if c]; self.cells = None
-                      if cells and self.secs and cells[0].lower() not in ("vehicle", "item", "name", "discount"):
-                          self.secs[-1]["items"].append(" — ".join(cells))
-                      return
-                  if tag != self.tag: return
-                  text = clean(self.buf); self.tag = None
-                  if not text: return
-                  if tag in ("h2", "h3", "h4") or (tag == "p" and len(text) < 80 and clean(self.bold) == text):
-                      self.secs.append({"title": text.rstrip(":"), "items": []})
-                  elif tag == "p" and self.secs and clean(self.bold) and text.startswith(clean(self.bold)) and len(text) < 160:
-                      self.secs[-1]["items"].append(text)          # "Podium Vehicle: Annis Savestra"
-                  elif tag == "li" and self.secs and len(text) < 220:
-                      self.secs[-1]["items"].append(text)
-              def handle_data(self, d):
-                  if self.tag: self.buf += d
-                  if self.tag and self.inb: self.bold += d
-          def sections_of(html_text):
-              pg = Page(); pg.feed(html_text)
-              return [s for s in pg.secs if s["items"] and not re.search(r"comment|related|newsletter|follow us|share|read more|latest news", s["title"], re.I)][:14]
 
           # ---- 1b. r/gtaonline RSS feed (often allowed when the JSON is not) ----
           def from_reddit_rss():
