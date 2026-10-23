@@ -1,7 +1,7 @@
 # GTA V Manager: weekly GTA Online bonuses for the Home page.
 # Every Thursday (after Rockstar's weekly update) and once a day as a check, this reads the newest
 # "Weekly Bonuses and Discounts" post on r/gtaonline (the same info Rockstar posts on its Newswire),
-# with gtabase.com as a fallback, and saves it as data/weekly.json. The page only reads that file.
+# (JSON, then its RSS feed), with gtaboss.gg / gtabase.com as fallbacks, and saves it as data/weekly.json. The page only reads that file.
 # Run it by hand any time: Actions → Weekly bonuses → Run workflow.
 name: Weekly bonuses
 on:
@@ -19,7 +19,7 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Read this week's bonuses
         run: |
           python3 - <<'PY'
@@ -77,34 +77,79 @@ jobs:
                       print("reddit failed:", host, e)
               return None
 
-          # ---- 2. gtabase.com "this week" page (HTML) ----
+          # ---- generic HTML reader: headings (h2-h4, or a paragraph that is all bold) and list items / table rows ----
           class Page(HTMLParser):
               def __init__(self):
-                  super().__init__(); self.secs = []; self.tag = None; self.buf = ""; self.depth = 0
+                  super().__init__(); self.secs = []; self.tag = None; self.buf = ""; self.bold = ""; self.inb = 0; self.cells = None
               def handle_starttag(self, tag, attrs):
-                  if tag in ("h2", "h3", "li"): self.tag, self.buf = tag, ""
+                  if tag in ("strong", "b"): self.inb += 1
+                  if tag == "tr": self.cells = []
+                  if tag in ("td", "th") and self.cells is not None: self.tag, self.buf = tag, ""
+                  if tag in ("h2", "h3", "h4", "li", "p"): self.tag, self.buf, self.bold = tag, "", ""
               def handle_endtag(self, tag):
+                  if tag in ("strong", "b"): self.inb = max(0, self.inb - 1)
+                  if tag in ("td", "th") and self.cells is not None:
+                      self.cells.append(clean(self.buf)); self.tag = None; return
+                  if tag == "tr" and self.cells is not None:
+                      cells = [c for c in self.cells if c]; self.cells = None
+                      if cells and self.secs and cells[0].lower() not in ("vehicle", "item", "name", "discount"):
+                          self.secs[-1]["items"].append(" — ".join(cells))
+                      return
                   if tag != self.tag: return
                   text = clean(self.buf); self.tag = None
                   if not text: return
-                  if tag in ("h2", "h3"): self.secs.append({"title": text, "items": []})
-                  elif self.secs and len(text) < 200: self.secs[-1]["items"].append(text)
+                  if tag in ("h2", "h3", "h4") or (tag == "p" and len(text) < 80 and clean(self.bold) == text):
+                      self.secs.append({"title": text.rstrip(":"), "items": []})
+                  elif tag == "p" and self.secs and clean(self.bold) and text.startswith(clean(self.bold)) and len(text) < 160:
+                      self.secs[-1]["items"].append(text)          # "Podium Vehicle: Annis Savestra"
+                  elif tag == "li" and self.secs and len(text) < 220:
+                      self.secs[-1]["items"].append(text)
               def handle_data(self, d):
                   if self.tag: self.buf += d
-          def from_gtabase():
+                  if self.tag and self.inb: self.bold += d
+          def sections_of(html_text):
+              pg = Page(); pg.feed(html_text)
+              return [s for s in pg.secs if s["items"] and not re.search(r"comment|related|newsletter|follow us|share|read more|latest news", s["title"], re.I)][:14]
+
+          # ---- 1b. r/gtaonline RSS feed (often allowed when the JSON is not) ----
+          def from_reddit_rss():
               try:
-                  url = "https://www.gtabase.com/gta-online/this-week-bonuses-discounts"
-                  pg = Page(); pg.feed(get(url))
-                  secs = [s for s in pg.secs if s["items"] and not re.search(r"comment|related|newsletter|follow|share", s["title"], re.I)][:12]
-                  if secs:
-                      return {"source": "gtabase.com", "title": "GTA Online weekly update", "url": url, "posted": "", "sections": secs}
+                  feed = get("https://www.reddit.com/r/gtaonline/search.rss?q=title%3A%22Weekly%20Bonuses%22&restrict_sr=on&sort=new&limit=5")
+                  for entry in re.findall(r"<entry>(.*?)</entry>", feed, re.S):
+                      title = clean(re.search(r"<title>(.*?)</title>", entry, re.S).group(1))
+                      if "weekly bonuses" not in title.lower(): continue
+                      link = re.search(r'<link href="([^"]+)"', entry).group(1)
+                      when = (re.search(r"<updated>(.*?)</updated>", entry) or re.search(r"<published>(.*?)</published>", entry)).group(1)
+                      body = html.unescape(re.search(r"<content[^>]*>(.*?)</content>", entry, re.S).group(1))
+                      secs = sections_of(body)
+                      if secs:
+                          return {"source": "r/gtaonline", "title": title, "url": link, "posted": when[:16] + "Z", "sections": secs}
               except Exception as e:
-                  print("gtabase failed:", e)
+                  print("reddit rss failed:", e)
               return None
 
-          data = from_reddit() or from_gtabase()
+          # ---- 2. gtaboss.gg / gtabase.com weekly pages (HTML) ----
+          def from_sites():
+              for url in ("https://www.gtaboss.gg/gta-5-online/gta-online-weekly-updates", "https://www.gtabase.com/gta-online/this-week-bonuses-discounts"):
+                  try:
+                      page = get(url)
+                      # gtaboss: the index links to the current week's page
+                      m = re.search(r'href="(/gta-5-online/gta-online-weekly-updates/\d{4}-\d{2}-\d{2})"', page)
+                      if m:
+                          url = "https://www.gtaboss.gg" + m.group(1); page = get(url)
+                      secs = sections_of(page)
+                      if secs:
+                          name = url.split("/")[2].replace("www.", "")
+                          return {"source": name, "title": "GTA Online weekly update", "url": url, "posted": "", "sections": secs}
+                      print("no sections found on", url)
+                  except Exception as e:
+                      print("site failed:", url, e)
+              return None
+
+          data = from_reddit() or from_reddit_rss() or from_sites()
           if not data:
-              print("No source answered; data/weekly.json stays as it was."); raise SystemExit(0)
+              # red X in Actions, so a failed week is visible; data/weekly.json stays as it was
+              print("::error::No source answered this time; data/weekly.json stays as it was."); raise SystemExit(1)
           for s in data["sections"]: s["items"] = s["items"][:20]
           data["fetched"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ")
           old = {}
@@ -113,7 +158,7 @@ jobs:
           if {k: v for k, v in old.items() if k != "fetched"} == {k: v for k, v in data.items() if k != "fetched"}:
               print("Nothing new."); raise SystemExit(0)
           json.dump(data, open("data/weekly.json", "w"), ensure_ascii=False, indent=1)
-          print("Saved:", data["title"], "-", sum(len(s["items"]) for s in data["sections"]), "items")
+          print("::notice::Saved from " + data["source"] + ":", data["title"], "-", sum(len(s["items"]) for s in data["sections"]), "items")
           PY
       - name: Save to the repository
         run: |
