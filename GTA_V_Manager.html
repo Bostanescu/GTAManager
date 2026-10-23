@@ -246,11 +246,14 @@ body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); 
 .pm-group { position: relative; display: flex; align-items: center; flex-wrap: wrap; }
 .pm-group > a { flex: 1; }
 .pm-more { width: 28px; height: 28px; border: 0; border-radius: 6px; background: none; color: inherit; font-size: 18px; line-height: 1; cursor: pointer; opacity: .7; padding: 0; }
-.pm-sub { display: none; position: absolute; left: calc(100% + 4px); top: -6px; min-width: 240px; padding: 6px; border-radius: 10px; border: 1px solid var(--border);
+.pm-sub { display: block; visibility: hidden; opacity: 0; transition: opacity .15s ease, visibility 0s linear .5s; position: absolute; left: calc(100% + 4px); top: -6px; min-width: 240px; padding: 6px; border-radius: 10px; border: 1px solid var(--border);
   background: var(--bg2); box-shadow: 0 14px 34px var(--shadow); z-index: 60; }
-.pm-group:hover > .pm-sub, .pm-group.open > .pm-sub { display: block; }
+.pm-group:hover > .pm-sub, .pm-group.open > .pm-sub, .pm-sub:hover { visibility: visible; opacity: 1; transition-delay: 0s; }
+/* an invisible bridge over the gap, so moving towards the submenu never closes it */
+.pm-sub::before { content: ""; position: absolute; left: -14px; top: -10px; bottom: -10px; width: 14px; }
 @media (hover: none), (max-width: 760px) {
-  .pm-sub { position: static; box-shadow: none; border: 0; padding: 0 0 0 14px; min-width: 0; width: 100%; }
+  .pm-sub { position: static; box-shadow: none; border: 0; padding: 0 0 0 14px; min-width: 0; width: 100%; display: none; visibility: visible; opacity: 1; transition: none; }
+  .pm-sub::before { display: none; }
   .pm-group:hover > .pm-sub { display: none; }
   .pm-group.open > .pm-sub { display: block; }
 }
@@ -455,7 +458,7 @@ body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); 
 /* ======================================================================
    CORE — written once, used by every section
    ====================================================================== */
-const APP_VERSION = "1.0";
+const APP_VERSION = "1.1";
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -717,6 +720,17 @@ function openText(title, html) {
 }
 // one history for the whole of GTA V Manager
 const CHANGELOG = [
+  { v: "1.1", date: "2026-10-24",
+    en: ["Production Manager: CEO Warehouses (the game's 22 warehouses, crates, sale value, staff timer, special items, delivery vehicle upgrades) and Acid Lab (Mutt's supplies timer, its daily boost, upgrades)",
+         "Mansion production boost (x3 for 24 hours) for the MC businesses and the Acid Lab; Nightclub safe amount can be typed; a bed mark for the Vehicle Warehouse",
+         "Vehicle Export Tracker: what you earn, Invite only or Public 20+, after the modification cost, also for the collections and in Production Manager",
+         "Vehicle Manager: garages with levels, picked from a list when adding a vehicle",
+         "Home: new background, this week's GTA Online bonuses (updated every Thursday), a getting-started guide; a guided tour on every page"],
+    ro: ["Production Manager: Depozite CEO (cele 22 de depozite din joc, lăzi, valoarea de vânzare, timer pentru angajat, obiecte speciale, upgrade-uri pentru vehiculele de livrare) și Acid Lab (timer pentru proviziile de la Mutt, boost-ul zilnic, upgrade-uri)",
+         "Boost de producție din Mansion (x3 timp de 24 de ore) pentru afacerile MC și Acid Lab; suma din seiful Nightclub se poate scrie; semn de pat pentru Vehicle Warehouse",
+         "Vehicle Export Tracker: cât câștigi, Invite only sau Public 20+, după costul modificărilor, inclusiv pentru colecții și în Production Manager",
+         "Vehicle Manager: garaje cu niveluri, alese dintr-o listă la adăugarea vehiculului",
+         "Home: fundal nou, bonusurile săptămânii din GTA Online (actualizate în fiecare joi), ghid de început; tur ghidat pe fiecare pagină"] },
   { v: "1.0", date: "2026-10-23",
     en: ["Rewritten as one clean page: one top bar, one set of themes, one language switch, one login, one notifications bell and one tour engine for every section",
          "Log in is now a real form in the page, so the browser offers to save your password and fills it in next time",
@@ -1029,7 +1043,7 @@ addEventListener("pagehide", () => { if (Sync.pending()) Sync.flush(); });
    ====================================================================== */
 const ROUTES = {
   "":         { sec: "home",       title: "GTA V Manager" },
-  vehicles:   { sec: "vehicles",   title: "Vehicle Manager",        logo: "🚗" },
+  vehicles:   { sec: "vehicles",   title: "Vehicle Manager" },
   production: { sec: "production", title: "Production Manager" },
   mc:         { sec: "production", title: "MC Business",            view: "mc" },
   night:      { sec: "production", title: "Nightclub",              view: "night" },
@@ -1095,6 +1109,7 @@ const Router = {
     const help = s.help && s.help();
     items.push({ head: "GTA V Manager" });
     if (s.tour && s.tour()) items.push({ label: t("m_tour"), act: () => $("#tourBtn").click() });
+    items.push({ label: t("m_guide"), act: openGuide });
     if (help) items.push({ label: t("m_help"), act: () => openText(t("helpTitle"), help) });
     items.push({ label: t("m_about"), act: openAbout });
     const list = $("#moreList");
@@ -1116,17 +1131,67 @@ new ResizeObserver(([e]) => document.documentElement.style.setProperty("--header
 $("#tourBtn").onclick = () => { const s = Router.cur; if (s.startTour) s.startTour(); else if (s.tour) Tour.start(s.tour(), s.tourKey); };
 $("#langSel").onchange = e => setLang(e.target.value);
 addEventListener("hashchange", () => Router.go());
+/* ---------- getting-started guide (⋮ → Getting started, and the link on Home) ---------- */
+i18n({
+  en: { m_guide: "📘 Getting started", guideTitle: "Getting started", guide: `<p>GTA V Manager is one web page. You don't install anything, and nothing touches the game: you write in what you have in GTA Online and the page keeps track, counts the time and warns you.</p>
+<h3>1. Just looking</h3>
+<p>Open the page and look around. Vehicle Manager shows the owner's published garage, read-only. The other sections start empty for you.</p>
+<h3>2. Your own copy in this browser (the simple way)</h3>
+<ul><li>In Vehicle Manager choose <b>Use your own copy</b> (in the yellow band or in ⋮). Production Manager and the Export Tracker are already yours.</li>
+<li>Everything is saved in <b>this browser, on this device</b>. Another browser or phone starts empty.</li>
+<li>Clearing the browser's data deletes it: from time to time use <b>Export</b> to keep a file, and <b>Import</b> to bring it back.</li></ul>
+<h3>3. The same data on every device (your own GitHub copy)</h3>
+<ul><li>Make a free account on <b>github.com</b> and press <b>Fork</b> on the project's repository: you get your own copy.</li>
+<li>In your copy: <b>Settings → Pages</b>, source <b>main</b>. After a minute your page is live at <code>yourname.github.io/GTAManager/GTA_V_Manager.html</code>.</li>
+<li>Create a token: your profile <b>Settings → Developer settings → Fine-grained tokens</b>, only for this repository, with <b>Contents: Read and write</b>.</li>
+<li>On your page: ⋮ → <b>Log in</b> → <b>First time: set up the login</b>. Choose a user and a password and paste the token. The token is encrypted with your password and stored in <code>auth.json</code>.</li>
+<li>From then on, on any device: ⋮ → Log in with the user and password. Everything you change is saved by itself in the <code>data/</code> folder of your repository.</li></ul>
+<h3>4. On your PC, without internet</h3>
+<p>Download the repository (<b>Code → Download ZIP</b>), unzip it and open <code>GTA_V_Manager.html</code>. Keep the <code>maps</code> folder next to it so the map shows. It works like option 2.</p>
+<h3>Good to know</h3>
+<ul><li>Every page has a guided tour (the <b>?</b> button or ⋮ → Guided tour).</li>
+<li>Production timers run only while <b>In game</b> is on, the way the game works.</li>
+<li>Notifications stay under the bell; ⋮ turns on the sound and desktop notifications.</li></ul>` },
+  ro: { m_guide: "📘 Ghid de început", guideTitle: "Ghid de început", guide: `<p>GTA V Manager e o singură pagină web. Nu instalezi nimic și nu atinge jocul: treci ce ai în GTA Online, iar pagina ține evidența, numără timpul și te anunță.</p>
+<h3>1. Doar te uiți</h3>
+<p>Deschide pagina și uită-te prin ea. Vehicle Manager arată garajul publicat de proprietar, doar în citire. Celelalte secțiuni pornesc goale pentru tine.</p>
+<h3>2. Copia ta în acest browser (varianta simplă)</h3>
+<ul><li>În Vehicle Manager alege <b>Folosește copia ta</b> (în banda galbenă sau în ⋮). Production Manager și Export Tracker sunt deja ale tale.</li>
+<li>Totul se salvează <b>în acest browser, pe acest dispozitiv</b>. Alt browser sau telefonul pornesc goale.</li>
+<li>Dacă ștergi datele browserului, se pierd: din când în când folosește <b>Export</b> ca să ai un fișier, și <b>Import</b> ca să le readuci.</li></ul>
+<h3>3. Aceleași date pe orice dispozitiv (copia ta pe GitHub)</h3>
+<ul><li>Fă-ți un cont gratuit pe <b>github.com</b> și apasă <b>Fork</b> pe repository-ul proiectului: primești copia ta.</li>
+<li>În copia ta: <b>Settings → Pages</b>, sursa <b>main</b>. După un minut pagina ta e live la <code>numele-tau.github.io/GTAManager/GTA_V_Manager.html</code>.</li>
+<li>Creează un token: din profilul tău <b>Settings → Developer settings → Fine-grained tokens</b>, doar pentru acest repository, cu <b>Contents: Read and write</b>.</li>
+<li>Pe pagina ta: ⋮ → <b>Intră în cont</b> → <b>Prima dată: configurează login-ul</b>. Alegi un utilizator și o parolă și lipești token-ul. Token-ul e criptat cu parola ta și salvat în <code>auth.json</code>.</li>
+<li>De atunci, pe orice dispozitiv: ⋮ → Intră în cont cu utilizatorul și parola. Tot ce schimbi se salvează singur în folderul <code>data/</code> din repository-ul tău.</li></ul>
+<h3>4. Pe PC, fără internet</h3>
+<p>Descarcă repository-ul (<b>Code → Download ZIP</b>), dezarhivează-l și deschide <code>GTA_V_Manager.html</code>. Păstrează folderul <code>maps</code> lângă el, ca să apară harta. Merge ca varianta 2.</p>
+<h3>Bine de știut</h3>
+<ul><li>Fiecare pagină are un tur ghidat (butonul <b>?</b> sau ⋮ → Tur ghidat).</li>
+<li>Timerele de producție merg doar cât e pornit <b>În joc</b>, ca în joc.</li>
+<li>Notificările rămân la clopoțel; din ⋮ pornești sunetul și notificările pe desktop.</li></ul>` }
+});
+function openGuide() { openText(t("guideTitle"), t("guide")); }
 </script>
 
 <main id="sections">
 <style>
 /* ======================== Home ======================== */
-#sec-home .wrap { max-width: 1100px; margin: 0 auto; padding: 8px 20px 48px; }
+/* the Los Santos poster behind the page (home_bg.webp next to the page), darkened so text stays readable */
+#sec-home { position: relative; isolation: isolate; }
+#sec-home::before { content: ""; position: fixed; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 35%, transparent) 0%, color-mix(in srgb, var(--bg) 55%, transparent) 45%, color-mix(in srgb, var(--bg) 92%, transparent) 100%),
+              url("home_bg.webp") center 35% / cover no-repeat, var(--bg); }
+#sec-home .wrap { position: relative; max-width: 1100px; margin: 0 auto; padding: 8px 20px 48px; }
+#sec-home .lead, #sec-home footer { color: color-mix(in srgb, var(--text) 82%, transparent); text-shadow: 0 1px 8px rgba(0,0,0,.7); }
+#sec-home h1 { text-shadow: 0 2px 18px rgba(0,0,0,.65), 0 0 22px color-mix(in srgb, var(--glow) 45%, transparent); }
 #sec-home h1 { margin: 36px 0 6px; font: 700 clamp(40px, 7vw, 68px)/1 var(--title-font, 'Barlow Condensed'), 'Barlow Condensed', sans-serif; color: var(--title);
   text-shadow: 0 0 22px color-mix(in srgb, var(--glow) 45%, transparent); }
 #sec-home .lead { margin: 0 0 32px; max-width: 60ch; color: var(--muted); font-size: 17px; }
 #sec-home .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
-#sec-home .card { display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg2);
+#sec-home .card { display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: 16px; border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg2) 82%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   color: inherit; text-decoration: none; transition: transform .2s ease, border-color .2s ease; }
 #sec-home .card:hover, #sec-home .card:focus-visible { transform: translateY(-3px); border-color: var(--accent); outline: none; }
 #sec-home .art { height: 150px; display: grid; place-items: center; border-radius: 12px;
@@ -1135,9 +1200,28 @@ addEventListener("hashchange", () => Router.go());
 #sec-home .card h2 { margin: 0; font: 700 28px/1.1 'Barlow Condensed', sans-serif; }
 #sec-home .card p { margin: 0; color: var(--muted); }
 #sec-home .go { margin-top: auto; align-self: flex-start; padding: 9px 16px; border-radius: 10px; background: var(--accent); color: var(--accent-text); font-weight: 600; }
-#sec-home footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
-#sec-home footer button { padding: 0; border: 0; background: none; color: var(--muted); text-decoration: underline; font: inherit; cursor: pointer; }
+#sec-home footer { margin-top: 40px; font-size: 13px; }
+#sec-home footer button { padding: 0; border: 0; background: none; color: inherit; text-decoration: underline; font: inherit; cursor: pointer; }
 @media (max-width: 600px) { #sec-home h1 { margin-top: 22px; } #sec-home .wrap { padding: 4px 14px 36px; } }
+/* this week's bonuses: a small see-through window, always on Home */
+#sec-home .weekly { position: fixed; right: 16px; bottom: 16px; z-index: 5; width: min(340px, calc(100vw - 32px)); max-height: calc(100vh - var(--header-h) - 32px);
+  display: flex; flex-direction: column; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  background: color-mix(in srgb, var(--bg2) 72%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 16px 40px rgba(0,0,0,.4); }
+#sec-home .weekly header { display: flex; align-items: center; gap: 8px; padding: 10px 12px 6px; cursor: pointer; }
+#sec-home .weekly header b { flex: 1; font: 700 17px 'Barlow Condensed', sans-serif; color: var(--title); }
+#sec-home .weekly header small { color: var(--muted); font-size: 11px; }
+#sec-home .weekly .wk-toggle { border: 0; background: none; color: var(--muted); font-size: 16px; cursor: pointer; padding: 0 2px; }
+#sec-home .weekly .wk-body { overflow-y: auto; padding: 0 12px 4px; font-size: 13px; }
+#sec-home .weekly.min .wk-body, #sec-home .weekly.min .wk-foot { display: none; }
+#sec-home .weekly h4 { margin: 8px 0 3px; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); }
+#sec-home .weekly ul { margin: 0; padding-left: 16px; }
+#sec-home .weekly li { margin: 1px 0; }
+#sec-home .weekly .wk-more { margin: 6px 0 2px; padding: 0; border: 0; background: none; color: var(--accent); font: 600 12px Barlow, sans-serif; cursor: pointer; }
+#sec-home .weekly .wk-foot { padding: 6px 12px 10px; font-size: 11px; color: var(--muted); border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent); }
+#sec-home .weekly .wk-foot a { color: var(--muted); }
+#sec-home .weekly .wk-old { color: var(--warn); font-weight: 600; }
+/* fixed in the corner only where it has room; otherwise it sits under the cards */
+@media (max-width: 1499px) { #sec-home .weekly { position: static; width: auto; max-width: 560px; max-height: none; margin-top: 24px; } }
 </style>
 <section class="sec" id="sec-home" hidden>
   <div class="wrap">
@@ -1163,7 +1247,8 @@ addEventListener("hashchange", () => Router.go());
         <span class="go" data-i18n="open"></span>
       </a>
     </div>
-    <footer><span data-i18n="home.foot"></span> · <button type="button" id="homeVersion"></button></footer>
+    <aside class="weekly" id="weekly" hidden aria-live="polite"></aside>
+    <footer><span data-i18n="home.foot"></span> · <button type="button" id="homeGuide" data-i18n="m_guide"></button> · <button type="button" id="homeVersion"></button></footer>
   </div>
 </section>
 <script>
@@ -1172,20 +1257,76 @@ i18n({
         "home.vm": "Every vehicle you own: garage, spot, upgrades and photo, with free slots per garage.",
         "home.pm": "Your businesses on the map: supplies, stock, timers and alerts, from MC businesses to the Nightclub.",
         "home.tk": "Cars in your vehicle warehouse and the collections they complete, linked with Production Manager.",
-        "home.foot": "A free fan project, not affiliated with Rockstar Games. Everything is entered by hand." },
+        "home.foot": "A free fan project, not affiliated with Rockstar Games. Everything is entered by hand.",
+        "home.wkTitle": "This week in GTA Online", "home.wkMore": n => `Show all (${n} more)`, "home.wkLess": "Show less", "home.wkSource": "Source",
+        "home.wkUpdated": d => `updated ${d}`, "home.wkOld": "Not this week's list yet: the new one comes on Thursday.",
+        "home.t1t": "Welcome to GTA V Manager", "home.t1b": "Your GTA Online world in one page: the vehicles you own, your businesses and the cars waiting to be exported. Everything is entered by you; the game itself is never touched.",
+        "home.t2t": "Three sections", "home.t2b": "<ul><li><b>Vehicle Manager</b>: every vehicle and garage.</li><li><b>Production Manager</b>: your businesses on the map, with timers and alerts.</li><li><b>Vehicle Export Tracker</b>: export cars, collections and what they earn.</li></ul>",
+        "home.t3t": "Moving around", "home.t3b": "The four squares open the pages menu from anywhere. Production Manager also has MC Business and Nightclub pages.",
+        "home.t4t": "Notifications, theme, language", "home.t4b": "The bell keeps every alert. The colored circle changes the theme, and EN / RO the language. Everything is remembered.",
+        "home.t5t": "Menu ⋮", "home.t5b": "Log in (to keep the same data on every device), help, the guided tour of each page and the version history. Each page has its own tour on the <b>?</b> button." },
   ro: { "home.lead": "Ține evidența lumii tale din GTA Online: mașinile pe care le deții, afacerile de pe hartă și vehiculele care așteaptă exportul.",
         "home.vm": "Fiecare vehicul pe care îl deții: garaj, loc, upgrade-uri și poză, cu locurile libere din fiecare garaj.",
         "home.pm": "Afacerile tale pe hartă: provizii, stoc, timere și alerte, de la afacerile MC la Nightclub.",
         "home.tk": "Mașinile din depozitul de vehicule și colecțiile pe care le completează, legat de Production Manager.",
-        "home.foot": "Proiect gratuit de fani, fără legătură cu Rockstar Games. Totul se introduce manual." }
+        "home.foot": "Proiect gratuit de fani, fără legătură cu Rockstar Games. Totul se introduce manual.",
+        "home.wkTitle": "Săptămâna asta în GTA Online", "home.wkMore": n => `Arată tot (încă ${n})`, "home.wkLess": "Arată mai puțin", "home.wkSource": "Sursa",
+        "home.wkUpdated": d => `actualizat ${d}`, "home.wkOld": "Încă nu e lista săptămânii acesteia: cea nouă apare joi.",
+        "home.t1t": "Bine ai venit în GTA V Manager", "home.t1b": "Lumea ta din GTA Online într-o singură pagină: vehiculele pe care le deții, afacerile și mașinile care așteaptă exportul. Totul îl introduci tu; jocul în sine nu e atins.",
+        "home.t2t": "Trei secțiuni", "home.t2b": "<ul><li><b>Vehicle Manager</b>: fiecare vehicul și garaj.</li><li><b>Production Manager</b>: afacerile pe hartă, cu timere și alerte.</li><li><b>Vehicle Export Tracker</b>: mașinile de export, colecțiile și cât aduc.</li></ul>",
+        "home.t3t": "Navigare", "home.t3b": "Cele patru pătrate deschid meniul de pagini de oriunde. Production Manager are și paginile MC Business și Nightclub.",
+        "home.t4t": "Notificări, temă, limbă", "home.t4b": "Clopoțelul păstrează toate alertele. Cercul colorat schimbă tema, iar EN / RO limba. Totul se ține minte.",
+        "home.t5t": "Meniul ⋮", "home.t5b": "Intrarea în cont (ca să ai aceleași date pe orice dispozitiv), ajutorul, turul ghidat al fiecărei pagini și istoricul versiunilor. Fiecare pagină are turul ei pe butonul <b>?</b>." }
 });
 Section({
   id: "home",
+  tourKey: "gtaHomeTourSeen",
+  tour: () => [
+    { k: "home.t1" }, { k: "home.t2", target: () => $("#sec-home .grid") }, { k: "home.t3", target: () => $('[data-pop="pagesPop"]') },
+    { k: "home.t4", target: () => [$("#bellBtn"), $('[data-pop="themePop"]'), $("#langSel")] }, { k: "home.t5", target: () => $("#moreBtn") }
+  ],
+  show() { if (!Tour.seen(this.tourKey)) setTimeout(() => { if (Router.cur === this && !Tour.layer.open) Tour.start(this.tour(), this.tourKey); }, 700); },
   init() {
     const v = $("#homeVersion");
     const label = () => v.textContent = `${t("version")} ${APP_VERSION}`;
     label(); Bus.on("lang", label);
     v.onclick = openAbout;
+    /* this week's bonuses: data/weekly.json, written every Thursday by the repository's GitHub Action */
+    const wk = $("#weekly");
+    let wkData = null, wkAll = false;
+    const wkMin = () => LS.raw("gtaWeeklyMin") === "1";
+    function wkRender() {
+      if (!wkData) return;
+      const d = wkData, secs = d.sections || [], LIMIT = 8;
+      let shown = 0, hiddenN = 0;
+      const body = secs.map(s => {
+        const items = s.items.filter(() => wkAll || shown++ < LIMIT || (hiddenN++, false));
+        return items.length ? `${s.title ? `<h4>${esc(s.title)}</h4>` : ""}<ul>${items.map(i => `<li>${esc(i)}</li>`).join("")}</ul>` : "";
+      }).join("");
+      // the post of the current week starts on the last Thursday; older than 8 days = last week's list
+      const when = Date.parse(d.posted || d.fetched || 0), old = !when || Date.now() - when > 8 * 86400000;
+      const date = when ? new Date(when).toLocaleDateString(lang === "ro" ? "ro-RO" : "en-GB", { day: "numeric", month: "short" }) : "";
+      wk.innerHTML = `<header><b>${t("home.wkTitle")}</b><small>${esc(date)}</small><button class="wk-toggle" aria-label="−/+">${wkMin() ? "▴" : "▾"}</button></header>
+        <div class="wk-body">${old ? `<p class="wk-old">${t("home.wkOld")}</p>` : ""}${body}
+          ${hiddenN || wkAll ? `<button class="wk-more">${wkAll ? t("home.wkLess") : t("home.wkMore", hiddenN)}</button>` : ""}</div>
+        <div class="wk-foot">${t("home.wkSource")}: <a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.source || "")}</a> · ${t("home.wkUpdated", esc((d.fetched || "").slice(0, 10)))}</div>`;
+      wk.classList.toggle("min", wkMin());
+      wk.querySelector("header").onclick = () => { LS.set("gtaWeeklyMin", wkMin() ? "0" : "1"); wkRender(); };
+      const more = wk.querySelector(".wk-more"); if (more) more.onclick = () => { wkAll = !wkAll; wkRender(); };
+      wk.hidden = false;
+    }
+    async function wkLoad() {
+      try {
+        const r = await fetch("data/weekly.json?v=" + Math.floor(Date.now() / 600000), { cache: "no-store" });
+        if (!r.ok) return;
+        wkData = await r.json();
+        wkRender();
+      } catch (e) {}
+    }
+    wkLoad();
+    setInterval(() => { if (!this.el.hidden) wkLoad(); }, 30 * 60000);   // a long-open page picks up Thursday's list
+    Bus.on("lang", wkRender);
+    $("#homeGuide").onclick = openGuide;
   }
 });
 </script>
@@ -1324,6 +1465,12 @@ Section({
 #sec-vehicles { min-height: calc(100vh - var(--header-h)); margin: 0; }
 .vm-garages .lbl { margin-left: 2px; }
 @media (max-width: 760px), (max-height: 520px) { .vm-garages .lbl { display: none; } }
+#sec-vehicles .lv-list { display: flex; flex-direction: column; gap: 6px; }
+#sec-vehicles .lv-row { display: grid; grid-template-columns: 1fr 110px auto; gap: 6px; }
+#sec-vehicles .lv-row button { padding: 6px 10px; }
+#sec-vehicles .lv-add { align-self: flex-start; margin-top: 6px; }
+#sec-vehicles .lv-info { display: block; margin-top: 2px; }
+#sec-vehicles #gSlotsInput[readonly] { opacity: .75; }
 </style>
 <section class="sec" id="sec-vehicles" hidden>
 <div class="vm-main">
@@ -1419,7 +1566,7 @@ Section({
         <datalist id="garageList"></datalist>
         <div id="garageInfo" class="garage-info"></div>
       </div>
-      <div class="form-group full"><label data-i18n="vm.levelSpot"></label><input id="spot" data-i18n-ph="vm.exSpot"></div>
+      <div class="form-group full"><label data-i18n="vm.levelSpot"></label><select id="spotLevel" hidden></select><input id="spot" data-i18n-ph="vm.exSpot"></div>
       <div class="form-group full"><label data-i18n="vm.notesOpt"></label><textarea id="notes" rows="2" data-i18n-ph="vm.notesPh"></textarea></div>
       <div class="form-group full">
         <div class="check-row">
@@ -1453,6 +1600,12 @@ Section({
     <div class="form-grid edit-only" style="margin-bottom:14px">
       <div class="form-group"><label data-i18n="vm.garageNameLbl"></label><input id="gNameInput" data-i18n-ph="vm.exFacility"></div>
       <div class="form-group"><label data-i18n="vm.slotCount"></label><input id="gSlotsInput" type="number" min="1" data-i18n-ph="vm.ex10"></div>
+      <div class="form-group full">
+        <label data-i18n="vm.levelsLbl"></label>
+        <div class="lv-list" id="gLevels"></div>
+        <button class="ghost lv-add" type="button" data-act="addLevel" data-i18n="vm.addLevel"></button>
+        <p class="hint" data-i18n="vm.levelsHint"></p>
+      </div>
     </div>
     <div class="edit-only" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
       <button class="primary" id="gSaveBtn" data-act="saveGarage"></button>
@@ -1641,10 +1794,14 @@ i18n({
 
 i18n({
   en: { "vm.garagesLbl": "Garages", "vm.menuData": "GitHub",
+    "vm.levelsLbl": "Levels (optional)", "vm.addLevel": "➕ Level", "vm.lvName": "e.g. B1", "vm.lvSlots": "spots", "vm.levelPick": "-- Level --",
+    "vm.levelsHint": "For example -1 with 10 spots and -2 with 10 spots. The total is added up for you, and when you add a car you pick the level from a list.",
     "vm.t2b": "<ul><li><b>View</b>: the published garage, read-only.</li><li><b>Your own copy</b>: your own list, saved only in your browser.</li><li><b>Owner</b>: logged in, everything is saved to GitHub.</li></ul>Switch from this band or from the ⋮ menu.",
     "vm.t14b": "Pick a theme (the colored circle) and the language. The four squares take you to the other sections of GTA V Manager.",
     "vm.ghStateEdit": o => `Owner · saves to <b>${o}</b>` },
   ro: { "vm.garagesLbl": "Garaje", "vm.menuData": "GitHub",
+    "vm.levelsLbl": "Niveluri (opțional)", "vm.addLevel": "➕ Nivel", "vm.lvName": "ex: B1", "vm.lvSlots": "locuri", "vm.levelPick": "-- Nivel --",
+    "vm.levelsHint": "De exemplu -1 cu 10 locuri și -2 cu 10 locuri. Totalul se adună singur, iar când adaugi o mașină alegi nivelul dintr-o listă.",
     "vm.t2b": "<ul><li><b>Vizualizare</b>: garajul publicat, doar în citire.</li><li><b>Copia ta</b>: lista ta, salvată doar în browserul tău.</li><li><b>Proprietar</b>: ai intrat în cont, totul se salvează în GitHub.</li></ul>Schimbi din această bandă sau din meniul ⋮.",
     "vm.t14b": "Alege o temă (cercul colorat) și limba. Cele patru pătrate te duc la celelalte secțiuni din GTA V Manager.",
     "vm.ghStateEdit": o => `Proprietar · salvează în <b>${o}</b>` }
@@ -1742,7 +1899,7 @@ Section({
         }
         if (rg) {
           if (!memoryOnly) await dbClear(GARAGES);
-          garages = rg.filter(g => g && g.name).map(g => ({ name: String(g.name), slots: parseInt(g.slots, 10) || 1 })).sort((a, b) => byName(a.name, b.name));
+          garages = rg.filter(g => g && g.name).map(normGarage).sort((a, b) => byName(a.name, b.name));
           if (!memoryOnly) for (const g of garages) await dbPut(GARAGES, g);
         }
       } finally { suppress = false; }
@@ -1832,6 +1989,40 @@ Section({
     byId("imani").onchange = e => byId("imaniType").disabled = !e.target.checked;
 
     /* ---------- garages: occupancy ---------- */
+    // a garage is { name, slots } or, with levels, { name, slots, levels: [{ name, slots }] } (slots = sum of the levels)
+    function normGarage(g) {
+      const levels = Array.isArray(g.levels) ? g.levels.filter(l => l && String(l.name || "").trim()).map(l => ({ name: String(l.name).trim(), slots: parseInt(l.slots, 10) || 1 })) : [];
+      return levels.length ? { name: String(g.name), slots: levels.reduce((s, l) => s + l.slots, 0), levels } : { name: String(g.name), slots: parseInt(g.slots, 10) || 1 };
+    }
+    const levelsOf = name => (garages.find(g => g.name === name) || {}).levels || [];
+    const levelOcc = (gname, lname, excludeId = null) => cars.filter(c => c.garage === gname && (c.spot || "") === lname && c.id !== excludeId).length;
+    // the car window: a list of levels when the garage has them, free text otherwise
+    function updateLevelPicker(keep) {
+      const sel = byId("spotLevel"), inp = byId("spot"), lv = levelsOf(byId("garage").value.trim());
+      const cur = keep !== undefined ? keep : (sel.hidden ? inp.value : sel.value);
+      sel.hidden = !lv.length; inp.hidden = !!lv.length;
+      if (!lv.length) { inp.value = cur || ""; return; }
+      const gname = byId("garage").value.trim();
+      const opts = lv.map(l => { const o = levelOcc(gname, l.name, editCarId); return `<option value="${esc(l.name)}">${esc(l.name)} (${o}/${l.slots}${o >= l.slots ? " ⚠" : ""})</option>`; });
+      if (cur && !lv.some(l => l.name === cur)) opts.unshift(`<option value="${esc(cur)}">${esc(cur)}</option>`);
+      sel.innerHTML = `<option value="">${T("levelPick")}</option>` + opts.join("");
+      sel.value = cur || "";
+    }
+    /* garage window: the levels editor */
+    function renderLevels(levels) {
+      byId("gLevels").innerHTML = levels.map(l => `<div class="lv-row"><input class="lv-name" value="${esc(l.name)}" placeholder="${T("lvName")}"><input class="lv-slots" type="number" min="1" value="${l.slots || ""}" placeholder="${T("lvSlots")}"><button class="danger" type="button" data-act="delLevel">✕</button></div>`).join("");
+      sumLevels();
+    }
+    function readLevels() {
+      return [...el.querySelectorAll("#gLevels .lv-row")].map(r => ({ name: r.querySelector(".lv-name").value.trim(), slots: parseInt(r.querySelector(".lv-slots").value, 10) || 0 }))
+        .filter(l => l.name && l.slots > 0);
+    }
+    function sumLevels() {
+      const rows = el.querySelectorAll("#gLevels .lv-row"), inp = byId("gSlotsInput");
+      inp.readOnly = rows.length > 0;
+      if (rows.length) inp.value = readLevels().reduce((s, l) => s + l.slots, 0) || "";
+    }
+    byId("gLevels").addEventListener("input", sumLevels);
     function occupancy(name, excludeId = null) {
       const occ = cars.filter(c => c.garage === name && c.id !== excludeId).length, g = garages.find(x => x.name === name), slots = g ? g.slots : null;
       return { name, occ, slots, free: slots != null ? Math.max(0, slots - occ) : null };
@@ -1847,7 +2038,7 @@ Section({
       else if (o.occ >= o.slots) { box.textContent = T("garageFull", o); box.classList.add("full"); }
       else { box.textContent = T("garageFree", o); box.classList.add("ok"); }
     }
-    byId("garage").oninput = updateGarageInfo;
+    byId("garage").oninput = () => { updateGarageInfo(); updateLevelPicker(); };
 
     /* ---------- filters ---------- */
     el.querySelectorAll(".filters img.chip-icon").forEach(img => img.src = BADGE_ICONS[img.dataset.icon] || "");
@@ -1889,6 +2080,7 @@ Section({
       const prev = byId("imgPreview");
       prev.src = (c && c.image) || ""; prev.style.display = c && c.image ? "block" : "none";
       updateGarageInfo();
+      updateLevelPicker(c ? c.spot || "" : "");
       carDlg.showModal();
     }
     async function saveCar() {
@@ -1902,6 +2094,7 @@ Section({
       if (f) { try { img = await compressImage(f); } catch (e) { notify(T("imgError"), "bad"); img = ""; } }
       const car = { id: old ? old.id : nextCarId++, type: byId("vtype").value };
       FIELDS.forEach(k => car[k] = byId(k).value.trim());
+      if (!byId("spotLevel").hidden) car.spot = byId("spotLevel").value;
       CHECKS.forEach(k => car[k] = byId(k).checked);
       car.imaniType = car.imani ? byId("imaniType").value : "";
       car.image = img !== null ? img : (old?.image || "");
@@ -1991,7 +2184,7 @@ Section({
 
     /* ---------- garage manager ---------- */
     function openGarages() { clearGarageForm(); renderGarageTable(); garageDlg.showModal(); }
-    function clearGarageForm() { editGarageName = null; byId("gNameInput").value = ""; byId("gSlotsInput").value = ""; byId("gSaveBtn").textContent = T("saveGarage"); }
+    function clearGarageForm() { editGarageName = null; byId("gNameInput").value = ""; byId("gSlotsInput").value = ""; renderLevels([]); byId("gSaveBtn").textContent = T("saveGarage"); }
     function renderGarageTable() {
       const known = new Map(garages.map(g => [g.name, g]));
       const rows = allGarageNames().map(n => ({ name: n, slots: known.has(n) ? known.get(n).slots : null, defined: known.has(n) }));
@@ -2001,7 +2194,7 @@ Section({
         const occ = cars.filter(c => c.garage === g.name).length;
         const cls = g.slots == null ? "" : occ > g.slots ? "occ-over" : occ >= g.slots ? "occ-full" : "occ-ok";
         return `<tr class="${editGarageName === g.name ? "editing" : ""}" data-g="${i}"><td>${i + 1}</td>
-          <td>${esc(g.name)}${g.defined ? "" : ` <span class="small">(${T("noSlotsShort")})</span>`}</td>
+          <td>${esc(g.name)}${g.defined ? "" : ` <span class="small">(${T("noSlotsShort")})</span>`}${levelsOf(g.name).length ? `<span class="small lv-info">${levelsOf(g.name).map(l => `${esc(l.name)} ${levelOcc(g.name, l.name)}/${l.slots}`).join(" · ")}</span>` : ""}</td>
           <td>${g.slots ?? "—"}</td><td class="${cls}">${occ}</td><td>${g.slots != null ? Math.max(0, g.slots - occ) : "—"}</td>
           <td><div class="actions"><button data-act="gEdit" title="${T("edit")}">✏️</button><button class="danger" data-act="gDel" title="${T("delete")}">🗑️</button></div></td></tr>`;
       }).join("");
@@ -2012,12 +2205,14 @@ Section({
       editGarageName = name;
       const g = garages.find(x => x.name === name);
       byId("gNameInput").value = name; byId("gSlotsInput").value = g ? g.slots : "";
+      renderLevels(g && g.levels ? g.levels : []);
       byId("gSaveBtn").textContent = T("updateBtn");
       renderGarageTable();
       byId(g ? "gNameInput" : "gSlotsInput").focus();   // garages without slots: straight to the slots field
     }
     async function saveGarage() {
-      const name = byId("gNameInput").value.trim(), slots = parseInt(byId("gSlotsInput").value, 10);
+      const levels = readLevels(), name = byId("gNameInput").value.trim();
+      const slots = levels.length ? levels.reduce((s, l) => s + l.slots, 0) : parseInt(byId("gSlotsInput").value, 10);
       if (!name) { notify(T("enterGarageName"), "warn"); return; }
       if (!slots || slots < 1) { notify(T("enterSlots"), "warn"); return; }
       const oldName = editGarageName, renamed = oldName !== null && oldName !== name;
@@ -2029,7 +2224,7 @@ Section({
       if (oldName !== null) { garages = garages.filter(g => g.name !== oldName); await dbDelete(GARAGES, oldName); }
       const finalName = clash && renamed ? clash.name : name;
       garages = garages.filter(g => g.name !== finalName);
-      const g = { name: finalName, slots };
+      const g = levels.length ? { name: finalName, slots, levels } : { name: finalName, slots };
       garages.push(g); await dbPut(GARAGES, g);
       let moved = 0;   // renaming also moves the cars that were in the old garage
       if (renamed) for (const c of cars) if (c.garage === oldName) { c.garage = finalName; await dbPut(CARS, c); moved++; }
@@ -2064,7 +2259,7 @@ Section({
     byId("importGaragesFile").onchange = e => readFile(e.target, async data => {
       if (!Array.isArray(data)) throw Object.assign(new Error(T("mustBeArray")), { prefix: T("garagesInvalid") });
       await dbClear(GARAGES); garages = [];
-      for (const g of data) { if (!g.name) continue; const it = { name: String(g.name), slots: parseInt(g.slots, 10) || 1 }; garages.push(it); await dbPut(GARAGES, it); }
+      for (const g of data) { if (!g.name) continue; const it = normGarage(g); garages.push(it); await dbPut(GARAGES, it); }
       garages.sort((a, b) => byName(a.name, b.name));
       refreshAll(); notify(T("garagesImported", garages.length), "ok");
     });
@@ -2075,6 +2270,8 @@ Section({
       const id = +b.dataset.id, name = b.closest("tr") && b.closest("tr").dataset.name;
       ({ newCar: () => openCar(null), saveCar, goLocal, toggleFilters: () => { const o = el.classList.toggle("filters-open"); b.setAttribute("aria-expanded", o); },
          fav: () => toggleFav(id), edit: () => openCar(cars.find(c => c.id === id)), del: () => delCar(id),
+         addLevel: () => { const box = byId("gLevels"); box.insertAdjacentHTML("beforeend", `<div class="lv-row"><input class="lv-name" placeholder="${T("lvName")}"><input class="lv-slots" type="number" min="1" placeholder="${T("lvSlots")}"><button class="danger" type="button" data-act="delLevel">✕</button></div>`); box.lastElementChild.querySelector("input").focus(); sumLevels(); },
+         delLevel: () => { b.closest(".lv-row").remove(); sumLevels(); if (!el.querySelector("#gLevels .lv-row")) byId("gSlotsInput").readOnly = false; },
          saveGarage, newGarage: () => { clearGarageForm(); renderGarageTable(); }, gEdit: () => editGarage(name), gDel: () => deleteGarage(name) })[b.dataset.act]?.();
     });
     // the 🅿️ Garages button lives in the top bar
@@ -2494,6 +2691,16 @@ body[data-sec="production"] { overflow: hidden; }
 .dlg .mc-row.sub { padding-left: 14px; }
 .dlg .mc-row input { width: 18px; height: 18px; accent-color: var(--accent); }
 .pm-tb { display: contents; }
+#sec-production .c-ceo { background: linear-gradient(120deg, #2a5f95, #14304d); }
+#sec-production .c-acid { background: linear-gradient(120deg, #4a7f1e, #233f0e); }
+#sec-production .ceo-pick { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+#sec-production .ceo-pick select { width: 100%; padding: 7px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--asphalt); color: var(--text); font: 500 14px var(--body); }
+#sec-production .ceo-step { display: flex; gap: 4px; margin: 8px 0; }
+#sec-production .ceo-step input { width: 64px; text-align: center; }
+#sec-production .ceo-sp { display: flex; flex-direction: column; gap: 4px; }
+#sec-production .ceo-sp label { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+#sec-production .ceo-sp label span { flex: 1; }
+#sec-production .ceo-sp input { width: 56px; text-align: center; }
 .pm-tb .ingame {display: flex; align-items: center; gap: 10px; padding: 5px 12px 5px 6px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); user-select: none;}
 .pm-tb .ingame .track {position: relative; width: 44px; height: 24px; border-radius: 999px; background: var(--steel); transition: background .25s cubic-bezier(.2, .8, .2, 1);}
 .pm-tb .ingame .track::after {content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--text); transition: transform .25s cubic-bezier(.2, .8, .2, 1);}
@@ -2558,6 +2765,42 @@ body[data-sec="production"] { overflow: hidden; }
 <script>
 i18n({
   en: {
+    "pm.boostTitle": "Mansion boost (x3, 24 h)", "pm.boostStart": "Boost started at the Mansion", "pm.boostStop": "Stop", "pm.boostOff": "Not boosted",
+    "pm.boostLeft": m => `Active: ${m} left`, "pm.boostOther": n => `Now on ${n}`, "pm.boostLast": "Boosted last time: pick another business next",
+    "pm.boostMove": n => `The Mansion boost is on ${n}. Move it here?`, "pm.boostStarted": n => `${n}: production x3 for 24 hours.`,
+    "pm.boostEnded": n => `Mansion boost ended on ${n}: you can boost another business`,
+    "pm.aboostTitle": "Acid Lab daily boost", "pm.aboostStart": "Boost started in the lab", "pm.aboostReady": "Available today",
+    "pm.aboostLeft": n => `Active: ${n} units at double speed`, "pm.aboostUsed": at => `Used today · available again at ${at}`, "pm.aboostStarted": "Next 80 units at double speed.",
+    "pm.pt13t": "CEO Warehouses and Acid Lab", "pm.pt13b": "CEO: pick each warehouse from the list, set the crates, send the staff (48 min timer) and see the sale value. Acid Lab works like the MC businesses, plus Mutt's supplies timer.",
+    "pm.mt1t": "MC Business page", "pm.mt1b": "All your MC businesses on one page, synced with the map: the same data, a bigger view.",
+    "pm.mt2t": "One card per business", "pm.mt2b": "Supplies, stock, value and upgrades for each business, plus the Clubhouse with the bar and the bike shop.",
+    "pm.mt3t": "Bars", "pm.mt3b": "Click or drag across the boxes to set supplies and stock exactly as in the game.",
+    "pm.mt4t": "In game", "pm.mt4b": "Production runs only while this is on. Turn it on when you play, off when you leave.",
+    "pm.nt1t": "Nightclub page", "pm.nt1b": "The advanced Nightclub view, synced with the map.",
+    "pm.nt2t": "Popularity and safe", "pm.nt2b": "Set the popularity with the boxes and the safe amount exactly as in the game. Below 95% the safe fills much slower.",
+    "pm.nt3t": "Warehouse", "pm.nt3b": "One fader per good. Click a tech to assign it; <b>Optimize</b> puts your technicians on the most valuable goods.",
+    "pm.nt4t": "Sale", "pm.nt4b": "What the goods earn after Tony's cut, the public lobby value and the delivery vehicle.",
+    "pm.nt5t": "In game", "pm.nt5b": "Goods are produced only while this is on.",
+    "pm.b_acid": "Acid Lab", "pm.ceoSlot": n => `CEO Warehouse ${n}`, "pm.ceoAdd": "Add a warehouse", "pm.ceoPick": "Which warehouse?",
+    "pm.ceoSmall": "Small · 16 crates", "pm.ceoMedium": "Medium · 42 crates", "pm.ceoLarge": "Large · 111 crates",
+    "pm.ceoNoWh": "Pick the warehouse from the list first.", "pm.ceoCrates": "Crates", "pm.ceoPer": "Per crate", "pm.ceoPrivate": "Invite only",
+    "pm.pubMax": "Public 20+ (max +50%)", "pm.ceoSold": "Sold all crates", "pm.ceoSoldToast": "Crates sold.",
+    "pm.ceoVeh1": "1 delivery vehicle", "pm.ceoVeh2": "1-2 vehicles (2 Brickades by land)", "pm.ceoVeh3": "1-3 vehicles (3 Brickades by land)",
+    "pm.ceoStaff": "Warehouse staff", "pm.ceoStaffSend": "Sent staff ($7,500)", "pm.ceoStaffSent": "Staff sent: back in 48 minutes.",
+    "pm.ceoStaffIdle": "Not sent out", "pm.ceoStaffIn": m => `Back in ${m}`, "pm.ceoStaffReady": "Back: add the crates they brought",
+    "pm.ceoStaffBack": n => `${n}: the staff is back with cargo`, "pm.ceoFull": n => `${n} is full (it can be raided)`, "pm.ceoRemind": "Reminder on / off",
+    "pm.ceoSpecial": "Special items", "pm.ceoSpecialHint": "Sold one at a time, without the lobby bonus.",
+    "pm.sp_reel": "Film Reel", "pm.sp_hide": "Rare Hide", "pm.sp_minigun": "Golden Minigun", "pm.sp_egg": "Ornamental Egg", "pm.sp_diamond": "Large Diamond", "pm.sp_watch": "Rare Pocket Watch",
+    "pm.ceoVehUp": "Delivery vehicle upgrades", "pm.ceoVehHint": "Bought in the warehouse. They make deliveries safer; the value stays the same.",
+    "pm.cv_brickArmor": "Brickade: Armor ($230,000)", "pm.cv_brickTires": "Brickade: Bulletproof Tires ($95,000)", "pm.cv_planeArmor": "Cuban 800 / Titan: Armor ($190,000)",
+    "pm.cv_planeJammer": "Cuban 800 / Titan: Jammer ($300,000)", "pm.cv_tugArmor": "Tug: Armor ($265,000)", "pm.cv_tugSpeed": "Tug: Speed ($170,000)",
+    "pm.acidEquip": "Equipment Upgrade", "pm.acidNamed": "Product named (+5% value)", "pm.acidMutt": "Supplies from Mutt",
+    "pm.acidMuttCall": "Called Mutt ($60,000)", "pm.acidMuttCalled": "Mutt is on his way: about 10 minutes.", "pm.acidMuttIdle": "No order",
+    "pm.acidMuttIn": m => `Arriving in ${m}`, "pm.acidMuttArrived": "Delivered: supplies full", "pm.acidMuttDone": "Acid Lab: Mutt's supplies arrived",
+    "pm.acidVehUp": "Vehicle upgrades", "pm.acidVehHint": "For safer resupply and sales; the value stays the same.",
+    "pm.av_brickArmor": "Brickade 6x6: Armor", "pm.av_brickPerf": "Brickade 6x6: Engine & brakes", "pm.av_bikePerf": "Manchez Scout C: Performance",
+    "pm.vehPrivate": "Invite only (net)", "pm.vehPublic": "Public 20+ (net)", "pm.vehNetHint": "What all the cars earn sold one by one, after the modification cost.",
+    "pm.safeIn": "Amount in the safe",
     "pm.inGame": "In game", "pm.ingameOn": "Timers running", "pm.ingameOff": "Timers paused",
     "pm.optSound": "Alert sound", "pm.testSound": "🔔 Play test sound", "pm.optNotify": "Desktop notifications",
     "pm.language": "Language", "pm.export": "📤 Export Production.json", "pm.import": "📥 Import Production.json",
@@ -2663,6 +2906,42 @@ i18n({
     "pm.soundBlocked": "Click anywhere on the page once so the browser allows sounds."
   },
   ro: {
+    "pm.boostTitle": "Boost Mansion (x3, 24 h)", "pm.boostStart": "Am dat boost din Mansion", "pm.boostStop": "Oprește", "pm.boostOff": "Fără boost",
+    "pm.boostLeft": m => `Activ: mai are ${m}`, "pm.boostOther": n => `Acum e pe ${n}`, "pm.boostLast": "A avut boost ultima dată: data viitoare alege altă afacere",
+    "pm.boostMove": n => `Boost-ul Mansion e pe ${n}. Îl muți aici?`, "pm.boostStarted": n => `${n}: producție x3 pentru 24 de ore.`,
+    "pm.boostEnded": n => `S-a terminat boost-ul Mansion pe ${n}: poți da boost altei afaceri`,
+    "pm.aboostTitle": "Boost-ul zilnic Acid Lab", "pm.aboostStart": "Am activat boost-ul în laborator", "pm.aboostReady": "Disponibil azi",
+    "pm.aboostLeft": n => `Activ: ${n} unități la viteză dublă`, "pm.aboostUsed": at => `Folosit azi · disponibil din nou la ${at}`, "pm.aboostStarted": "Următoarele 80 de unități la viteză dublă.",
+    "pm.pt13t": "Depozite CEO și Acid Lab", "pm.pt13b": "CEO: alegi fiecare depozit din listă, setezi lăzile, trimiți angajatul (timer de 48 min) și vezi valoarea de vânzare. Acid Lab merge ca afacerile MC, plus timer-ul pentru proviziile de la Mutt.",
+    "pm.mt1t": "Pagina MC Business", "pm.mt1b": "Toate afacerile MC pe o singură pagină, sincronizate cu harta: aceleași date, o vedere mai mare.",
+    "pm.mt2t": "Un card pe afacere", "pm.mt2b": "Provizii, stoc, valoare și upgrade-uri pentru fiecare afacere, plus Clubhouse-ul cu barul și Bike Shop-ul.",
+    "pm.mt3t": "Barele", "pm.mt3b": "Click sau trage peste căsuțe ca să setezi proviziile și stocul exact ca în joc.",
+    "pm.mt4t": "În joc", "pm.mt4b": "Producția merge doar cât e pornit. Pornește-l când joci, oprește-l când ieși.",
+    "pm.nt1t": "Pagina Nightclub", "pm.nt1b": "Vederea avansată a Nightclub-ului, sincronizată cu harta.",
+    "pm.nt2t": "Popularitate și seif", "pm.nt2b": "Setezi popularitatea din căsuțe și suma din seif exact ca în joc. Sub 95% seiful se umple mult mai încet.",
+    "pm.nt3t": "Depozitul", "pm.nt3b": "Câte un fader pe marfă. Click pe Tech ca să aloci un tehnician; <b>Optimize</b> îi pune pe mărfurile cele mai valoroase.",
+    "pm.nt4t": "Vânzarea", "pm.nt4b": "Cât aduc mărfurile după partea lui Tony, valoarea în lobby public și vehiculul de livrare.",
+    "pm.nt5t": "În joc", "pm.nt5b": "Mărfurile se produc doar cât e pornit.",
+    "pm.b_acid": "Acid Lab", "pm.ceoSlot": n => `Depozit CEO ${n}`, "pm.ceoAdd": "Adaugă un depozit", "pm.ceoPick": "Ce depozit?",
+    "pm.ceoSmall": "Mic · 16 lăzi", "pm.ceoMedium": "Mediu · 42 lăzi", "pm.ceoLarge": "Mare · 111 lăzi",
+    "pm.ceoNoWh": "Alege întâi depozitul din listă.", "pm.ceoCrates": "Lăzi", "pm.ceoPer": "Pe ladă", "pm.ceoPrivate": "Invite only",
+    "pm.pubMax": "Public 20+ (maxim +50%)", "pm.ceoSold": "Am vândut toate lăzile", "pm.ceoSoldToast": "Lăzi vândute.",
+    "pm.ceoVeh1": "1 vehicul de livrare", "pm.ceoVeh2": "1-2 vehicule (2 Brickade pe uscat)", "pm.ceoVeh3": "1-3 vehicule (3 Brickade pe uscat)",
+    "pm.ceoStaff": "Angajatul depozitului", "pm.ceoStaffSend": "Am trimis angajatul ($7,500)", "pm.ceoStaffSent": "Angajat trimis: se întoarce în 48 de minute.",
+    "pm.ceoStaffIdle": "Netrimis", "pm.ceoStaffIn": m => `Se întoarce în ${m}`, "pm.ceoStaffReady": "S-a întors: adaugă lăzile aduse",
+    "pm.ceoStaffBack": n => `${n}: angajatul s-a întors cu marfă`, "pm.ceoFull": n => `${n} e plin (poate fi atacat)`, "pm.ceoRemind": "Memento pornit / oprit",
+    "pm.ceoSpecial": "Obiecte speciale", "pm.ceoSpecialHint": "Se vând câte unul, fără bonusul de lobby.",
+    "pm.sp_reel": "Film Reel", "pm.sp_hide": "Rare Hide", "pm.sp_minigun": "Golden Minigun", "pm.sp_egg": "Ornamental Egg", "pm.sp_diamond": "Large Diamond", "pm.sp_watch": "Rare Pocket Watch",
+    "pm.ceoVehUp": "Upgrade-uri vehicule de livrare", "pm.ceoVehHint": "Se cumpără din depozit. Fac livrarea mai sigură; valoarea rămâne aceeași.",
+    "pm.cv_brickArmor": "Brickade: Armor ($230,000)", "pm.cv_brickTires": "Brickade: Bulletproof Tires ($95,000)", "pm.cv_planeArmor": "Cuban 800 / Titan: Armor ($190,000)",
+    "pm.cv_planeJammer": "Cuban 800 / Titan: Jammer ($300,000)", "pm.cv_tugArmor": "Tug: Armor ($265,000)", "pm.cv_tugSpeed": "Tug: Speed ($170,000)",
+    "pm.acidEquip": "Equipment Upgrade", "pm.acidNamed": "Produs denumit (+5% valoare)", "pm.acidMutt": "Provizii de la Mutt",
+    "pm.acidMuttCall": "Am sunat la Mutt ($60,000)", "pm.acidMuttCalled": "Mutt e pe drum: cam 10 minute.", "pm.acidMuttIdle": "Nicio comandă",
+    "pm.acidMuttIn": m => `Ajunge în ${m}`, "pm.acidMuttArrived": "Livrat: provizii pline", "pm.acidMuttDone": "Acid Lab: au sosit proviziile de la Mutt",
+    "pm.acidVehUp": "Upgrade-uri vehicule", "pm.acidVehHint": "Pentru resupply și vânzări mai sigure; valoarea rămâne aceeași.",
+    "pm.av_brickArmor": "Brickade 6x6: Armor", "pm.av_brickPerf": "Brickade 6x6: motor și frâne", "pm.av_bikePerf": "Manchez Scout C: performanță",
+    "pm.vehPrivate": "Invite only (net)", "pm.vehPublic": "Public 20+ (net)", "pm.vehNetHint": "Cât aduc toate mașinile vândute pe rând, după costul modificărilor.",
+    "pm.safeIn": "Suma din seif",
     "pm.inGame": "În joc", "pm.ingameOn": "Timerele merg", "pm.ingameOff": "Timerele sunt oprite",
     "pm.optSound": "Sunet la alerte", "pm.testSound": "🔔 Testează sunetul", "pm.optNotify": "Notificări pe desktop",
     "pm.language": "Limbă", "pm.export": "📤 Export Production.json", "pm.import": "📥 Import Production.json",
@@ -2842,10 +3121,10 @@ const CATEGORIES = [
   { id: "mc", art: "art-mc", ready: true, emblem: true, clear: true },
   { id: "bunker", art: "art-bunker", emblem: true, clear: true },
   { id: "night", art: "art-night", emblem: true, clear: true, ready: true, single: "night" },
-  { id: "ceo", art: "art-ceo", emblem: true, clear: true },
+  { id: "ceo", art: "art-ceo", emblem: true, clear: true, ready: true },
   { id: "veh", art: "art-veh", emblem: true, clear: true, ready: true, single: "vehwh" },
   { id: "hangar", art: "art-hangar", emblem: true, clear: true },
-  { id: "acid", art: "art-acid", emblem: true, clear: true }
+  { id: "acid", art: "art-acid", emblem: true, clear: true, ready: true, single: "acid" }
 ];
 const FAR_BONUS = 1.5;
 // businesses that live in their own category (one per tile)
@@ -2853,14 +3132,26 @@ const EXTRA = [
   { id: "night", icon: "night", cls: "c-night", kind: "night", production: false },
   { id: "vehwh", icon: "veh", cls: "c-veh", kind: "veh", production: false }
 ];
-const ALL = [...MC, ...EXTRA];
+// Acid Lab: one business that produces like the MC ones (supplies -> stock), in its own category.
+// 160 units; $1,485 / $2,095 per unit; 2.25 / 1.5 min per unit; a full supply bar makes 50 / 100 units (without / with the Equipment Upgrade)
+const ACID = { id: "acid", icon: "acid", cls: "c-acid", production: true, acid: true, cap: 160,
+  mpu: { none: 2.25, one: 1.5, both: 1.5 }, upb: { equip: 100, noEquip: 50 },
+  value: { none: 1485, one: 2095, both: 2095 } };
+// CEO Special Cargo: up to 5 warehouses, each picked from the game's list
+const CEO_SLOTS = [1, 2, 3, 4, 5].map(n => ({ id: "ceo" + n, icon: "ceo16", cls: "c-ceo", kind: "ceo", production: false, slot: n }));
+const ALL = [...MC, ...EXTRA, ACID, ...CEO_SLOTS];
+const PROD = [...MC, ACID].filter(d => d.production);   // everything that turns supplies into stock
 
 /* ======================================================================
    Text (EN / RO)
    ====================================================================== */
 
 const t = (key, arg) => window.t("pm." + key, arg);
-const bizName = id => t("b_" + id);
+const bizName = id => {
+  const d = ALL.find(x => x.id === id);
+  if (d && d.kind === "ceo") return (S.biz[id] && S.biz[id].wh) || t("ceoSlot", d.slot);
+  return t("b_" + id);
+};
 
 /* ======================================================================
    State (saved in this browser)
@@ -2870,6 +3161,10 @@ function defaultBiz(def) {
   if (def.kind === "night") return { owned: false, pin: null, alert: null, layer: "mid", bed: false, security: false, equipment: false,
     hired: 1, floors: 1, assign: {}, crates: {}, pop: 100, safe: 0, fired: {} };
   if (def.kind === "veh") return { owned: false, pin: null, alert: null, layer: "mid" };
+  if (def.kind === "ceo") return { owned: false, pin: null, alert: null, layer: "mid", wh: "", crates: 0, special: {}, veh: {},
+    staff: { last: null, remind: true, fired: {} }, fired: {} };
+  if (def.acid) return { owned: false, pin: null, equip: false, staff: false, supplies: 0, stock: 0, alertMin: 15, over: {}, alert: null, nearFull: false,
+    named: false, veh: {}, mutt: { last: null, remind: true, fired: {} }, aboost: { units: 0, day: "" } };
   return def.production
     ? { owned: false, pin: null, equip: false, staff: false, supplies: 0, stock: 0, alertMin: 15, over: {}, alert: null, nearFull: false }
     : { owned: false, pin: null, alert: null,
@@ -2886,7 +3181,7 @@ function defaultState() {
   ALL.forEach(d => biz[d.id] = defaultBiz(d));
   return { v: 5, inGame: false, lastTick: Date.now(), sideOpen: true, sound: true, notify: false, biz, notes: [],
            catOrder: CATEGORIES.map(c => c.id), bizOrder: MC.map(d => d.id), mapStyle: "satellite", mapV: 2,
-           hidden: { cats: {}, biz: {} } };
+           hidden: { cats: {}, biz: {} }, boost: { biz: null, until: 0, last: null } };
 }
 let S = defaultState();
 
@@ -2975,14 +3270,67 @@ function isClock() {
    ====================================================================== */
 const defOf = id => ALL.find(d => d.id === id);
 function level(b) { return b.equip && b.staff ? "both" : (b.equip || b.staff) ? "one" : "none"; }
+/* ---------- production boosts ----------
+   Mansion (AI Concierge): production x3 for 24 real hours, one business at a time (MC businesses, Acid Lab, Bunker),
+   never the same business twice in a row.
+   Acid Lab's own daily boost (the testing table in the lab): the next 80 units at double speed, once a day (resets 07:00 UTC). */
+const BOOST_H = 24, ACID_BOOST_UNITS = 80;
+const mansionOn = id => !!(S.boost && S.boost.biz === id && Date.now() < S.boost.until);
+const boostDay = (ts = Date.now()) => new Date(ts - 7 * 3600000).toISOString().slice(0, 10);   // a "day" starts at 07:00 UTC
+const acidBoostUsedToday = () => S.biz.acid.aboost.day === boostDay();
+function speedOf(id) { return (mansionOn(id) ? 3 : 1) * (id === "acid" && S.biz.acid.aboost.units > 0 ? 2 : 1); }
+function nextBoostReset() { const d = new Date(); d.setUTCHours(7, 0, 0, 0); if (d <= new Date()) d.setUTCDate(d.getUTCDate() + 1); return d; }
+function checkBoost() {
+  const bo = S.boost;
+  if (bo && bo.biz && Date.now() >= bo.until) {
+    const id = bo.biz;
+    bo.last = id; bo.biz = null;
+    notify(t("boostEnded", bizName(id)), "info", id);
+    save(true); ghMarkDirty();
+  }
+}
+function boostHtml(id) {
+  const on = mansionOn(id), bo = S.boost, other = bo.biz && bo.biz !== id && Date.now() < bo.until;
+  const left = on ? fmtTime((bo.until - Date.now()) / 60000) : "";
+  return `<div class="club-sect boost-sect"><h5>${t("boostTitle")}</h5>
+    <div class="club-line ${on ? "ready" : ""}"><b data-live-timer="${id}:boost">${on ? t("boostLeft", left) : other ? t("boostOther", bizName(bo.biz)) : bo.last === id ? t("boostLast") : t("boostOff")}</b></div>
+    <div class="btn-row">${on ? `<button class="btn small" data-boost="stop">${t("boostStop")}</button>` : `<button class="btn small primary" data-boost="start" ${bo.last === id && !other ? "" : ""}>${t("boostStart")}</button>`}</div></div>`;
+}
+function acidBoostHtml() {
+  const a = S.biz.acid.aboost, used = acidBoostUsedToday();
+  const at = nextBoostReset().toLocaleTimeString(lang === "ro" ? "ro-RO" : "en-GB", { hour: "2-digit", minute: "2-digit" });
+  return `<div class="club-sect boost-sect"><h5>${t("aboostTitle")}</h5>
+    <div class="club-line ${a.units > 0 ? "ready" : ""}"><b>${a.units > 0 ? t("aboostLeft", Math.ceil(a.units)) : used ? t("aboostUsed", at) : t("aboostReady")}</b></div>
+    <div class="btn-row">${a.units > 0 ? `<button class="btn small" data-aboost="stop">${t("boostStop")}</button>` : `<button class="btn small primary" data-aboost="start" ${used ? "disabled" : ""}>${t("aboostStart")}</button>`}</div></div>`;
+}
+function bindBoost(root, id, after) {
+  root.querySelectorAll("[data-boost]").forEach(el => el.onclick = () => {
+    const bo = S.boost;
+    if (el.dataset.boost === "stop") { bo.last = id; bo.biz = null; bo.until = 0; }
+    else {
+      if (bo.biz && bo.biz !== id && Date.now() < bo.until && !confirm(t("boostMove", bizName(bo.biz)))) return;
+      tick();                                   // count the time so far at the old speed
+      bo.biz = id; bo.until = Date.now() + BOOST_H * 3600000;
+      toast(t("boostStarted", bizName(id)));
+    }
+    save(true); ghMarkDirty(); after();
+  });
+  root.querySelectorAll("[data-aboost]").forEach(el => el.onclick = () => {
+    const a = S.biz.acid.aboost;
+    tick();
+    if (el.dataset.aboost === "stop") a.units = 0;
+    else { a.units = ACID_BOOST_UNITS; a.day = boostDay(); toast(t("aboostStarted")); }
+    save(true); ghMarkDirty(); after();
+  });
+}
 function numbers(id) {
   const d = defOf(id), b = S.biz[id], lv = level(b);
   return {
     cap: d.cap,
-    mpu: +b.over.mpu || d.mpu[lv],
+    mpu: (+b.over.mpu || d.mpu[lv]) / speedOf(id),
     upb: +b.over.upb || (b.equip ? d.upb.equip : d.upb.noEquip),
-    value: +b.over.value || d.value[lv],
-    estimated: lv !== "both"
+    value: (+b.over.value || d.value[lv]) * (d.acid && b.named ? 1.05 : 1),
+    estimated: d.acid ? false : lv !== "both"
   };
 }
 // advance one business by dt minutes of play time
@@ -2993,6 +3341,7 @@ function advance(id, dt) {
   if (b.supplies <= 0 || b.stock >= n.cap) return;
   const units = Math.min(dt / n.mpu, b.supplies * n.upb, n.cap - b.stock);
   b.stock = Math.min(n.cap, b.stock + units);
+  if (id === "acid" && b.aboost.units > 0) b.aboost.units = Math.max(0, b.aboost.units - units);
   b.supplies = Math.max(0, b.supplies - units / n.upb);
   if (b.supplies < 1e-6) b.supplies = 0;
 }
@@ -3040,7 +3389,7 @@ function nearFull(id) {
   return b.owned && b.stock < n.cap - 1e-6 && isFinite(f.minToFull) && f.minToFull <= b.alertMin;
 }
 function syncStatus() {
-  MC.filter(d => d.production).forEach(d => {
+  PROD.forEach(d => {
     const st = status(d.id), b = S.biz[d.id];
     lastSt[d.id] = st;
     b.nearFull = nearFull(d.id);
@@ -3049,7 +3398,7 @@ function syncStatus() {
 }
 const KIND_OF = { low: "warn", empty: "bad", full: "full", nearfull: "full" };
 function checkAlerts(fromProduction) {
-  MC.filter(d => d.production).forEach(d => {
+  PROD.forEach(d => {
     const b = S.biz[d.id];
     const st = status(d.id), prev = lastSt[d.id];
     lastSt[d.id] = st;
@@ -3066,6 +3415,9 @@ function checkAlerts(fromProduction) {
     }
   });
   checkClub();
+  checkCeo();
+  checkAcid();
+  checkBoost();
   checkNight(fromProduction);
 }
 
@@ -3226,6 +3578,159 @@ function checkNight(fromProduction) {
 }
 
 /* Vehicle Warehouse: read the Export Tracker's list (same site, same browser storage) */
+/* ======================================================================
+   CEO Special Cargo warehouses and Acid Lab
+   Warehouses and crate prices: GTA Wiki (Warehouses, Ad-Hawk). Staff: $7,500, 48 real minutes, 1-3 crates.
+   Acid Lab: GTA Wiki (Acid Product), gtaboss. Mutt delivers supplies ($60,000) in about 10 minutes.
+   ====================================================================== */
+const CEO_WH = [
+  ["Convenience Store Lockup", "Rancho", 16], ["Celltowa Unit", "La Mesa", 16], ["White Widow Garage", "La Puerta", 16],
+  ["Pacific Bait Storage", "Elysian Island", 16], ["Pier 400 Utility Building", "Elysian Island", 16], ["Foreclosed Garage", "West Vinewood", 16],
+  ["GEE Warehouse", "El Burro Heights", 42], ["Derriere Lingerie Backlot", "Del Perro", 42], ["Fridgit Annexe", "La Puerta", 42],
+  ["Discount Retail Unit", "Downtown Vinewood", 42], ["Disused Factory Outlet", "Strawberry", 42], ["LS Marine Building 3", "Elysian Island", 42],
+  ["Old Power Station", "Rancho", 42], ["Railyard Warehouse", "La Mesa", 42],
+  ["Wholesale Furniture", "Cypress Flats", 111], ["West Vinewood Backlot", "West Vinewood", 111], ["Xero Gas Factory", "LSIA", 111],
+  ["Logistics Depot", "La Mesa", 111], ["Bilgeco Warehouse", "LSIA", 111], ["Walker & Sons Warehouse", "Banning", 111],
+  ["Cypress Warehouses", "Cypress Flats", 111], ["Darnell Bros Warehouse", "La Mesa", 111]
+].map(([n, a, s]) => ({ n, a, s }));
+// price per crate by how many are sold at once: [from, price]
+const CEO_TIERS = [[1, 10000], [2, 11000], [3, 12000], [4, 13000], [6, 13500], [8, 14000], [10, 14500], [15, 15000], [20, 15500], [25, 16000],
+  [30, 16500], [35, 17000], [40, 17500], [45, 17750], [50, 18000], [60, 18250], [70, 18500], [80, 18750], [90, 19000], [100, 19500], [111, 20000]];
+const CEO_SPECIAL = [["reel", 95000], ["hide", 105000], ["minigun", 115000], ["egg", 125000], ["diamond", 135000], ["watch", 150000]];
+const CEO_VEH = ["brickArmor", "brickTires", "planeArmor", "planeJammer", "tugArmor", "tugSpeed"];
+const ACID_VEH = ["brickArmor", "brickPerf", "bikePerf"];
+const STAFF_MIN = 48, MUTT_MIN = 10;
+const ceoWh = id => CEO_WH.find(w => w.n === S.biz[id].wh) || null;
+const ceoCap = id => (ceoWh(id) || { s: 16 }).s;
+function crateValue(n) { let v = 0; CEO_TIERS.forEach(([k, p]) => { if (n >= k) v = p; }); return v; }
+function ceoSale(id) {
+  const b = S.biz[id], n = Math.floor(b.crates || 0), per = crateValue(n), base = n * per;
+  const sp = CEO_SPECIAL.reduce((s, [k, v]) => s + (b.special[k] || 0) * v, 0);
+  return { n, per, base, pub: base * FAR_BONUS, sp, cap: ceoCap(id) };
+}
+const ceoVehicles = n => n < 1 ? "—" : n < 10 ? t("ceoVeh1") : n < 30 ? t("ceoVeh2") : t("ceoVeh3");
+function ICO(id) { const d = defOf(id); return d.kind === "ceo" ? ICON["ceo" + ceoCap(id)] : ICON[d.icon]; }
+function staffText(id) {
+  const st = S.biz[id].staff, left = minsLeft(st.last, STAFF_MIN);
+  return left === null ? t("ceoStaffIdle") : left > 0 ? t("ceoStaffIn", fmtTime(left)) : t("ceoStaffReady");
+}
+function muttText() {
+  const m = S.biz.acid.mutt, left = minsLeft(m.last, MUTT_MIN);
+  return left !== null && left > 0 ? t("acidMuttIn", fmtTime(left)) : m.last ? t("acidMuttArrived") : t("acidMuttIdle");
+}
+// countdowns shown anywhere on the page tick every second without rebuilding anything
+function liveTimers() {
+  document.querySelectorAll("[data-live-timer]").forEach(el => {
+    const [id, k] = el.dataset.liveTimer.split(":");
+    el.textContent = k === "staff" ? staffText(id) : k === "boost" ? (mansionOn(id) ? t("boostLeft", fmtTime((S.boost.until - Date.now()) / 60000)) : t("boostOff")) : muttText();
+  });
+}
+function checkCeo() {
+  CEO_SLOTS.forEach(d => {
+    const b = S.biz[d.id];
+    if (!b.owned) return;
+    const st = b.staff;
+    if (st.last && minsLeft(st.last, STAFF_MIN) === 0 && !st.fired.back) {
+      st.fired.back = true;
+      if (st.remind) { b.alert = "ready"; notify(t("ceoStaffBack", bizName(d.id)), "ok", d.id); }
+      save();
+    }
+    const full = b.wh && (b.crates || 0) >= ceoCap(d.id);
+    if (full && !b.fired.full) { b.fired.full = true; notify(t("ceoFull", bizName(d.id)), "full", d.id); save(); }
+    if (!full && b.fired.full) b.fired.full = false;
+  });
+}
+// Mutt's supplies arrive: the supply bar is full again
+function checkAcid() {
+  const b = S.biz.acid;
+  if (!b.owned || !b.mutt.last || b.mutt.fired.done || minsLeft(b.mutt.last, MUTT_MIN) > 0) return;
+  b.mutt.fired.done = true;
+  b.supplies = 1;
+  b.alert = null;
+  syncStatus();
+  if (b.mutt.remind) notify(t("acidMuttDone"), "ok", "acid");
+  save(true); ghMarkDirty();
+}
+function ceoPickHtml(id) {
+  const b = S.biz[id], taken = CEO_SLOTS.filter(d => d.id !== id && S.biz[d.id].owned).map(d => S.biz[d.id].wh);
+  const grp = (sz, lbl) => `<optgroup label="${lbl}">${CEO_WH.filter(w => w.s === sz).map(w => `<option value="${escapeHtml(w.n)}" ${b.wh === w.n ? "selected" : ""} ${taken.includes(w.n) ? "disabled" : ""}>${w.n} · ${w.a}</option>`).join("")}</optgroup>`;
+  return `<label class="ceo-pick"><span>${t("ceoPick")}</span><select data-ceo="wh"><option value="">—</option>${grp(16, t("ceoSmall"))}${grp(42, t("ceoMedium"))}${grp(111, t("ceoLarge"))}</select></label>`;
+}
+function ceoCratesHtml(id) {
+  const s = ceoSale(id);
+  return `<div class="q-label">${t("ceoCrates")}</div>
+    <div class="bar-cap"><span>${s.n >= s.cap ? t("st_full") : ""}</span><b>${s.n} / ${s.cap}</b></div>
+    <div class="thin"><i style="width:${Math.min(100, s.n / s.cap * 100)}%"></i></div>
+    <div class="ceo-step"><button class="btn small" data-ceo="-1">−1</button><input type="number" class="num-input" min="0" max="${s.cap}" inputmode="numeric" value="${s.n}" data-ceo="n"><button class="btn small" data-ceo="+1">+1</button><button class="btn small" data-ceo="+2">+2</button><button class="btn small" data-ceo="+3">+3</button></div>
+    <div class="nc-vals"><div><small>${t("ceoPrivate")}</small><b>${money(s.base)}</b></div><div><small>${t("pubMax")}</small><b class="hot">${money(s.pub)}</b></div></div>
+    <div class="bar-cap"><span>${t("ceoPer")} <b>${money(s.per)}</b></span><span>${ceoVehicles(s.n)}</span></div>
+    <div class="btn-row"><button class="btn" data-ceo="sold">${t("ceoSold")}</button></div>`;
+}
+function ceoStaffHtml(id) {
+  const st = S.biz[id].staff, left = minsLeft(st.last, STAFF_MIN);
+  return `<div class="club-sect"><h5>${t("ceoStaff")}<button class="bell-tg" data-ceo="remind" aria-pressed="${st.remind}" title="${t("ceoRemind")}">🔔</button></h5>
+    <div class="club-line ${left === 0 ? "ready" : ""}"><b data-live-timer="${id}:staff">${staffText(id)}</b></div>
+    <div class="btn-row"><button class="btn small primary" data-ceo="send">${t("ceoStaffSend")}</button></div></div>`;
+}
+function ceoQuickHtml(id) {
+  return S.biz[id].wh ? ceoCratesHtml(id) + ceoStaffHtml(id) + `<p class="q-note">${t("qMore")}</p>` : ceoPickHtml(id);
+}
+function ceoWinHtml(id) {
+  const b = S.biz[id], s = ceoSale(id);
+  if (!b.wh) return `<div class="sect">${ceoPickHtml(id)}<p class="hint">${t("ceoNoWh")}</p></div>`;
+  return `<div class="sect">${ceoPickHtml(id)}</div>
+    <div class="sect">${ceoCratesHtml(id)}</div>
+    ${ceoStaffHtml(id)}
+    <div class="sect"><h4>${t("ceoSpecial")} <span class="muted">${money(s.sp)}</span></h4>
+      <div class="ceo-sp">${CEO_SPECIAL.map(([k, v]) => `<label><span>${t("sp_" + k)} <small class="muted">${money(v)}</small></span><input type="number" class="num-input" min="0" max="9" value="${b.special[k] || 0}" data-sp="${k}"></label>`).join("")}</div>
+      <p class="hint">${t("ceoSpecialHint")}</p></div>
+    <div class="sect"><h4>${t("ceoVehUp")}</h4>${CEO_VEH.map(k => `<label class="mini-check"><input type="checkbox" data-cv="${k}" ${b.veh[k] ? "checked" : ""}> ${t("cv_" + k)}</label>`).join("<br>")}
+      <p class="hint">${t("ceoVehHint")}</p></div>`;
+}
+function bindCeo(root, id, rerender) {
+  const b = S.biz[id];
+  const done = () => { b.alert = null; save(true); ghMarkDirty(); rerender(); renderPins(); renderAll(); if (flyCat) fillFlyout(); };
+  root.querySelectorAll("[data-ceo]").forEach(el => {
+    const a = el.dataset.ceo;
+    if (a === "wh") { el.onchange = () => { b.wh = el.value; b.crates = Math.min(b.crates || 0, ceoCap(id)); done(); }; return; }
+    if (a === "n") { el.onchange = () => { b.crates = Math.max(0, Math.min(ceoCap(id), Math.round(+el.value || 0))); done(); }; return; }
+    el.onclick = () => {
+      if (/^[+-]\d$/.test(a)) b.crates = Math.max(0, Math.min(ceoCap(id), (b.crates || 0) + +a));
+      if (a === "send") { b.staff.last = Date.now(); b.staff.fired = {}; toast(t("ceoStaffSent")); }
+      if (a === "remind") b.staff.remind = !b.staff.remind;
+      if (a === "sold") { const had = b.crates; b.crates = 0; toast(t("ceoSoldToast"), { label: t("undo"), run: () => { b.crates = had; done(); } }); }
+      done();
+    };
+  });
+  root.querySelectorAll("[data-sp]").forEach(el => el.onchange = () => { b.special[el.dataset.sp] = Math.max(0, Math.round(+el.value || 0)); done(); });
+  root.querySelectorAll("[data-cv]").forEach(el => el.onchange = () => { b.veh[el.dataset.cv] = el.checked; done(); });
+}
+function acidMuttHtml() {
+  const m = S.biz.acid.mutt;
+  return `<div class="club-sect"><h5>${t("acidMutt")}<button class="bell-tg" data-acid="remind" aria-pressed="${m.remind}" title="${t("ceoRemind")}">🔔</button></h5>
+    <div class="club-line"><b data-live-timer="acid:mutt">${muttText()}</b></div>
+    <div class="btn-row"><button class="btn small primary" data-acid="mutt">${t("acidMuttCall")}</button></div></div>`;
+}
+function acidExtrasHtml() {
+  const b = S.biz.acid;
+  return `<label class="mini-check"><input type="checkbox" data-acid="named" ${b.named ? "checked" : ""}> ${t("acidNamed")}</label>
+    ${acidMuttHtml()}
+    <div class="sect"><h4>${t("acidVehUp")}</h4>${ACID_VEH.map(k => `<label class="mini-check"><input type="checkbox" data-av="${k}" ${b.veh[k] ? "checked" : ""}> ${t("av_" + k)}</label>`).join("<br>")}
+      <p class="hint">${t("acidVehHint")}</p></div>`;
+}
+function bindAcid(root, after) {
+  const b = S.biz.acid;
+  root.querySelectorAll("[data-acid]").forEach(el => {
+    const a = el.dataset.acid;
+    if (a === "named") { el.onchange = () => { b.named = el.checked; after(); }; return; }
+    el.onclick = () => {
+      if (a === "mutt") { b.mutt.last = Date.now(); b.mutt.fired = {}; toast(t("acidMuttCalled")); }
+      if (a === "remind") b.mutt.remind = !b.mutt.remind;
+      after();
+    };
+  });
+  root.querySelectorAll("[data-av]").forEach(el => el.onchange = () => { b.veh[el.dataset.av] = el.checked; after(); });
+}
 const VEH_CAP = 40;
 function vehData() {
   try {
@@ -3323,6 +3828,7 @@ function nightWinHtml() {
     </div>
     <div class="sect"><h4>${t("ncSafe")}</h4>
       <div class="bag-line"><b class="bag-sum ${n.safe >= NC_SAFE_CAP - 1 ? "full" : ""}">${money(n.safe)} / ${money(NC_SAFE_CAP)}</b><button class="btn small" id="ncCollect">${t("bagCollect")}</button></div>
+      <label class="val-in"><span>${t("safeIn")}</span><span class="dollar">$</span><input type="number" min="0" max="${NC_SAFE_CAP}" step="1000" inputmode="numeric" data-safe value="${Math.round(n.safe)}"></label>
       <p class="hint">${n.safe >= NC_SAFE_CAP - 1 ? t("ncSafeFullHint") : t("ncSafeLeft", fmtTime(f.safeLeft))}</p>
     </div>
     <div class="sect"><h4>${t("ncUpgrades")}</h4>${nightSettingsHtml()}</div>`;
@@ -3336,7 +3842,18 @@ function bindNightWin(rerender) {
   $("#ncCollect").onclick = () => { const had = n.safe; n.safe = 0; n.alert = null; done();
     toast(t("bagCollected", money(had)), { label: t("undo"), run: () => { n.safe = had; done(); } }); };
   bindValueInputs(win, done);
+  bindSafeInput(win, done);
   bindNightSettings(win, rerender);
+}
+// the Nightclub safe: set the exact amount shown in the game
+function bindSafeInput(root, done) {
+  root.querySelectorAll("[data-safe]").forEach(inp => inp.onchange = () => {
+    const n = S.biz.night;
+    n.safe = Math.max(0, Math.min(NC_SAFE_CAP, Math.round(parseFloat(inp.value) || 0)));
+    n.fired = { ...n.fired, safeNear: false, safeFull: false };
+    n.alert = null;
+    done();
+  });
 }
 function vehQuickHtml() {
   const v = vehData();
@@ -3346,10 +3863,13 @@ function vehStatsHtml(v) {
   return `<div class="bar-cap" style="margin-top:6px"><span>${t("vehCars")}</span><b>${v.count} / ${VEH_CAP}</b></div>
     <div class="thin"><i style="width:${Math.min(100, v.count / VEH_CAP * 100)}%"></i></div>
     <div class="bar-cap"><span>Top ${v.top} · Mid ${v.mid} · Std ${v.std}</span></div>
+    <div class="nc-vals"><div><small>${t("vehPrivate")}</small><b>${money(Warehouse.listNet(Warehouse.list(), false))}</b></div><div><small>${t("vehPublic")}</small><b class="hot">${money(Warehouse.listNet(Warehouse.list(), true))}</b></div></div>
+    <p class="hint">${t("vehNetHint")}</p>
     <div class="btn-row"><a class="btn primary" href="#export">${t("vehOpen")}</a></div>`;
 }
 function vehWinHtml() {
-  return `<div class="sect"><h4>${t("vehStock")}</h4>${vehQuickHtml()}<p class="hint">${t("vehNote")}</p></div>`;
+  return `<label class="mini-check"><input type="checkbox" id="wBed" ${S.biz.vehwh.bed ? "checked" : ""}> ${t("hasBed")}</label>
+  <div class="sect"><h4>${t("vehStock")}</h4>${vehQuickHtml()}<p class="hint">${t("vehNote")}</p></div>`;
 }
 // update just the numbers while a bar is being dragged
 function liveNightBits() {
@@ -3370,7 +3890,7 @@ function tick() {
   if (clock) {
     if (S.inGame) {
       const dt = (now - S.lastTick) / 60000;
-      MC.filter(d => d.production).forEach(d => advance(d.id, dt));
+      PROD.forEach(d => advance(d.id, dt));
       advanceNight(dt);
     }
     S.lastTick = now;
@@ -3378,6 +3898,7 @@ function tick() {
   checkAlerts(S.inGame && clock);
   renderLive();
   liveFocus();
+  liveTimers();
   if (clock) { if (++clockSaves % 10 === 0) save(true); ghTick(); }
 }
 
@@ -3766,7 +4287,7 @@ const ghost = document.getElementById("ghost");
 function startPlacing(id) {
   placing = id;
   mapEl.classList.add("placing");
-  ghost.innerHTML = `<div class="pin-disc"><div class="ico">${ICON[defOf(id).icon]}</div></div>`;
+  ghost.innerHTML = `<div class="pin-disc"><div class="ico">${ICO(id)}</div></div>`;
   document.getElementById("placeHint").textContent = t("placeHint", bizName(id));
   closeWin();
   closeFlyout();
@@ -3814,6 +4335,7 @@ function ringHtml(id) {
   const C = 2 * Math.PI * 21;
   if (d.kind === "night") { frac = Math.min(1, ncTotals().frac); col = ncForecast().idle ? "var(--bad)" : "var(--full)"; }
   else if (d.kind === "veh") { frac = Math.min(1, vehData().count / VEH_CAP); col = frac >= 1 ? "var(--bad)" : "var(--full)"; }
+  else if (d.kind === "ceo") { frac = Math.min(1, (b.crates || 0) / ceoCap(id)); col = frac >= 1 ? "var(--full)" : "var(--ok)"; }
   else if (!d.production) return "";
   else {
     const n = numbers(id);
@@ -3833,7 +4355,7 @@ function renderPins() {
     const el = document.createElement("div");
     el.className = "pin";
     el.dataset.id = d.id;
-    el.innerHTML = `<div class="pin-body"><div class="pin-disc">${ringHtml(d.id)}<div class="ico">${ICON[d.icon]}</div></div>${d.production ? seg5Html(b, d.id) : ""}<div class="pin-label">${bizName(d.id)}</div></div>`;
+    el.innerHTML = `<div class="pin-body"><div class="pin-disc">${ringHtml(d.id)}<div class="ico">${ICO(d.id)}</div></div>${d.production ? seg5Html(b, d.id) : ""}<div class="pin-label">${bizName(d.id)}</div></div>`;
     host.appendChild(el);
     positionPin(d.id);
   });
@@ -3881,10 +4403,10 @@ function renderTiles() {
     el.className = "tile" + (c.ready ? "" : " locked") + (c.emblem ? " emblem" : "") + (c.clear ? " clear" : "");
     el.dataset.cat = c.id;
     el.tabIndex = c.ready ? 0 : -1;
-    const owned = c.id === "mc" ? MC.filter(d => S.biz[d.id].owned).length : 0;
+    const owned = c.id === "mc" ? MC.filter(d => S.biz[d.id].owned).length : c.id === "ceo" ? CEO_SLOTS.filter(d => S.biz[d.id].owned).length : 0;
     el.innerHTML = `<div class="art ${c.art}">${c.id === "mc" ? '<div class="beam"></div>' : ""}</div>
-      ${c.id === "mc" ? `<div class="tile-dots">${MC.filter(d => d.production).map(d => `<i class="${S.biz[d.id].owned ? status(d.id) : ""}"></i>`).join("")}</div>` : c.ready ? "" : `<span class="soon">${t("soon")}</span>`}
-      <div class="tile-text"><h2>${t("cat_" + c.id)}${c.single ? nameMarks(c.single) : ""}</h2>${c.id === "mc" ? `<div class="tile-sub">${t("mcSub", owned)}</div>` : c.single ? `<div class="tile-sub">${tileSub(c.single)}</div>` : ""}</div>`;
+      ${c.id === "ceo" ? `<div class="tile-dots">${ceoDots()}</div>` : c.id === "mc" ? `<div class="tile-dots">${MC.filter(d => d.production).map(d => `<i class="${S.biz[d.id].owned ? status(d.id) : ""}"></i>`).join("")}</div>` : c.ready ? "" : `<span class="soon">${t("soon")}</span>`}
+      <div class="tile-text"><h2>${t("cat_" + c.id)}${c.single ? nameMarks(c.single) : ""}</h2>${c.id === "mc" ? `<div class="tile-sub">${t("mcSub", owned)}</div>` : c.id === "ceo" ? `<div class="tile-sub">${t("mcSub", owned)}</div>` : c.single ? `<div class="tile-sub">${tileSub(c.single)}</div>` : ""}</div>`;
     if (c.ready) bindTile(el, c);
     host.appendChild(el);
   });
@@ -3894,9 +4416,13 @@ function renderTiles() {
 const flyout = document.getElementById("flyout");
 let flyTimer = null, flyCat = null;
 const canHover = matchMedia("(hover: hover)").matches;
+function ceoDots() {
+  return CEO_SLOTS.filter(d => S.biz[d.id].owned && S.biz[d.id].wh).map(d => `<i class="${(S.biz[d.id].crates || 0) >= ceoCap(d.id) ? "full" : "ok"}"></i>`).join("");
+}
 function tileSub(id) {
   const b = S.biz[id];
   if (!b.owned) return t("notOwned");
+  if (id === "acid") return `${mansionOn(id) || b.aboost.units > 0 ? "⚡ " : ""}${t("st_" + status(id))} · <b>${Math.floor(b.stock + 1e-6)} / ${ACID.cap}</b>`;
   if (id === "night") { const tt = ncTotals(); return `${t("ncGoodsShort")} <b>${money(tt.net)}</b> · ${t("ncPopShort")} <b style="color:${popColor(b.pop)}">${Math.round(b.pop)}%</b>`; }
   if (id === "vehwh") { const v = vehData(); return `${t("vehCars")} <b>${v.count} / ${VEH_CAP}</b>`; }
   return "";
@@ -3950,6 +4476,12 @@ function closeFlyout() {
 }
 function tabSub(id) {
   const d = defOf(id), b = S.biz[id];
+  if (d.kind === "ceo") {
+    if (!b.owned) return t("ceoAdd");
+    if (!b.wh) return t("ceoNoWh");
+    const s = ceoSale(id);
+    return `${s.n} / ${s.cap} · ${money(s.base)}`;
+  }
   if (!b.owned) return t("notOwned");
   if (!d.production) {
     const bi = barInfo(), si = shopInfo(), parts = [];
@@ -3959,12 +4491,19 @@ function tabSub(id) {
     return parts.join(" · ") || (!b.pin ? t("noPin") : "");
   }
   if (!b.pin) return t("noPin");
-  return t("st_" + status(id));
+  return (mansionOn(id) ? "⚡ " : "") + t("st_" + status(id));
+}
+function flyIds() {
+  if (flyCat === "ceo") {
+    const own = CEO_SLOTS.filter(d => S.biz[d.id].owned), free = CEO_SLOTS.find(d => !S.biz[d.id].owned);
+    return [...own, ...(free ? [free] : [])].map(d => d.id);
+  }
+  return S.bizOrder.filter(id => !S.hidden.biz[id]);
 }
 function fillFlyout() {
-  if (flyCat !== "mc") return;
-  flyout.innerHTML = S.bizOrder.filter(id => !S.hidden.biz[id]).map(defOf).map(d => `<button class="tab ${d.cls}" role="menuitem" data-id="${d.id}">
-      <span class="ico">${ICON[d.icon]}</span>
+  if (flyCat !== "mc" && flyCat !== "ceo") return;
+  flyout.innerHTML = flyIds().map(defOf).map(d => `<button class="tab ${d.cls}" role="menuitem" data-id="${d.id}">
+      <span class="ico">${ICO(d.id)}</span>
       <span><span class="tab-name">${bizName(d.id)}<span class="tab-marks"></span></span><span class="tab-state"></span></span>
       <span class="tab-bar"></span>
     </button>`).join("");
@@ -4143,7 +4682,7 @@ function renderQuick() {
   if (kd) {
     let html = `<div class="q-head"><b>${bizName(id)}</b>${nameMarks(id)}</div>`;
     if (!b.owned) html += `<p class="q-note">${t("notOwned")}</p><div class="btn-row"><button class="btn primary" id="qOwn">${t("qOwn")}</button></div>`;
-    else html += kd === "night" ? nightQuickHtml() : vehQuickHtml();
+    else html += kd === "night" ? nightQuickHtml() : kd === "ceo" ? ceoQuickHtml(id) : vehQuickHtml();
     if (html === quick._last) return;        // unchanged: no rebuild, no flicker
     quick.innerHTML = quick._last = html;
     quick.querySelectorAll(".segbar").forEach(updateSegBar);
@@ -4151,6 +4690,7 @@ function renderQuick() {
     if (own) own.onclick = () => { b.owned = true; save(true); renderPins(); renderAll(); renderQuick(); };
     if (kd === "night" && b.owned) bindValueInputs(quick, () => { checkNight(false); save(true); ghMarkDirty(); renderQuick(); renderAll(); });
     if (kd === "veh" && b.owned) bindVehAdd(quick, renderQuick);
+    if (kd === "ceo" && b.owned) bindCeo(quick, id, () => { quick._last = null; renderQuick(); });
     return;
   }
   if (!defOf(id).production) {
@@ -4180,6 +4720,8 @@ function renderQuick() {
         <button class="btn primary" id="qResupply">${t("qResupply")}</button>
         <button class="btn" id="qSold">${t("qSold")}</button>
       </div>
+      ${defOf(id).acid ? acidBoostHtml() + acidMuttHtml() : ""}
+      ${mansionOn(id) ? `<div class="bar-cap"><span>⚡ ${t("boostTitle")}</span><b data-live-timer="${id}:boost"></b></div>` : ""}
       <p class="q-note">${t("qMore")}</p>`;
   }
   quick.innerHTML = html;
@@ -4188,6 +4730,8 @@ function renderQuick() {
   bindValueInputs(quick, () => afterEdit());
   if ($("#qResupply")) $("#qResupply").onclick = () => { b.supplies = 1; ackAlerts(id); afterEdit(); };
   if ($("#qSold")) $("#qSold").onclick = () => { b.stock = 0; ackAlerts(id); afterEdit(); };
+  if (defOf(id).acid && b.owned) bindAcid(quick, () => { save(true); ghMarkDirty(); renderQuick(); renderAll(); });
+  if (b.owned) bindBoost(quick, id, () => { renderQuick(); renderAll(); });
   liveQuick();
 }
 let liveCount = 0;
@@ -4350,7 +4894,7 @@ function renderWin() {
     if (b.pin) body += `<div class="layer-row"><span>${t("layer")}</span>${["top", "mid", "bottom"].map(l => `<button type="button" class="${(b.layer || "mid") === l ? "on" : ""}" data-layer="${l}">${t("layer_" + l)}</button>`).join("")}</div>`;
   }
   if (d.kind) {
-    if (b.owned) body += d.kind === "night" ? nightWinHtml() : vehWinHtml();
+    if (b.owned) body += d.kind === "night" ? nightWinHtml() : d.kind === "ceo" ? ceoWinHtml(id) : vehWinHtml();
   } else if (!d.production) {
     body += `<p class="hint">${t("clubNote")}</p>`;
     if (b.owned) {
@@ -4376,10 +4920,12 @@ function renderWin() {
       <div class="row"><span class="state-badge st-${st}" id="wState">${t("st_" + st)}</span>${!S.inGame ? `<span class="hint" style="margin:0">${t("ingameOff")}</span>` : ""}</div>
       <div class="sect"><h4>${t("upgrades")}</h4>
         <div class="chip-row">
-          <button class="chip ${b.equip ? "on" : ""}" id="wEquip">${b.equip ? "✓ " : ""}${t("equipment")}</button>
-          <button class="chip ${b.staff ? "on" : ""}" id="wStaff">${b.staff ? "✓ " : ""}${t("staff")}</button>
+          <button class="chip ${b.equip ? "on" : ""}" id="wEquip">${b.equip ? "✓ " : ""}${t(d.acid ? "acidEquip" : "equipment")}</button>
+          ${d.acid ? "" : `<button class="chip ${b.staff ? "on" : ""}" id="wStaff">${b.staff ? "✓ " : ""}${t("staff")}</button>`}
         </div>
       </div>
+      ${boostHtml(id)}
+      ${d.acid ? acidBoostHtml() + acidExtrasHtml() : ""}
       <p class="hint">${t("barHelp")}</p>
       <div class="sect"><h4>${t("supplies")}</h4>
         ${segBarHtml("supplies", id)}
@@ -4392,7 +4938,7 @@ function renderWin() {
       </div>
       ${valueInputHtml(id)}
       <div class="sect"><h4>${t("value")}</h4>
-        <div class="kv" id="wValue"><span>${t("local")}</span><b>${money(Math.floor(b.stock + 1e-6) * n.value)}</b><span>${t("far")}</span><b>${money(Math.floor(b.stock + 1e-6) * n.value * FAR_BONUS)}</b></div>
+        <div class="kv" id="wValue"><span>${t("local")}</span><b>${money(Math.floor(b.stock + 1e-6) * n.value)}</b><span>${t(d.acid ? "pubMax" : "far")}</span><b>${money(Math.floor(b.stock + 1e-6) * n.value * FAR_BONUS)}</b></div>
       </div>
       <div class="btn-row">
         <button class="btn primary" id="wResupply">${t("resupply")}</button>
@@ -4411,8 +4957,8 @@ function renderWin() {
   }
   const html = `
     <div class="win-head ${d.cls}">
-      <span class="ico">${ICON[d.icon]}</span>
-      <div><h3>${bizName(id)}${nameMarks(id)}</h3><small>${t(d.kind === "night" ? "ncSubtitle" : d.kind === "veh" ? "cat_veh" : "cat_mc")}</small></div>
+      <span class="ico">${ICO(d.id)}</span>
+      <div><h3>${bizName(id)}${nameMarks(id)}</h3><small>${d.kind === "ceo" ? (ceoWh(id) ? `${t("cat_ceo")} · ${ceoWh(id).a} · ${ceoCap(id)}` : t("cat_ceo")) : t(d.kind === "night" ? "ncSubtitle" : d.kind === "veh" ? "cat_veh" : d.acid ? "cat_acid" : "cat_mc")}</small></div>
       ${d.kind === "night" && b.owned && !isPhone() ? `<button class="btn small win-mode" id="wMode">${S.ncAdvanced ? t("modeSimple") : t("modeAdvanced")}</button>` : ""}
       <button class="icon-btn" id="wClose" aria-label="${t("close")}">✕</button>
     </div>
@@ -4432,7 +4978,8 @@ function bindWin(id) {
   if ($("#wPin")) $("#wPin").onclick = () => startPlacing(id);
   if ($("#wPinDel")) $("#wPinDel").onclick = () => { b.pin = null; changed(); renderPins(); };
   win.querySelectorAll("[data-layer]").forEach(x => x.onclick = () => { b.layer = x.dataset.layer; save(true); renderWin(); updatePinStates(); });
-  if (defOf(id).kind === "veh" && b.owned) bindVehAdd(win, () => renderWin());
+  if (defOf(id).kind === "veh" && b.owned) { bindVehAdd(win, () => renderWin()); $("#wBed").onchange = e => { b.bed = e.target.checked; save(true); ghMarkDirty(); renderWin(); renderAll(); }; }
+  if (defOf(id).kind === "ceo" && b.owned) bindCeo(win, id, () => { const wb = win.querySelector(".win-body"), sc = wb ? wb.scrollTop : 0; win._last = null; renderWin(); const nb = win.querySelector(".win-body"); if (nb) nb.scrollTop = sc; });
   if (defOf(id).kind) { if (defOf(id).kind === "night" && b.owned) bindNightWin(() => { const sc = win.querySelector(".win-body").scrollTop; renderWin(); win.querySelector(".win-body").scrollTop = sc; }); return; }
   if (!defOf(id).production) {
     if (!b.owned) return;
@@ -4460,7 +5007,9 @@ function bindWin(id) {
   }
   if (!b.owned) return;
   $("#wEquip").onclick = () => { b.equip = !b.equip; changed(); };
-  $("#wStaff").onclick = () => { b.staff = !b.staff; changed(); };
+  if ($("#wStaff")) $("#wStaff").onclick = () => { b.staff = !b.staff; changed(); };
+  if (defOf(id).acid) bindAcid(win, () => { ghMarkDirty(); changed(); });
+  bindBoost(win, id, () => changed());
   bindValueInputs(win, () => changed());
   $("#wResupply").onclick = () => { b.supplies = 1; ackAlerts(id); changed(); };
   $("#wSold").onclick = () => { b.stock = 0; ackAlerts(id); changed(); };
@@ -4491,7 +5040,7 @@ function liveWin() {
   q("#wStockNum").textContent = t("stockOf", [Math.floor(b.stock + 1e-6), n.cap]);
   q("#wStockHint").textContent = b.stock >= n.cap ? t("st_full") : isFinite(f.minToFull) ? t("toFull", fmtTime(f.minToFull)) : t("needsSupplies");
   const units = Math.floor(b.stock + 1e-6);
-  q("#wValue").innerHTML = `<span>${t("local")}</span><b>${money(units * n.value)}</b><span>${t("far")}</span><b>${money(units * n.value * FAR_BONUS)}</b>`;
+  q("#wValue").innerHTML = `<span>${t("local")}</span><b>${money(units * n.value)}</b><span>${t(defOf(id).acid ? "pubMax" : "far")}</span><b>${money(units * n.value * FAR_BONUS)}</b>`;
 }
 
 function renderHead() {
@@ -4500,7 +5049,7 @@ function renderHead() {
   ig.setAttribute("aria-checked", S.inGame);
   ingameSub.textContent = S.inGame ? t("ingameOn") : t("ingameOff");
   let total = 0, next = null;
-  MC.filter(d => d.production).forEach(d => {
+  PROD.forEach(d => {
     const b = S.biz[d.id];
     if (!b.owned) return;
     const n = numbers(d.id);
@@ -4511,6 +5060,7 @@ function renderHead() {
     const cand = Math.max(0, Math.min(lowIn, f.minToFull));
     if (isFinite(cand) && (!next || cand < next.m)) next = { m: cand, id: d.id };
   });
+  CEO_SLOTS.forEach(d => { if (S.biz[d.id].owned) total += ceoSale(d.id).base; });
   if (S.biz.night.owned) {
     total += ncTotals().net + S.biz.night.safe;
     const f = ncForecast(), m = Math.min(f.firstFull, f.safeLeft);
@@ -4529,6 +5079,11 @@ function renderAll() {
   if (mcTile) {
     mcTile.querySelector(".tile-dots").innerHTML = MC.filter(d => d.production).map(d => `<i class="${S.biz[d.id].owned ? status(d.id) : ""}"></i>`).join("");
     mcTile.querySelector(".tile-sub").textContent = t("mcSub", MC.filter(d => S.biz[d.id].owned).length);
+  }
+  const ceoTile = document.querySelector('.tile[data-cat="ceo"]');
+  if (ceoTile) {
+    ceoTile.querySelector(".tile-dots").innerHTML = ceoDots();
+    ceoTile.querySelector(".tile-sub").textContent = t("mcSub", CEO_SLOTS.filter(d => S.biz[d.id].owned).length);
   }
   CATEGORIES.filter(c => c.single).forEach(c => {
     const tl = document.querySelector(`.tile[data-cat="${c.id}"]`);
@@ -4730,7 +5285,7 @@ makeSortable(document.getElementById("tiles"), ".tile", {
 });
 makeSortable(flyout, ".tab", {
   onStart: () => { clearTimeout(flyTimer); closeQuick(); },
-  onDrop: ids => { S.bizOrder = ids; save(true); if (!flyout.matches(":hover")) scheduleClose(); }
+  onDrop: ids => { if (flyCat === "mc") S.bizOrder = ids; save(true); if (!flyout.matches(":hover")) scheduleClose(); }
 });
 
 /* ======================================================================
@@ -4744,6 +5299,7 @@ const TOUR = [
   { k: 2, target: () => ingameEl },
   { k: 3, side: true, target: () => qs('.tile[data-cat="mc"]') },
   { k: 4, side: true, prep: () => { const tl = qs('.tile[data-cat="mc"]'); openFlyout(tl, CATEGORIES[0]); }, target: () => qs("#flyout") },
+  { k: 13, side: true, target: () => [qs('.tile[data-cat="ceo"]'), qs('.tile[data-cat="acid"]')].filter(Boolean) },
   { k: 5, desk: true, side: true, prep: () => { const tl = qs('.tile[data-cat="mc"]'); openFlyout(tl, CATEGORIES[0]); const tb = qs('.tab[data-id="coke"]'); if (tb) openQuick("coke", tb); }, target: () => qs("#quick") },
   { k: 6, prep: () => openWin("coke", false), target: () => qs("#win") },
   { k: 7, prep: () => openWin("coke", false), target: () => { const bars = [...document.querySelectorAll("#win .segbar")]; return bars.length ? bars : qs("#win"); } },
@@ -4753,12 +5309,20 @@ const TOUR = [
   { k: 11, target: () => qs("#moreBtn") },
   { k: 12 }
 ];
+// the MC Business and Nightclub pages have short tours of their own
+const fq = sel => focusEl.querySelector(sel);
+const PAGE_TOURS = {
+  mc: [{ k: "mt1" }, { k: "mt2", target: () => fq(".mcb-grid") || fq(".mcb") }, { k: "mt3", target: () => fq(".mcb .segbar") }, { k: "mt4", target: () => ingameEl }],
+  night: [{ k: "nt1" }, { k: "nt2", target: () => fq(".adv-card") }, { k: "nt3", target: () => fq(".mixer") }, { k: "nt4", target: () => { const r = fq(".adv-range"); return r ? r.closest(".adv-card") : null; } }, { k: "nt5", target: () => ingameEl }]
+};
+const tourKeyOf = () => VIEW ? TOUR_KEY + ":" + VIEW : TOUR_KEY;
 sec.tourKey = TOUR_KEY;
-sec.tour = () => VIEW ? null : TOUR.filter(st => !(st.desk && isPhone())).map(st => ({
+sec.tour = () => VIEW ? (S.biz[VIEW === "mc" ? "weed" : "night"] ? PAGE_TOURS[VIEW].map(st => ({ k: "pm." + st.k, target: st.target })) : null) : TOUR.filter(st => !(st.desk && isPhone())).map(st => ({
   k: "pm.pt" + st.k, target: st.target, delay: 320,
   before: () => { tourReset(); if (st.side && !S.sideOpen) setSide(true); if (st.prep) st.prep(); }
 }));
-sec.startTour = () => { const s = sec.tour(); if (s) Tour.start(s, TOUR_KEY, tourReset); };
+sec.startTour = () => { const s = sec.tour(); if (s) Tour.start(s, tourKeyOf(), tourReset); };
+sec.tourSeen = () => !!localStorage.getItem(tourKeyOf());
 
 
 /* ======================================================================
@@ -4806,6 +5370,7 @@ function nightAdvancedHtml() {
       <div class="btn-row"><button class="btn small" data-a="dj">${t("ncDj")}</button></div>
       <h4 style="margin-top:16px">${t("ncSafe")}</h4>
       <div class="bag-line"><b class="bag-sum ${n.safe >= NC_SAFE_CAP - 1 ? "full" : ""}">${money(n.safe)} / ${money(NC_SAFE_CAP)}</b><button class="btn small" data-a="collect">${t("bagCollect")}</button></div>
+      <label class="val-in"><span>${t("safeIn")}</span><span class="dollar">$</span><input type="number" min="0" max="${NC_SAFE_CAP}" step="1000" inputmode="numeric" data-safe value="${Math.round(n.safe)}"></label>
       <h4 style="margin-top:16px">${t("advAttention")}</h4>
       <div class="adv-alerts">${states.map(([k, m]) => `<div class="k-${k}"><span class="nbar"></span>${m}</div>`).join("") || `<div class="muted">${t("advAllGood")}</div>`}</div>
     </section>
@@ -4837,6 +5402,7 @@ function nightAdvancedHtml() {
 function bindNightAdvanced(root, rerender) {
   const n = S.biz.night;
   const done = () => { checkNight(false); save(true); ghMarkDirty(); rerender(); renderAll(); };
+  bindSafeInput(root, done);
   root.querySelectorAll("[data-a]").forEach(el => {
     const a = el.dataset.a;
     if (a === "lobby") { el.oninput = () => { n.lobby = +el.value; el.nextElementSibling.textContent = el.value; }; el.onchange = done; return; }
@@ -4880,7 +5446,7 @@ function rerenderNightViews() {
 function mcBoardHtml() {
   const cards = MC.filter(d => d.production).map(d => {
     const b = S.biz[d.id];
-    const head = `<div class="mcb-head ${d.cls}"><span class="ico">${ICON[d.icon]}</span><b>${bizName(d.id)}</b>${b.owned ? `<span class="state-badge st-${status(d.id)}">${t("st_" + status(d.id))}</span>` : ""}</div>`;
+    const head = `<div class="mcb-head ${d.cls}"><span class="ico">${ICO(d.id)}</span><b>${bizName(d.id)}</b>${b.owned ? `<span class="state-badge st-${status(d.id)}">${t("st_" + status(d.id))}</span>` : ""}</div>`;
     if (!b.owned) return `<section class="mcb">${head}<div class="mcb-body"><p class="muted">${t("notOwned")}</p><button class="btn primary" data-own="${d.id}">${t("qOwn")}</button></div></section>`;
     const n = numbers(d.id), f = forecast(d.id), units = Math.floor(b.stock + 1e-6);
     return `<section class="mcb">${head}<div class="mcb-body">
@@ -5013,7 +5579,7 @@ async function ghPullPM() {
 Bus.on("auth", on => { if (on) ghPullPM(); });
 
 
-function bizIcon(id) { return id ? ICON[defOf(id).icon] : ""; }
+function bizIcon(id) { return id ? ICO(id) : ""; }
 function escapeHtml(x) { return String(x).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]); }
 
 let toastTimer = null;
@@ -5220,7 +5786,8 @@ Section({
   show(r, changed) {
     this.pm.setView(r.view || null);
     Router.refreshChrome();
-    if (!r.view && !this.pm.seen() && !Tour.layer.open) setTimeout(() => { if (Router.cur === this && !Router.route.view) this.startTour(); }, 900);
+    // first visit of the map, the MC page or the Nightclub page: its own tour
+    if (!this.tourSeen() && !Tour.layer.open) setTimeout(() => { if (Router.cur === this && (Router.route.view || null) === (r.view || null) && this.tour()) this.startTour(); }, 900);
   }
 });
 </script>
@@ -5326,6 +5893,19 @@ Section({
 #sec-export .sidebar { top: var(--header-h); height: calc(100vh - var(--header-h)); }
 #sec-export h1, #sec-export h2, #sec-export .collection-title { font-family: 'Barlow Condensed', Barlow, sans-serif; letter-spacing: .01em; }
 #sec-export .main h1 { font-size: 1.7rem; }
+#sec-export .tk-value { margin: 0 0 18px; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg2); }
+#sec-export .tk-value-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+#sec-export .tk-value-head h2 { margin: 0 auto 0 0; font-size: 1.2rem; }
+#sec-export .tk-mode { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+#sec-export .tk-mode button { padding: 6px 12px; border: 0; background: var(--bg3); color: var(--muted); font: 600 13px Barlow, sans-serif; cursor: pointer; }
+#sec-export .tk-mode button.on { background: var(--accent); color: var(--accent-text); }
+#sec-export .tk-vals { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
+#sec-export .tk-vals > div { padding: 9px 11px; border-radius: 8px; background: var(--bg3); }
+#sec-export .tk-vals small { display: block; color: var(--muted); font-size: 12px; }
+#sec-export .tk-vals b { display: block; font: 700 1.35rem/1.2 'Barlow Condensed', sans-serif; color: var(--ok); }
+#sec-export .tk-vals span { display: block; color: var(--muted); font-size: 11.5px; margin-top: 2px; }
+#sec-export .tk-note { margin: 10px 0 0; color: var(--muted); font-size: 12px; }
+#sec-export .col-val { font-size: 12px; color: var(--ok); font-weight: 700; white-space: nowrap; }
 @media (max-width: 900px) {
   #sec-export:not([hidden]) { flex-direction: column; }
   #sec-export .sidebar { position: static; height: auto; }
@@ -5374,6 +5954,13 @@ Section({
   <h1>Vehicle Cargo Collections</h1>
   <p class="subtitle" data-i18n="tk.subtitle"></p>
   <div class="progress"><span data-i18n="tk.complete"></span> <span id="doneCount">0</span> / 10</div>
+  <div class="tk-value">
+    <div class="tk-value-head"><h2 data-i18n="tk.valTitle"></h2>
+      <div class="tk-mode" role="group"><button type="button" data-lobby="private" data-i18n="tk.private"></button><button type="button" data-lobby="public" data-i18n="tk.public"></button></div>
+    </div>
+    <div class="tk-vals" id="tkVals"></div>
+    <p class="tk-note" data-i18n="tk.valNote"></p>
+  </div>
   <div id="collections"></div>
   <div class="actions">
     <button type="button" id="tkResetCols" data-i18n="tk.resetCols"></button>
@@ -5391,7 +5978,18 @@ i18n({
     "tk.noCars": "No cars added yet.", "tk.noResults": "No results for the current filters.", "tk.badgeCol": "COLLECTION", "tk.badgeSell": "TO SELL", "tk.del": "Delete",
     "tk.confirmReset": "Reset all collection ticks?", "tk.confirmEmpty": "Empty the warehouse list?", "tk.collector": "Collector:",
     "tk.exported": "Exported", "tk.markExported": "Mark the whole collection as exported", "tk.showCars": "Show the cars", "tk.carsDone": (a, b) => `${a} / ${b} cars`,
-    "tk.added": n => `${n} added to the warehouse.` },
+    "tk.added": n => `${n} added to the warehouse.`,
+    "tk.valTitle": "What you earn", "tk.private": "Invite only", "tk.public": "Public 20+",
+    "tk.valAll": "All cars in the warehouse", "tk.valSell": "Only the cars to sell", "tk.valCols": "Collections not exported yet",
+    "tk.valNet": "after the modification cost", "tk.valColsSub": n => `${n} collection(s), with the collection bonus`,
+    "tk.colWorth": "worth",
+    "tk.t1t": "Vehicle Export Tracker", "tk.t1b": "The cars sitting in your vehicle warehouse and the 10 collections they complete. Linked with the Vehicle Warehouse in Production Manager.",
+    "tk.t2t": "Your warehouse", "tk.t2b": "How many cars you have, split by Top / Mid / Standard. Search and filter: <b>Collection</b> shows the cars you keep, <b>To sell</b> the ones you can sell now.",
+    "tk.t3t": "Add a car", "tk.t3b": "Type part of the plate or the name, pick it from the list and press <b>Add</b>. Name, plate and range fill in by themselves.",
+    "tk.t4t": "What you earn", "tk.t4b": "Choose <b>Invite only</b> or <b>Public 20+</b>: you see the money after the modification cost, for all the cars, for the ones to sell and for the collections.",
+    "tk.t5t": "Collections", "tk.t5b": "Tick each car you have delivered for a collection. When the whole collection is exported it shows ✓ Exported, folds and moves to the end.",
+    "tk.t6t": "Backups", "tk.t6b": "Export / Import save the list to a file. When you are logged in, everything is also saved to GitHub by itself.",
+    "tk.valNote": "Specialist dealer: Top $100,000, Mid $62,500, Standard $37,500, minus the modification cost ($20,000 / $12,500 / $7,500). Public 20+: +50% High Demand bonus. A whole collection is sold without modification cost, plus its bonus." },
   ro: { "tk.stored": "mașini stocate", "tk.searchPh": "🔍 Caută nume sau plăcuță...", "tk.all": "Toate", "tk.collection": "Colecție", "tk.toSell": "De vândut", "tk.shown": "Afișate:",
     "tk.addPh": "Adaugă: caută plăcuță sau nume...", "tk.carName": "Nume mașină", "tk.plate": "Plăcuță", "tk.addBtn": "+ Adaugă în warehouse",
     "tk.subtitle": "Filtrează warehouse-ul pe „De vândut” ca să vezi rapid mașinile care nu fac parte din nicio colecție.",
@@ -5400,7 +5998,18 @@ i18n({
     "tk.noCars": "Nicio mașină adăugată încă.", "tk.noResults": "Niciun rezultat pentru filtrele curente.", "tk.badgeCol": "COLECȚIE", "tk.badgeSell": "DE VÂNDUT", "tk.del": "Șterge",
     "tk.confirmReset": "Resetezi toate bifările de colecții?", "tk.confirmEmpty": "Golești lista de mașini din warehouse?", "tk.collector": "Colecționar:",
     "tk.exported": "Exportată", "tk.markExported": "Marchează toată colecția ca exportată", "tk.showCars": "Arată mașinile", "tk.carsDone": (a, b) => `${a} / ${b} mașini`,
-    "tk.added": n => `${n} adăugată în warehouse.` }
+    "tk.added": n => `${n} adăugată în warehouse.`,
+    "tk.valTitle": "Cât câștigi", "tk.private": "Invite only", "tk.public": "Public 20+",
+    "tk.valAll": "Toate mașinile din warehouse", "tk.valSell": "Doar mașinile de vândut", "tk.valCols": "Colecțiile neexportate încă",
+    "tk.valNet": "după costul modificărilor", "tk.valColsSub": n => `${n} colecți(i), cu bonusul de colecție`,
+    "tk.colWorth": "valoare",
+    "tk.t1t": "Vehicle Export Tracker", "tk.t1b": "Mașinile din depozitul de vehicule și cele 10 colecții pe care le completează. Legat de Vehicle Warehouse din Production Manager.",
+    "tk.t2t": "Depozitul tău", "tk.t2b": "Câte mașini ai, pe Top / Mid / Standard. Caută și filtrează: <b>Colecție</b> arată mașinile pe care le păstrezi, <b>De vândut</b> pe cele pe care le poți vinde acum.",
+    "tk.t3t": "Adaugă o mașină", "tk.t3b": "Scrie o parte din plăcuță sau din nume, alege din listă și apasă <b>Adaugă</b>. Numele, plăcuța și categoria se completează singure.",
+    "tk.t4t": "Cât câștigi", "tk.t4b": "Alege <b>Invite only</b> sau <b>Public 20+</b>: vezi banii după costul modificărilor, pentru toate mașinile, pentru cele de vândut și pentru colecții.",
+    "tk.t5t": "Colecții", "tk.t5b": "Bifează fiecare mașină livrată pentru o colecție. Când toată colecția e exportată apare ✓ Exportată, se pliază și trece la final.",
+    "tk.t6t": "Copii de siguranță", "tk.t6b": "Export / Import salvează lista într-un fișier. Când ești în cont, totul se salvează și în GitHub singur.",
+    "tk.valNote": "Dealerul specialist: Top $100,000, Mid $62,500, Standard $37,500, minus costul modificărilor ($20,000 / $12,500 / $7,500). Public 20+: +50% bonus High Demand. O colecție întreagă se vinde fără cost de modificare, plus bonusul ei." }
 });
 
 /* Warehouse data, shared with Production Manager (Vehicle Warehouse pin) */
@@ -5455,11 +6064,20 @@ const Warehouse = (() => {
   COLLECTIONS.forEach(c => c.vehicles = c.plates.map(p => ({ name: byPlate[p].name, plate: p, range: byPlate[p].range })));
   const colPlates = new Set(COLLECTIONS.flatMap(c => c.plates));
   const FILE = "data/warehouse.json";
+  // what one car pays at the Specialist dealer, and what its modifications cost before the sale
+  const PRICE = { Top: 100000, Mid: 62500, Standard: 37500 }, MOD = { Top: 20000, Mid: 12500, Standard: 7500 }, PUBLIC_BONUS = 0.5;
   const W = {
     ALL, COLLECTIONS, byPlate, colPlates,
     list: () => LS.get("gtaWarehouse", []),
     checks: () => LS.get("gtaChecks", {}),
     rangeOf: c => c.range || (byPlate[c.plate] || {}).range || "",
+    PRICE, MOD, PUBLIC_BONUS,
+    lobby: () => LS.raw("gtaExportLobby", "private") === "public" ? "public" : "private",
+    // net money for one car sold on its own (pub = public lobby, 20+ players)
+    carNet: (range, pub) => PRICE[range] ? Math.round(PRICE[range] * (1 + (pub ? PUBLIC_BONUS : 0)) - MOD[range]) : 0,
+    listNet(list, pub) { return list.reduce((s, c) => s + W.carNet(W.rangeOf(c), pub), 0); },
+    // a whole collection: no modification cost, plus its bonus
+    colValue(col, pub) { return col.vehicles.reduce((s, v) => s + PRICE[v.range] * (1 + (pub ? PUBLIC_BONUS : 0)), 0) + (+col.bonus.replace(/\D/g, "") || 0); },
     // a small summary Production Manager reads for the Vehicle Warehouse pin
     summary(list = W.list()) {
       const n = r => list.filter(c => W.rangeOf(c) === r).length;
@@ -5500,6 +6118,11 @@ const Warehouse = (() => {
 
 Section({
   id: "export",
+  tourKey: "gtaExportTourSeen",
+  tour: () => [
+    { k: "tk.t1" }, { k: "tk.t2", target: () => [$("#sec-export .range-stats"), $("#sec-export .filters")] }, { k: "tk.t3", target: () => $("#sec-export .add-form") },
+    { k: "tk.t4", target: () => $("#sec-export .tk-value") }, { k: "tk.t5", target: () => $("#collections .collection") }, { k: "tk.t6", target: () => $("#sec-export .io-buttons") }
+  ],
   init() {
     const W = Warehouse, el = this.el, q = s => el.querySelector(s);
     let colFilter = "all", rngFilter = "all", picked = null, matches = [], sel = -1;
@@ -5600,6 +6223,19 @@ Section({
           </div><button type="button" data-del="${c.id}" title="${t("tk.del")}">✕</button></div>`;
       }).join("");
     }
+    function renderValue() {
+      const pub = W.lobby() === "public", list = W.list(), checks = W.checks();
+      $$("[data-lobby]", el).forEach(b => b.classList.toggle("on", (b.dataset.lobby === "public") === pub));
+      const sell = list.filter(c => !W.colPlates.has(c.plate));
+      const per = r => list.filter(c => W.rangeOf(c) === r).length;
+      const open = W.COLLECTIONS.filter(c => checks[c.id] !== true);
+      q("#tkVals").innerHTML = `
+        <div><small>${t("tk.valAll")}</small><b>${money(W.listNet(list, pub))}</b><span>Top ${per("Top")} × ${money(W.carNet("Top", pub))} · Mid ${per("Mid")} × ${money(W.carNet("Mid", pub))} · Std ${per("Standard")} × ${money(W.carNet("Standard", pub))}</span></div>
+        <div><small>${t("tk.valSell")}</small><b>${money(W.listNet(sell, pub))}</b><span>${sell.length} · ${t("tk.valNet")}</span></div>
+        <div><small>${t("tk.valCols")}</small><b>${money(open.reduce((s, c) => s + W.colValue(c, pub), 0))}</b><span>${t("tk.valColsSub", open.length)}</span></div>`;
+    }
+    const money = n => "$" + Math.round(n).toLocaleString("en-US");
+    el.addEventListener("click", e => { const b = e.target.closest("[data-lobby]"); if (b) { LS.set("gtaExportLobby", b.dataset.lobby); render(); Bus.emit("warehouse"); } });
     function renderCollections() {
       const checks = W.checks(), have = new Set(W.list().map(c => c.plate)), box = q("#collections");
       let done = 0;
@@ -5613,7 +6249,8 @@ Section({
             <input type="checkbox" data-whole="${col.id}" ${colDone ? "checked" : ""} title="${t("tk.markExported")}">
             <div class="collection-title">${col.name}</div>
             ${colDone ? `<span class="exported">✓ ${t("tk.exported")}</span>` : `<span class="col-prog">${t("tk.carsDone", got, col.vehicles.length)}</span>`}
-            <div class="bonus">${col.bonus}</div>
+            <span class="col-val">${t("tk.colWorth")} ${money(W.colValue(col, W.lobby() === "public"))}</span>
+            <div class="bonus">+${col.bonus}</div>
             ${colDone ? `<button class="fold" type="button" data-fold="${col.id}" aria-expanded="${open}" title="${t("tk.showCars")}">${open ? "▴" : "▾"}</button>` : ""}
           </div>
           <div class="collector">${t("tk.collector")} ${col.collector}</div>
@@ -5641,14 +6278,17 @@ Section({
       } else return;
       W.setChecks(checks);
     });
-    const render = () => { renderWarehouse(); renderCollections(); };
+    const render = () => { renderWarehouse(); renderCollections(); renderValue(); };
     this.render = render;
     Bus.on("warehouse", () => { if (!el.hidden) render(); });
     Bus.on("lang", () => { if (!el.hidden) render(); });
     applyI18n(el);
     W.summary();
   },
-  show() { this.render(); }
+  show() {
+    this.render();
+    if (!Tour.seen(this.tourKey)) setTimeout(() => { if (Router.cur === this && !Tour.layer.open) Tour.start(this.tour(), this.tourKey); }, 700);
+  }
 });
 Bus.on("auth", on => { if (on) Warehouse.pull(); });
 </script>
