@@ -2,6 +2,13 @@
 
 * * *
 
+### v0.12.0 (2026-10-24)
+* Production Manager:
+  * Add Bunker: pick yours from the game's 11 bunkers, staff on manufacturing, research or both, research progress with an alert when a project is done, Equipment / Staff / Security, bed, Mansion boost.
+  * Add the Bunker advanced view (Disruption Logistics bars, staff planner, sale) in the window and as its own page, #bunker, in the Production Manager submenu.
+  * Add: pointing at a business in the menu lights up its pin and brings it to the middle of the free map; the map goes back when the menu closes.
+  * Fix the CEO Warehouses tile showing the MC Business text.
+
 ### v0.11.0 (2026-10-24)
 * Add Property, Financial and Job Manager to Home as coming soon.
 * Home:

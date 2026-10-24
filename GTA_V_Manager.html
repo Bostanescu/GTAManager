@@ -516,7 +516,7 @@ html[data-anim="off"] *, html[data-anim="off"] *::before, html[data-anim="off"] 
 /* ======================================================================
    CORE — written once, used by every section
    ====================================================================== */
-const APP_VERSION = "0.11";
+const APP_VERSION = "0.12";
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -778,65 +778,18 @@ function openText(title, html) {
 }
 // one history for the whole of GTA V Manager, newest first (changelog.json, also published as CHANGELOG.md)
 const CHANGELOG = [
- {"v": "0.11.0", "date": "2026-10-24",
-  "en": ["Add Property, Financial and Job Manager to Home as coming soon.",
-         {"area": "Home", "items": ["Change cards: no title under the emblem, one line of text, see-through.", "Fix a leftover piece of another emblem under Vehicle Warehouse."]},
-         {"area": "Weekly bonuses", "items": ["Change order: 2X first, then 3X.", "Show all 2X and 3X when the window opens; Show less goes back to that size.", "Add a bigger button to make the window small."]},
-         {"area": "Production Manager", "items": ["Add short lists for every business on phones, with Open all settings.", "Add a bar of boxes for CEO crates (click or drag).", "Add Add another warehouse in the CEO window; the new warehouse opens straight away.", "Change the empty CEO slot in the menu into a small + button.", "Change map rings: red when empty, orange at half, light green when full.", "Add a Stock label to the value in the top bar.", "Add alerts when the Acid Lab daily boost is used up and when it is available again.", "Change phone menu tiles: smaller, emblem only.", "Fix windows jumping to the top after ticking a box.", "Fix the map switching to Satellite while zooming on another style.", "Fix leftover pieces around the CEO, Hangar, Acid Lab and Vehicle Warehouse emblems."]},
-         {"area": "Vehicle Manager", "items": ["Add a photo editor: brightness, contrast, saturation, hue, warmth, rotate, mirror.", "Change the Garages button icon."]},
-         "Add a highlighted Start here button for first-time visitors.",
-         "Change Vehicle Export Tracker: Invite only and Public 20+ shown side by side.",
-         "Change the version history to this format; versions renumbered (1.0 and 1.1 became 0.9 and 0.10)."],
-  "ro": ["Adaugă Property, Financial și Job Manager pe Home, ca „în curând”.",
-         {"area": "Home", "items": ["Schimbă cardurile: fără titlu sub emblemă, un rând de text, semi-transparente.", "Repară o bucată rămasă din altă emblemă sub Vehicle Warehouse."]},
-         {"area": "Bonusurile săptămânii", "items": ["Schimbă ordinea: întâi 2X, apoi 3X.", "Arată tot 2X și 3X la deschidere; Arată mai puțin revine la mărimea aceea.", "Adaugă un buton mai mare pentru micșorarea ferestrei."]},
-         {"area": "Production Manager", "items": ["Adaugă liste scurte pentru toate afacerile pe telefon, cu Toate setările.", "Adaugă o bară de căsuțe pentru lăzile CEO (click sau tras).", "Adaugă Adaugă alt depozit în fereastra CEO; depozitul nou se deschide imediat.", "Schimbă locul liber CEO din meniu într-un buton + mic.", "Schimbă inelele de pe hartă: roșu gol, portocaliu la jumătate, verde deschis plin.", "Adaugă eticheta Stoc la valoarea din bara de sus.", "Adaugă alerte când boost-ul zilnic Acid Lab se consumă și când e din nou disponibil.", "Schimbă dalele din meniu pe telefon: mai mici, doar emblema.", "Repară ferestrele care săreau sus după o bifă.", "Repară harta care trecea pe Satelit la zoom, pe alt stil.", "Repară resturile din jurul emblemelor CEO, Hangar, Acid Lab și Vehicle Warehouse."]},
-         {"area": "Vehicle Manager", "items": ["Adaugă un editor de poze: luminozitate, contrast, saturație, nuanță, căldură, rotire, oglindă.", "Schimbă iconița butonului Garaje."]},
-         "Adaugă butonul evidențiat Începe aici pentru cine vine prima oară.",
-         "Schimbă Vehicle Export Tracker: Invite only și Public 20+ unul lângă altul.",
-         "Schimbă istoricul versiunilor în acest format; versiuni renumerotate (1.0 și 1.1 au devenit 0.9 și 0.10)."]},
- {"v": "0.10.0", "date": "2026-10-24",
-  "en": [{"area": "Production Manager", "items": ["Add CEO Warehouses: the game's 22 warehouses, crates, sale value, staff timer, special items, delivery vehicle upgrades.", "Add Acid Lab: production, Mutt's supplies timer, daily boost, upgrades.", "Add the Mansion production boost (x3 for 24 hours) for MC businesses and Acid Lab.", "Add typing the Nightclub safe amount.", "Add a bed mark for the Vehicle Warehouse."]},
-         "Add what you earn to Vehicle Export Tracker (Invite only / Public 20+, after the modification cost), also in Production Manager.",
-         "Add garage levels to Vehicle Manager, picked from a list when adding a vehicle.",
-         {"area": "Home", "items": ["Add the background poster.", "Add this week's GTA Online bonuses, read every Thursday by a GitHub Action.", "Add the Getting started guide."]},
-         "Add a guided tour to every page.",
-         "Fix the Production Manager submenu closing too fast.",
-         "Change: no car emoji next to the Vehicle Manager title."],
-  "ro": [{"area": "Production Manager", "items": ["Adaugă depozitele CEO: cele 22 din joc, lăzi, valoarea de vânzare, timer pentru angajat, obiecte speciale, upgrade-uri pentru vehiculele de livrare.", "Adaugă Acid Lab: producție, timer pentru proviziile de la Mutt, boost zilnic, upgrade-uri.", "Adaugă boost-ul de producție din Mansion (x3 timp de 24 de ore) pentru afacerile MC și Acid Lab.", "Adaugă scrierea sumei din seiful Nightclub.", "Adaugă semnul de pat la Vehicle Warehouse."]},
-         "Adaugă cât câștigi în Vehicle Export Tracker (Invite only / Public 20+, după costul modificărilor), și în Production Manager.",
-         "Adaugă niveluri la garajele din Vehicle Manager, alese din listă la adăugarea vehiculului.",
-         {"area": "Home", "items": ["Adaugă posterul de fundal.", "Adaugă bonusurile săptămânii din GTA Online, citite în fiecare joi de un GitHub Action.", "Adaugă Ghidul de început."]},
-         "Adaugă tur ghidat pe fiecare pagină.",
-         "Repară submeniul Production Manager care se închidea prea repede.",
-         "Schimbă: fără mașinuța de lângă titlul Vehicle Manager."]},
- {"v": "0.9.0", "date": "2026-10-23",
-  "en": ["Change: rewritten as one clean page: one top bar, one theme system, one language switch, one login, one notifications bell, one tour engine for all sections.", "Change login to a real form in the page, so the browser offers to save the password.", "Same data and the same files on GitHub: nothing to move."],
-  "ro": ["Schimbă: rescris ca o singură pagină curată: o bară de sus, un sistem de teme, un comutator de limbă, un login, un clopoțel de notificări, un motor de tur pentru toate secțiunile.", "Schimbă login-ul într-un formular adevărat în pagină, ca browserul să se ofere să salveze parola.", "Aceleași date și aceleași fișiere în GitHub: nu trebuie mutat nimic."]},
- {"v": "0.8.0", "date": "2026-10-23",
-  "en": ["Change: one file, GTA_V_Manager.html; index.html only redirects to it.", "Change: everything saved to GitHub lives in data/ (vehicles, garages, production, warehouse); older files moved automatically.", "Add one version history for the whole project."],
-  "ro": ["Schimbă: un singur fișier, GTA_V_Manager.html; index.html doar trimite la el.", "Schimbă: tot ce se salvează în GitHub stă în data/ (vehicule, garaje, producție, depozit); fișierele vechi au fost mutate automat.", "Adaugă un singur istoric al versiunilor pentru tot proiectul."]},
- {"v": "0.7.0", "date": "2026-10-22",
-  "en": ["Add all sections in one page: Vehicle Manager, Production Manager, MC Business, Nightclub, Vehicle Export Tracker.", "Change: Car Manager renamed Vehicle Manager, with vehicle types (car, moto, plane, heli, boat, yacht, other).", "Add exported collections in the tracker (✓ Exported, folded, moved to the end).", "Add sticky top bars and the Production Manager submenu in the pages menu.", "Add new emblems and the gold M icon."],
-  "ro": ["Adaugă toate secțiunile într-o singură pagină: Vehicle Manager, Production Manager, MC Business, Nightclub, Vehicle Export Tracker.", "Schimbă: Car Manager devine Vehicle Manager, cu tipuri de vehicule (mașină, moto, avion, elicopter, barcă, yacht, altele).", "Adaugă colecțiile exportate în tracker (✓ Exportată, pliată, mutată la final).", "Adaugă bare de sus fixe și submeniul Production Manager în meniul de pagini.", "Adaugă embleme noi și iconița M aurie."]},
- {"v": "0.6.0", "date": "2026-10-21",
-  "en": [{"area": "Nightclub", "items": ["Add popularity, goods value (private / public lobby), safe, floors, technicians and assignments.", "Add the Advanced view (mixer, Optimize, sale planner) and its own page."]}, "Add Vehicle Warehouse, linked with the Vehicle Export Tracker, with quick add of export cars.", "Change: exact values and finer bars."],
-  "ro": [{"area": "Nightclub", "items": ["Adaugă popularitate, valoarea mărfii (privat / lobby public), seif, etaje, tehnicieni și alocări.", "Adaugă vederea Avansat (mixer, Optimize, planificator de vânzare) și pagina ei."]}, "Adaugă Vehicle Warehouse, legat de Vehicle Export Tracker, cu adăugare rapidă de mașini de export.", "Schimbă: valori exacte și bare mai fine."]},
- {"v": "0.5.0", "date": "2026-10-21",
-  "en": ["Add login with user and password (the GitHub token encrypted in auth.json); data saved to GitHub.", "Add notifications in every section."],
-  "ro": ["Adaugă login cu utilizator și parolă (token-ul GitHub criptat în auth.json); datele salvate în GitHub.", "Adaugă notificări în toate secțiunile."]},
- {"v": "0.4.0", "date": "2026-10-19",
-  "en": ["Add themes and English / Romanian everywhere.", "Add map styles: Satellite, Atlas, Road and Dark; pins keep their place on every style.", "Add guided tours.", "Add pin layers (Front / Normal / Back, plus automatic) and a confirmation before moving a pin.", "Fix the map tearing on phones when zooming out (smaller map copy while zoomed out)."],
-  "ro": ["Adaugă teme și engleză / română peste tot.", "Adaugă stiluri de hartă: Satelit, Atlas, Drumuri și Întunecat; pinurile rămân pe loc pe orice stil.", "Adaugă tururi ghidate.", "Adaugă straturi pentru pinuri (Față / Normal / Spate, plus automat) și confirmare înainte de mutarea unui pin.", "Repară harta care se rupea pe telefon la zoom out (copie mai mică a hărții la zoom mic)."]},
- {"v": "0.3.0", "date": "2026-10-18",
-  "en": ["Add MC Business complete: supplies, stock, timers, alerts, upgrades.", "Add the Clubhouse: bar resupply and earnings bag, Custom Bike Shop."],
-  "ro": ["Adaugă MC Business complet: provizii, stoc, timere, alerte, upgrade-uri.", "Adaugă Clubhouse-ul: aprovizionarea barului și sacul cu încasări, Custom Bike Shop."]},
- {"v": "0.2.0", "date": "2026-10-18",
-  "en": ["Change: Production Manager rebuilt from scratch, with a cascading menu and a real map of Los Santos."],
-  "ro": ["Schimbă: Production Manager refăcut de la zero, cu meniu în cascadă și hartă reală a Los Santos."]},
- {"v": "0.1.0", "date": "2026-10-17",
-  "en": ["Add Car Manager: cars, garages with slots, filters, photos."],
-  "ro": ["Adaugă Car Manager: mașini, garaje cu locuri, filtre, poze."]}
+ {"v": "0.12.0", "date": "2026-10-24", "en": [{"area": "Production Manager", "items": ["Add Bunker: pick yours from the game's 11 bunkers, staff on manufacturing, research or both, research progress with an alert when a project is done, Equipment / Staff / Security, bed, Mansion boost.", "Add the Bunker advanced view (Disruption Logistics bars, staff planner, sale) in the window and as its own page, #bunker, in the Production Manager submenu.", "Add: pointing at a business in the menu lights up its pin and brings it to the middle of the free map; the map goes back when the menu closes.", "Fix the CEO Warehouses tile showing the MC Business text."]}], "ro": [{"area": "Production Manager", "items": ["Adaugă Bunker: îți alegi buncărul dintre cele 11 din joc, angajați la producție, cercetare sau ambele, progresul cercetării cu alertă când un proiect e gata, Equipment / Staff / Securitate, pat, boost Mansion.", "Adaugă vederea avansată Bunker (barele Disruption Logistics, comparația angajaților, vânzarea) în fereastră și ca pagină proprie, #bunker, în submeniul Production Manager.", "Adaugă: când arăți spre o afacere din meniu, pinul ei se aprinde și harta îl aduce în mijlocul zonei libere; harta revine când se închide meniul.", "Repară tile-ul Depozite CEO care arăta textul de la MC Business."]}]},
+ {"v": "0.11.0", "date": "2026-10-24", "en": ["Add Property, Financial and Job Manager to Home as coming soon.", {"area": "Home", "items": ["Change cards: no title under the emblem, one line of text, see-through.", "Fix a leftover piece of another emblem under Vehicle Warehouse."]}, {"area": "Weekly bonuses", "items": ["Change order: 2X first, then 3X.", "Show all 2X and 3X when the window opens; Show less goes back to that size.", "Add a bigger button to make the window small."]}, {"area": "Production Manager", "items": ["Add short lists for every business on phones, with Open all settings.", "Add a bar of boxes for CEO crates (click or drag).", "Add Add another warehouse in the CEO window; the new warehouse opens straight away.", "Change the empty CEO slot in the menu into a small + button.", "Change map rings: red when empty, orange at half, light green when full.", "Add a Stock label to the value in the top bar.", "Add alerts when the Acid Lab daily boost is used up and when it is available again.", "Change phone menu tiles: smaller, emblem only.", "Fix windows jumping to the top after ticking a box.", "Fix the map switching to Satellite while zooming on another style.", "Fix leftover pieces around the CEO, Hangar, Acid Lab and Vehicle Warehouse emblems."]}, {"area": "Vehicle Manager", "items": ["Add a photo editor: brightness, contrast, saturation, hue, warmth, rotate, mirror.", "Change the Garages button icon."]}, "Add a highlighted Start here button for first-time visitors.", "Change Vehicle Export Tracker: Invite only and Public 20+ shown side by side.", "Change the version history to this format; versions renumbered (1.0 and 1.1 became 0.9 and 0.10)."], "ro": ["Adaugă Property, Financial și Job Manager pe Home, ca „în curând”.", {"area": "Home", "items": ["Schimbă cardurile: fără titlu sub emblemă, un rând de text, semi-transparente.", "Repară o bucată rămasă din altă emblemă sub Vehicle Warehouse."]}, {"area": "Bonusurile săptămânii", "items": ["Schimbă ordinea: întâi 2X, apoi 3X.", "Arată tot 2X și 3X la deschidere; Arată mai puțin revine la mărimea aceea.", "Adaugă un buton mai mare pentru micșorarea ferestrei."]}, {"area": "Production Manager", "items": ["Adaugă liste scurte pentru toate afacerile pe telefon, cu Toate setările.", "Adaugă o bară de căsuțe pentru lăzile CEO (click sau tras).", "Adaugă Adaugă alt depozit în fereastra CEO; depozitul nou se deschide imediat.", "Schimbă locul liber CEO din meniu într-un buton + mic.", "Schimbă inelele de pe hartă: roșu gol, portocaliu la jumătate, verde deschis plin.", "Adaugă eticheta Stoc la valoarea din bara de sus.", "Adaugă alerte când boost-ul zilnic Acid Lab se consumă și când e din nou disponibil.", "Schimbă dalele din meniu pe telefon: mai mici, doar emblema.", "Repară ferestrele care săreau sus după o bifă.", "Repară harta care trecea pe Satelit la zoom, pe alt stil.", "Repară resturile din jurul emblemelor CEO, Hangar, Acid Lab și Vehicle Warehouse."]}, {"area": "Vehicle Manager", "items": ["Adaugă un editor de poze: luminozitate, contrast, saturație, nuanță, căldură, rotire, oglindă.", "Schimbă iconița butonului Garaje."]}, "Adaugă butonul evidențiat Începe aici pentru cine vine prima oară.", "Schimbă Vehicle Export Tracker: Invite only și Public 20+ unul lângă altul.", "Schimbă istoricul versiunilor în acest format; versiuni renumerotate (1.0 și 1.1 au devenit 0.9 și 0.10)."]},
+ {"v": "0.10.0", "date": "2026-10-24", "en": [{"area": "Production Manager", "items": ["Add CEO Warehouses: the game's 22 warehouses, crates, sale value, staff timer, special items, delivery vehicle upgrades.", "Add Acid Lab: production, Mutt's supplies timer, daily boost, upgrades.", "Add the Mansion production boost (x3 for 24 hours) for MC businesses and Acid Lab.", "Add typing the Nightclub safe amount.", "Add a bed mark for the Vehicle Warehouse."]}, "Add what you earn to Vehicle Export Tracker (Invite only / Public 20+, after the modification cost), also in Production Manager.", "Add garage levels to Vehicle Manager, picked from a list when adding a vehicle.", {"area": "Home", "items": ["Add the background poster.", "Add this week's GTA Online bonuses, read every Thursday by a GitHub Action.", "Add the Getting started guide."]}, "Add a guided tour to every page.", "Fix the Production Manager submenu closing too fast.", "Change: no car emoji next to the Vehicle Manager title."], "ro": [{"area": "Production Manager", "items": ["Adaugă depozitele CEO: cele 22 din joc, lăzi, valoarea de vânzare, timer pentru angajat, obiecte speciale, upgrade-uri pentru vehiculele de livrare.", "Adaugă Acid Lab: producție, timer pentru proviziile de la Mutt, boost zilnic, upgrade-uri.", "Adaugă boost-ul de producție din Mansion (x3 timp de 24 de ore) pentru afacerile MC și Acid Lab.", "Adaugă scrierea sumei din seiful Nightclub.", "Adaugă semnul de pat la Vehicle Warehouse."]}, "Adaugă cât câștigi în Vehicle Export Tracker (Invite only / Public 20+, după costul modificărilor), și în Production Manager.", "Adaugă niveluri la garajele din Vehicle Manager, alese din listă la adăugarea vehiculului.", {"area": "Home", "items": ["Adaugă posterul de fundal.", "Adaugă bonusurile săptămânii din GTA Online, citite în fiecare joi de un GitHub Action.", "Adaugă Ghidul de început."]}, "Adaugă tur ghidat pe fiecare pagină.", "Repară submeniul Production Manager care se închidea prea repede.", "Schimbă: fără mașinuța de lângă titlul Vehicle Manager."]},
+ {"v": "0.9.0", "date": "2026-10-23", "en": ["Change: rewritten as one clean page: one top bar, one theme system, one language switch, one login, one notifications bell, one tour engine for all sections.", "Change login to a real form in the page, so the browser offers to save the password.", "Same data and the same files on GitHub: nothing to move."], "ro": ["Schimbă: rescris ca o singură pagină curată: o bară de sus, un sistem de teme, un comutator de limbă, un login, un clopoțel de notificări, un motor de tur pentru toate secțiunile.", "Schimbă login-ul într-un formular adevărat în pagină, ca browserul să se ofere să salveze parola.", "Aceleași date și aceleași fișiere în GitHub: nu trebuie mutat nimic."]},
+ {"v": "0.8.0", "date": "2026-10-23", "en": ["Change: one file, GTA_V_Manager.html; index.html only redirects to it.", "Change: everything saved to GitHub lives in data/ (vehicles, garages, production, warehouse); older files moved automatically.", "Add one version history for the whole project."], "ro": ["Schimbă: un singur fișier, GTA_V_Manager.html; index.html doar trimite la el.", "Schimbă: tot ce se salvează în GitHub stă în data/ (vehicule, garaje, producție, depozit); fișierele vechi au fost mutate automat.", "Adaugă un singur istoric al versiunilor pentru tot proiectul."]},
+ {"v": "0.7.0", "date": "2026-10-22", "en": ["Add all sections in one page: Vehicle Manager, Production Manager, MC Business, Nightclub, Vehicle Export Tracker.", "Change: Car Manager renamed Vehicle Manager, with vehicle types (car, moto, plane, heli, boat, yacht, other).", "Add exported collections in the tracker (✓ Exported, folded, moved to the end).", "Add sticky top bars and the Production Manager submenu in the pages menu.", "Add new emblems and the gold M icon."], "ro": ["Adaugă toate secțiunile într-o singură pagină: Vehicle Manager, Production Manager, MC Business, Nightclub, Vehicle Export Tracker.", "Schimbă: Car Manager devine Vehicle Manager, cu tipuri de vehicule (mașină, moto, avion, elicopter, barcă, yacht, altele).", "Adaugă colecțiile exportate în tracker (✓ Exportată, pliată, mutată la final).", "Adaugă bare de sus fixe și submeniul Production Manager în meniul de pagini.", "Adaugă embleme noi și iconița M aurie."]},
+ {"v": "0.6.0", "date": "2026-10-21", "en": [{"area": "Nightclub", "items": ["Add popularity, goods value (private / public lobby), safe, floors, technicians and assignments.", "Add the Advanced view (mixer, Optimize, sale planner) and its own page."]}, "Add Vehicle Warehouse, linked with the Vehicle Export Tracker, with quick add of export cars.", "Change: exact values and finer bars."], "ro": [{"area": "Nightclub", "items": ["Adaugă popularitate, valoarea mărfii (privat / lobby public), seif, etaje, tehnicieni și alocări.", "Adaugă vederea Avansat (mixer, Optimize, planificator de vânzare) și pagina ei."]}, "Adaugă Vehicle Warehouse, legat de Vehicle Export Tracker, cu adăugare rapidă de mașini de export.", "Schimbă: valori exacte și bare mai fine."]},
+ {"v": "0.5.0", "date": "2026-10-21", "en": ["Add login with user and password (the GitHub token encrypted in auth.json); data saved to GitHub.", "Add notifications in every section."], "ro": ["Adaugă login cu utilizator și parolă (token-ul GitHub criptat în auth.json); datele salvate în GitHub.", "Adaugă notificări în toate secțiunile."]},
+ {"v": "0.4.0", "date": "2026-10-19", "en": ["Add themes and English / Romanian everywhere.", "Add map styles: Satellite, Atlas, Road and Dark; pins keep their place on every style.", "Add guided tours.", "Add pin layers (Front / Normal / Back, plus automatic) and a confirmation before moving a pin.", "Fix the map tearing on phones when zooming out (smaller map copy while zoomed out)."], "ro": ["Adaugă teme și engleză / română peste tot.", "Adaugă stiluri de hartă: Satelit, Atlas, Drumuri și Întunecat; pinurile rămân pe loc pe orice stil.", "Adaugă tururi ghidate.", "Adaugă straturi pentru pinuri (Față / Normal / Spate, plus automat) și confirmare înainte de mutarea unui pin.", "Repară harta care se rupea pe telefon la zoom out (copie mai mică a hărții la zoom mic)."]},
+ {"v": "0.3.0", "date": "2026-10-18", "en": ["Add MC Business complete: supplies, stock, timers, alerts, upgrades.", "Add the Clubhouse: bar resupply and earnings bag, Custom Bike Shop."], "ro": ["Adaugă MC Business complet: provizii, stoc, timere, alerte, upgrade-uri.", "Adaugă Clubhouse-ul: aprovizionarea barului și sacul cu încasări, Custom Bike Shop."]},
+ {"v": "0.2.0", "date": "2026-10-18", "en": ["Change: Production Manager rebuilt from scratch, with a cascading menu and a real map of Los Santos."], "ro": ["Schimbă: Production Manager refăcut de la zero, cu meniu în cascadă și hartă reală a Los Santos."]},
+ {"v": "0.1.0", "date": "2026-10-17", "en": ["Add Car Manager: cars, garages with slots, filters, photos."], "ro": ["Adaugă Car Manager: mașini, garaje cu locuri, filtre, poze."]}
 ]
 ;
 function openAbout() {
@@ -1125,6 +1078,7 @@ const ROUTES = {
   production: { sec: "production", title: "Production Manager" },
   mc:         { sec: "production", title: "MC Business",            view: "mc" },
   night:      { sec: "production", title: "Nightclub",              view: "night" },
+  bunker:     { sec: "production", title: "Bunker",                 view: "bunker" },
   export:     { sec: "export",     title: "Vehicle Export Tracker" }
 };
 const SECTIONS = {};
@@ -1173,7 +1127,7 @@ const Router = {
       : `<a href="#${h}">${label}</a>`;
     $("#pagesList").innerHTML = link("", t("pg_home")) + link("vehicles", "Vehicle Manager")
       + `<div class="pm-group">${link("production", "Production Manager")}<button type="button" class="pm-more" aria-label="More" aria-expanded="false">›</button>`
-      + `<div class="pm-sub">${link("mc", "MC Business")}${link("night", "Nightclub")}${link("export", "Vehicle Export Tracker")}</div></div>`;
+      + `<div class="pm-sub">${link("mc", "MC Business")}${link("night", "Nightclub")}${link("bunker", "Bunker")}${link("export", "Vehicle Export Tracker")}</div></div>`;
   },
   // ⋮ menu: the section's own items, then notifications, account, help, about
   renderMore() {
@@ -2959,6 +2913,43 @@ body[data-sec="production"] { overflow: hidden; }
 .pm-tb .head-stat small {color: var(--muted); font-size: 12px;}
 .pm-tb .ingame { cursor: pointer; }
 .pm-tb .head-stat .hs-lbl { font-style: normal; font-size: .62em; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-right: 3px; }
+/* "here I am": the pin of the business under the mouse in the menu */
+#sec-production .pin.spot { z-index: 199999 !important; }
+#sec-production .pin.spot .pin-disc { animation: spotHop .75s cubic-bezier(.2, .8, .2, 1) 2; }
+#sec-production .pin.spot .pin-disc::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 3px solid var(--sodium);
+  box-shadow: 0 0 16px var(--sodium); animation: spotRing 1.2s ease-out infinite; pointer-events: none; }
+#sec-production .pin.spot .pin-label, #sec-production #map.far .pin.spot .pin-label { opacity: 1; transform: none; background: var(--sodium); color: var(--sodium-ink); }
+@keyframes spotHop { 0%, 100% { transform: none; } 35% { transform: translateY(-14px) scale(1.25); } 65% { transform: scale(1.08); } }
+@keyframes spotRing { 0% { transform: scale(.75); opacity: 1; } 100% { transform: scale(1.9); opacity: 0; } }
+html[data-anim="off"] #sec-production .pin.spot .pin-disc, html[data-anim="off"] #sec-production .pin.spot .pin-disc::after { animation: none; }
+/* Bunker */
+#sec-production .c-bunker { background: linear-gradient(120deg, #6b7a3a, #2f3818); }
+#sec-production .bk-mode { display: flex; gap: 4px; padding: 3px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel-2); }
+#sec-production .bk-mode button { flex: 1; padding: 6px 8px; border: 0; border-radius: 999px; background: transparent; box-shadow: none; font: 600 14px var(--display); color: var(--muted); cursor: pointer; }
+#sec-production .bk-mode button:hover:not(.on) { color: var(--text); background: color-mix(in srgb, var(--sodium) 12%, transparent); }
+#sec-production .bk-mode button.on { background: var(--sodium); color: var(--sodium-ink); }
+#sec-production .bk-res { margin-top: 4px; }
+#sec-production .segbar.research { --seg-c: #6fb3ff; }
+#sec-production .bk-done { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 13px; color: var(--muted); }
+#sec-production .bk-done span { margin-right: auto; }
+#sec-production .bk-done b { min-width: 22px; text-align: center; color: var(--text); font-size: 15px; }
+#sec-production .bk-done .btn { flex: 0 0 auto !important; padding: 2px 10px; min-width: 0; }
+#sec-production .bk-laptop { display: flex; flex-direction: column; }
+#sec-production .bk-laptop .q-label { font: 600 14px/1 var(--display); margin: 12px 0 6px; }
+#sec-production .bk-meter { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 8px 10px; border-radius: 8px; background: var(--panel); }
+#sec-production .bk-meter span { color: var(--muted); font-size: 13px; }
+#sec-production .bk-meter b { font: 700 24px/1 var(--display); color: var(--sodium); }
+#sec-production .bk-plan { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+#sec-production .bk-opt { display: flex; flex-direction: column; gap: 6px; padding: 12px; text-align: left; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); transition: border-color .15s, background .15s; }
+#sec-production .bk-opt:hover { border-color: color-mix(in srgb, var(--sodium) 60%, var(--line)); }
+#sec-production .bk-opt.on { border-color: var(--sodium); background: color-mix(in srgb, var(--sodium) 14%, var(--panel)); }
+#sec-production .bk-opt b { font: 700 17px/1.1 var(--display); }
+#sec-production .bk-opt span { display: flex; flex-direction: column; font-weight: 600; font-size: 14px; }
+#sec-production .bk-opt small { color: var(--muted); font-weight: 400; font-size: 12px; }
+#sec-production .bk-upg { display: flex; flex-wrap: wrap; gap: 8px; }
+#sec-production .bk-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; align-items: start; }
+#sec-production .bk-two .boost-sect { margin: 0; }
+@media (max-width: 760px) { #sec-production .bk-plan, #sec-production .bk-two { grid-template-columns: 1fr; } }
 /* phones: smaller tiles in the menu, more room for the map and the details */
 @media (max-width: 760px) {
   #sec-production .tile { height: 78px; margin-bottom: 8px; }
@@ -3030,7 +3021,7 @@ i18n({
   en: {
     "pm.ceoAddNext": "➕ Add another warehouse",
     "pm.qOpenFull": "Open all settings",
-    "pm.stockValue": "Stock", "pm.stockValueTip": "What everything you have to sell is worth now: MC businesses, Acid Lab, Nightclub goods and safe, CEO crates (sold nearby, invite only).",
+    "pm.stockValue": "Stock", "pm.stockValueTip": "What everything you have to sell is worth now: MC businesses, Acid Lab, Bunker, Nightclub goods and safe, CEO crates (sold nearby, invite only).",
     "pm.aboostDone": "Acid Lab: the daily boost is used up", "pm.aboostAgain": "Acid Lab: the daily boost is available again",
     "pm.boostTitle": "Mansion boost (x3, 24 h)", "pm.boostStart": "Boost started at the Mansion", "pm.boostStop": "Stop", "pm.boostOff": "Not boosted",
     "pm.boostLeft": m => `Active: ${m} left`, "pm.boostOther": n => `Now on ${n}`, "pm.boostLast": "Boosted last time: pick another business next",
@@ -3038,7 +3029,7 @@ i18n({
     "pm.boostEnded": n => `Mansion boost ended on ${n}: you can boost another business`,
     "pm.aboostTitle": "Acid Lab daily boost", "pm.aboostStart": "Boost started in the lab", "pm.aboostReady": "Available today",
     "pm.aboostLeft": n => `Active: ${n} units at double speed`, "pm.aboostUsed": at => `Used today · available again at ${at}`, "pm.aboostStarted": "Next 80 units at double speed.",
-    "pm.pt13t": "CEO Warehouses and Acid Lab", "pm.pt13b": "CEO: pick each warehouse from the list, set the crates, send the staff (48 min timer) and see the sale value. Acid Lab works like the MC businesses, plus Mutt's supplies timer.",
+    "pm.pt13t": "CEO Warehouses, Acid Lab and Bunker", "pm.pt13b": "CEO: pick each warehouse from the list, set the crates, send the staff (48 min timer) and see the sale value. Acid Lab works like the MC businesses, plus Mutt's supplies timer. Bunker: pick yours from the list and choose what the staff work on (manufacturing, research or both).",
     "pm.mt1t": "MC Business page", "pm.mt1b": "All your MC businesses on one page, synced with the map: the same data, a bigger view.",
     "pm.mt2t": "One card per business", "pm.mt2b": "Supplies, stock, value and upgrades for each business, plus the Clubhouse with the bar and the bike shop.",
     "pm.mt3t": "Bars", "pm.mt3b": "Click or drag across the boxes to set supplies and stock exactly as in the game.",
@@ -3175,7 +3166,7 @@ i18n({
   ro: {
     "pm.ceoAddNext": "➕ Adaugă alt depozit",
     "pm.qOpenFull": "Toate setările",
-    "pm.stockValue": "Stoc", "pm.stockValueTip": "Cât valorează acum tot ce ai de vândut: afacerile MC, Acid Lab, mărfurile și seiful Nightclub, lăzile CEO (vânzare aproape, invite only).",
+    "pm.stockValue": "Stoc", "pm.stockValueTip": "Cât valorează acum tot ce ai de vândut: afacerile MC, Acid Lab, Bunker, mărfurile și seiful Nightclub, lăzile CEO (vânzare aproape, invite only).",
     "pm.aboostDone": "Acid Lab: boost-ul zilnic s-a consumat", "pm.aboostAgain": "Acid Lab: boost-ul zilnic e din nou disponibil",
     "pm.boostTitle": "Boost Mansion (x3, 24 h)", "pm.boostStart": "Am dat boost din Mansion", "pm.boostStop": "Oprește", "pm.boostOff": "Fără boost",
     "pm.boostLeft": m => `Activ: mai are ${m}`, "pm.boostOther": n => `Acum e pe ${n}`, "pm.boostLast": "A avut boost ultima dată: data viitoare alege altă afacere",
@@ -3183,7 +3174,7 @@ i18n({
     "pm.boostEnded": n => `S-a terminat boost-ul Mansion pe ${n}: poți da boost altei afaceri`,
     "pm.aboostTitle": "Boost-ul zilnic Acid Lab", "pm.aboostStart": "Am activat boost-ul în laborator", "pm.aboostReady": "Disponibil azi",
     "pm.aboostLeft": n => `Activ: ${n} unități la viteză dublă`, "pm.aboostUsed": at => `Folosit azi · disponibil din nou la ${at}`, "pm.aboostStarted": "Următoarele 80 de unități la viteză dublă.",
-    "pm.pt13t": "Depozite CEO și Acid Lab", "pm.pt13b": "CEO: alegi fiecare depozit din listă, setezi lăzile, trimiți angajatul (timer de 48 min) și vezi valoarea de vânzare. Acid Lab merge ca afacerile MC, plus timer-ul pentru proviziile de la Mutt.",
+    "pm.pt13t": "Depozite CEO, Acid Lab și Bunker", "pm.pt13b": "CEO: alegi fiecare depozit din listă, setezi lăzile, trimiți angajatul (timer de 48 min) și vezi valoarea de vânzare. Acid Lab merge ca afacerile MC, plus timer-ul pentru proviziile de la Mutt. Bunker: îți alegi buncărul din listă și la ce lucrează angajații (producție, cercetare sau ambele).",
     "pm.mt1t": "Pagina MC Business", "pm.mt1b": "Toate afacerile MC pe o singură pagină, sincronizate cu harta: aceleași date, o vedere mai mare.",
     "pm.mt2t": "Un card pe afacere", "pm.mt2b": "Provizii, stoc, valoare și upgrade-uri pentru fiecare afacere, plus Clubhouse-ul cu barul și Bike Shop-ul.",
     "pm.mt3t": "Barele", "pm.mt3b": "Click sau trage peste căsuțe ca să setezi proviziile și stocul exact ca în joc.",
@@ -3319,6 +3310,62 @@ i18n({
   }
 });
 
+// Bunker (idea 38)
+i18n({
+  en: {
+    "pm.b_bunker": "Bunker", "pm.bkPick": "Your bunker", "pm.bkNoLoc": "Pick your bunker from the list (the game has 11).",
+    "pm.bkMode": "Staff work on", "pm.bkMode_manu": "Manufacturing", "pm.bkMode_res": "Research", "pm.bkMode_both": "Both",
+    "pm.bkModeHint_manu": "All staff make stock.", "pm.bkModeHint_res": "No stock is made: the supplies go to research.",
+    "pm.bkModeHint_both": "Stock and research, each at half speed.",
+    "pm.bkResearch": "Research", "pm.bkResOf": p => `${p} / 60`, "pm.bkResNext": m => `Project done in ${m}`,
+    "pm.bkResStop": "Research stopped: needs supplies", "pm.bkResOff": "The staff are not on research",
+    "pm.bkDone": n => `${n} done`, "pm.bkResDoneNote": "Bunker: a research project is finished", "pm.bkResRemind": "Tell me when a research project is done",
+    "pm.bkResShort": p => `research ${p}%`, "pm.bkSecurity": "Security", "pm.bkSoldToast": "Bunker stock sold.",
+    "pm.bkValue": "Value (sell nearby)", "pm.bkPlanNote": "with your upgrades, from empty, one full supply bar",
+    "pm.bkPlanHour": "Stock per hour · Los Santos", "pm.bkPlanFull": "Bunker full (100) in", "pm.bkPlanRes": "One research project",
+    "pm.bkPlanBar": "One supply bar lasts",
+    "pm.bkResHint": "A research project needs 60 points; projects unlock in random order and you can't choose the next one.",
+    "pm.bkUpgHint": "Equipment and Staff: faster and worth more (Equipment also makes a supply bar go twice as far). Security only lowers the chance of raids.",
+    "pm.bkLsPub": n => `Los Santos, ${n} players`, "pm.bkSupCost": "Supplies for this stock (bought)", "pm.bkProfit": "Profit, Los Santos",
+    "pm.bkFullHint": o => `A full bunker sold in Los Santos: ${o.v}; buying all its supplies costs ${o.c} ($75,000 a bar).`,
+    "pm.focusBunkerSub": "Stock, research, staff and sale on one page, synced with the map.",
+    "pm.bt1t": "Bunker page", "pm.bt1b": "The advanced Bunker view, synced with the map.",
+    "pm.bt2t": "Disruption Logistics", "pm.bt2b": "The same four bars as the laptop in the bunker: value, stock, supplies and research. Drag a bar to match the game.",
+    "pm.bt3t": "Staff", "pm.bt3b": "Compare manufacturing, research and both with your upgrades, then click one to switch.",
+    "pm.bt4t": "Sale", "pm.bt4b": "What the stock earns nearby, in Los Santos (+50%) and in a public lobby, and what the supplies cost.",
+    "pm.bt5t": "In game", "pm.bt5b": "The bunker works only while this is on.",
+    "pm.bkResNeed": m => `Project done in ${m}, if you resupply in time`, "pm.bkDoneLbl": "Projects finished",
+    "pm.bkNear": "Sell in Blaine County", "pm.bkLs": "Sell in Los Santos (+50%)", "pm.bkOpenPage": "Open the Bunker page",
+    "pm.ceoSub": n => n ? `${n} owned` : "Up to 5 warehouses"
+  },
+  ro: {
+    "pm.b_bunker": "Bunker", "pm.bkPick": "Buncărul tău", "pm.bkNoLoc": "Alege-ți buncărul din listă (în joc sunt 11).",
+    "pm.bkMode": "Angajații lucrează la", "pm.bkMode_manu": "Producție", "pm.bkMode_res": "Cercetare", "pm.bkMode_both": "Ambele",
+    "pm.bkModeHint_manu": "Toți angajații fac stoc.", "pm.bkModeHint_res": "Nu se face stoc: proviziile merg la cercetare.",
+    "pm.bkModeHint_both": "Stoc și cercetare, fiecare la jumătate de viteză.",
+    "pm.bkResearch": "Cercetare", "pm.bkResOf": p => `${p} / 60`, "pm.bkResNext": m => `Proiect gata în ${m}`,
+    "pm.bkResStop": "Cercetarea s-a oprit: lipsesc proviziile", "pm.bkResOff": "Angajații nu sunt la cercetare",
+    "pm.bkDone": n => `${n} gata`, "pm.bkResDoneNote": "Bunker: un proiect de cercetare e gata", "pm.bkResRemind": "Anunță-mă când e gata un proiect de cercetare",
+    "pm.bkResShort": p => `cercetare ${p}%`, "pm.bkSecurity": "Securitate", "pm.bkSoldToast": "Stocul din Bunker a fost vândut.",
+    "pm.bkValue": "Valoare (vânzare aproape)", "pm.bkPlanNote": "cu upgrade-urile tale, de la gol, o bară plină de provizii",
+    "pm.bkPlanHour": "Stoc pe oră · Los Santos", "pm.bkPlanFull": "Buncăr plin (100) în", "pm.bkPlanRes": "Un proiect de cercetare",
+    "pm.bkPlanBar": "O bară de provizii ține",
+    "pm.bkResHint": "Un proiect de cercetare are nevoie de 60 de puncte; proiectele se deblochează în ordine aleatorie și nu-l poți alege pe următorul.",
+    "pm.bkUpgHint": "Equipment și Staff: mai repede și mai valoros (Equipment face și ca o bară de provizii să țină de două ori mai mult). Securitatea doar scade șansa de raid.",
+    "pm.bkLsPub": n => `Los Santos, ${n} jucători`, "pm.bkSupCost": "Proviziile pentru acest stoc (cumpărate)", "pm.bkProfit": "Profit, Los Santos",
+    "pm.bkFullHint": o => `Un buncăr plin vândut în Los Santos: ${o.v}; toate proviziile cumpărate costă ${o.c} (75.000 $ bara).`,
+    "pm.focusBunkerSub": "Stoc, cercetare, angajați și vânzare pe o singură pagină, sincronizată cu harta.",
+    "pm.bt1t": "Pagina Bunker", "pm.bt1b": "Vederea avansată a Bunker-ului, sincronizată cu harta.",
+    "pm.bt2t": "Disruption Logistics", "pm.bt2b": "Aceleași patru bare ca pe laptopul din buncăr: valoare, stoc, provizii și cercetare. Trage de o bară ca să fie ca în joc.",
+    "pm.bt3t": "Angajații", "pm.bt3b": "Compari producția, cercetarea și ambele cu upgrade-urile tale, apoi dai click pe una ca s-o schimbi.",
+    "pm.bt4t": "Vânzare", "pm.bt4b": "Cât aduce stocul aproape, în Los Santos (+50%) și într-un lobby public, și cât costă proviziile.",
+    "pm.bt5t": "În joc", "pm.bt5b": "Buncărul lucrează doar cât timp asta e pornit.",
+    "pm.bkResNeed": m => `Proiect gata în ${m}, dacă pui provizii la timp`, "pm.bkDoneLbl": "Proiecte terminate",
+    "pm.bkNear": "Vânzare în Blaine County", "pm.bkLs": "Vânzare în Los Santos (+50%)", "pm.bkOpenPage": "Deschide pagina Bunker",
+    "pm.ceoSub": n => n ? `${n} deținute` : "Până la 5 depozite"
+  }
+});
+
 function ProductionManager(sec) {
 const ROOT = sec.el;
 // pieces of the shared top bar
@@ -3390,7 +3437,7 @@ const MC = [
 ];
 const CATEGORIES = [
   { id: "mc", art: "art-mc", ready: true, emblem: true, clear: true },
-  { id: "bunker", art: "art-bunker", emblem: true, clear: true },
+  { id: "bunker", art: "art-bunker", emblem: true, clear: true, ready: true, single: "bunker" },
   { id: "night", art: "art-night", emblem: true, clear: true, ready: true, single: "night" },
   { id: "ceo", art: "art-ceo", emblem: true, clear: true, ready: true },
   { id: "veh", art: "art-veh", emblem: true, clear: true, ready: true, single: "vehwh" },
@@ -3408,10 +3455,24 @@ const EXTRA = [
 const ACID = { id: "acid", icon: "acid", cls: "c-acid", production: true, acid: true, cap: 160,
   mpu: { none: 2.25, one: 1.5, both: 1.5 }, upb: { equip: 100, noEquip: 50 },
   value: { none: 1485, one: 2095, both: 2095 } };
+/* Bunker (Gunrunning): one bunker, picked from the game's 11. It produces like the MC businesses, but the staff can work on
+   manufacturing, research or both (each at half speed). Numbers (gtaboss, timesaver.gg, GTA Wiki, oct. 2026):
+   100 units; $5,000 / $6,000 / $7,000 per unit (Los Santos +50%); 10 / 8.5 / 7 min per unit;
+   a supply bar ($75,000) makes 10 units without the Equipment Upgrade, 20 with it.
+   Research: 60 points per project, 5 / 4.25 / 3.5 min per point; a supply bar gives 5 times as many points as units. */
+const BUNKER = { id: "bunker", icon: "bunker", cls: "c-bunker", production: true, bunker: true, cap: 100,
+  mpu: { none: 10, one: 8.5, both: 7 }, upb: { equip: 20, noEquip: 10 },
+  value: { none: 5000, one: 6000, both: 7000 }, rmpu: { none: 5, one: 4.25, both: 3.5 } };
+const BUNKERS = [["Paleto Forest", 1165000], ["Raton Canyon", 1450000], ["Lago Zancudo", 1550000], ["Chumash", 1650000],
+  ["Grapeseed", 1750000], ["Route 68", 1950000], ["Grand Senora Oilfields", 2035000], ["Grand Senora Desert", 2120000],
+  ["Smoke Tree Road", 2205000], ["Thomson Scrapyard", 2290000], ["Farmhouse", 2375000]].map(([n, p]) => ({ n, p }));
+const BK_UPG = [["equip", 1155000], ["staff", 598500], ["security", 351000]];
+const RES_PTS = 60, BK_BAR = 75000;
+const BK_SHARE = { manu: [1, 0], res: [0, 1], both: [0.5, 0.5] };
 // CEO Special Cargo: up to 5 warehouses, each picked from the game's list
 const CEO_SLOTS = [1, 2, 3, 4, 5].map(n => ({ id: "ceo" + n, icon: "ceo16", cls: "c-ceo", kind: "ceo", production: false, slot: n }));
-const ALL = [...MC, ...EXTRA, ACID, ...CEO_SLOTS];
-const PROD = [...MC, ACID].filter(d => d.production);   // everything that turns supplies into stock
+const ALL = [...MC, ...EXTRA, ACID, BUNKER, ...CEO_SLOTS];
+const PROD = [...MC, ACID, BUNKER].filter(d => d.production);   // everything that turns supplies into stock
 
 /* ======================================================================
    Text (EN / RO)
@@ -3421,6 +3482,7 @@ const t = (key, arg) => window.t("pm." + key, arg);
 const bizName = id => {
   const d = ALL.find(x => x.id === id);
   if (d && d.kind === "ceo") return (S.biz[id] && S.biz[id].wh) || t("ceoSlot", d.slot);
+  if (d && d.bunker && S.biz[id] && S.biz[id].loc) return S.biz[id].loc + " Bunker";
   return t("b_" + id);
 };
 
@@ -3434,6 +3496,8 @@ function defaultBiz(def) {
   if (def.kind === "veh") return { owned: false, pin: null, alert: null, layer: "mid" };
   if (def.kind === "ceo") return { owned: false, pin: null, alert: null, layer: "mid", wh: "", crates: 0, special: {}, veh: {},
     staff: { last: null, remind: true, fired: {} }, fired: {} };
+  if (def.bunker) return { owned: false, pin: null, equip: false, staff: false, security: false, supplies: 0, stock: 0, alertMin: 15, over: {}, alert: null,
+    nearFull: false, loc: "", bed: false, mode: "manu", research: 0, done: 0, resRemind: true, lobby: 0 };
   if (def.acid) return { owned: false, pin: null, equip: false, staff: false, supplies: 0, stock: 0, alertMin: 15, over: {}, alert: null, nearFull: false,
     named: false, veh: {}, mutt: { last: null, remind: true, fired: {} }, aboost: { units: 0, day: "" } };
   return def.production
@@ -3615,6 +3679,7 @@ function numbers(id) {
 }
 // advance one business by dt minutes of play time
 function advance(id, dt) {
+  if (id === "bunker") { advanceBunker(dt); return; }
   const b = S.biz[id];
   if (!b.owned || dt <= 0) return;
   const n = numbers(id);
@@ -3627,6 +3692,7 @@ function advance(id, dt) {
 }
 // minutes until supplies run out / stock is full (Infinity = never)
 function forecast(id) {
+  if (id === "bunker") return bunkerForecast();
   const b = S.biz[id], n = numbers(id);
   const unitsFromSupplies = b.supplies * n.upb;
   const unitsToFull = n.cap - b.stock;
@@ -4020,6 +4086,200 @@ function bindAcid(root, after) {
   });
   root.querySelectorAll("[data-av]").forEach(el => el.onchange = () => { b.veh[el.dataset.av] = el.checked; after(); });
 }
+/* ======================================================================
+   Bunker: staff split, research, location, simple + advanced views
+   ====================================================================== */
+// stock and research per minute right now (Mansion boost included), and how far one supply bar goes
+function bunkerRates(mode) {
+  const b = S.biz.bunker, n = numbers("bunker"), lv = level(b);
+  const [m, r] = BK_SHARE[mode || b.mode] || BK_SHARE.manu;
+  const rmpu = BUNKER.rmpu[lv] / speedOf("bunker");
+  return { sr: m / n.mpu, rr: r / rmpu, upb: n.upb, rpb: n.upb * 5, n };
+}
+function addResearch(pts) {
+  const b = S.biz.bunker;
+  b.research = (b.research || 0) + pts;
+  while (b.research >= RES_PTS - 1e-9) {
+    b.research = Math.max(0, b.research - RES_PTS);
+    b.done = (b.done || 0) + 1;
+    if (b.resRemind) { b.alert = "ready"; notify(t("bkResDoneNote"), "ok", "bunker"); }
+  }
+}
+// advance in pieces: the rates change when the stock is full or the supplies run out
+function advanceBunker(dt) {
+  const b = S.biz.bunker;
+  if (!b.owned || dt <= 0) return;
+  let left = dt;
+  for (let k = 0; k < 4 && left > 1e-9 && b.supplies > 1e-9; k++) {
+    const r = bunkerRates(), sr = b.stock >= r.n.cap - 1e-9 ? 0 : r.sr;
+    const burn = sr / r.upb + r.rr / r.rpb;
+    if (burn <= 0) break;
+    let step = Math.min(left, b.supplies / burn);
+    if (sr > 0) step = Math.min(step, (r.n.cap - b.stock) / sr);
+    b.stock = Math.min(r.n.cap, b.stock + sr * step);
+    b.supplies = Math.max(0, b.supplies - burn * step);
+    if (r.rr > 0) addResearch(r.rr * step);
+    left -= step;
+  }
+  if (b.supplies < 1e-6) b.supplies = 0;
+}
+// minutes until: stock full, supplies used up, the research project done (Infinity = never)
+function bunkerForecast(mode) {
+  const b = S.biz.bunker, r = bunkerRates(mode), n = r.n;
+  const full = b.stock >= n.cap - 1e-6, sr = full ? 0 : r.sr;
+  const burn1 = sr / r.upb + r.rr / r.rpb, burn2 = r.rr / r.rpb;
+  const tSup = burn1 > 0 ? b.supplies / burn1 : Infinity;
+  const tFull = sr > 0 ? (n.cap - b.stock) / sr : Infinity;
+  let minToEmpty = tSup;
+  if (tFull < tSup) minToEmpty = burn2 > 0 ? tFull + (b.supplies - tFull * burn1) / burn2 : Infinity;
+  const minToFull = tFull <= tSup ? tFull : Infinity;
+  const resT = r.rr > 0 ? (RES_PTS - (b.research || 0)) / r.rr : Infinity;
+  return { minToEmpty, minToFull, suppliesOutFirst: b.supplies > 0 && isFinite(minToEmpty), n,
+    minToRes: resT <= minToEmpty + 1e-9 ? resT : Infinity, resAll: resT, rates: r };
+}
+// what one choice of staff gives with a full supply bar and an empty bunker (for the planner)
+function bunkerPlan(mode) {
+  const r = bunkerRates(mode);
+  const burn = r.sr / r.upb + r.rr / r.rpb;
+  return { stockH: r.sr * 60, full: r.sr > 0 ? r.n.cap / r.sr : Infinity, res: r.rr > 0 ? RES_PTS / r.rr : Infinity, bar: burn > 0 ? 1 / burn : Infinity };
+}
+function bunkerSale() {
+  const b = S.biz.bunker, n = numbers("bunker"), u = Math.floor(b.stock + 1e-6);
+  const near = u * n.value, ls = near * FAR_BONUS, pub = ls * (1 + 0.025 * Math.min(20, b.lobby || 0));
+  const sup = u / n.upb * BK_BAR;
+  return { u, near, ls, pub, sup, fullLs: n.cap * n.value * FAR_BONUS, fullSup: n.cap / n.upb * BK_BAR };
+}
+const bkAdv = () => !!S.bkAdvanced && !isPhone();
+function bunkerPickHtml() {
+  const b = S.biz.bunker;
+  return `<label class="ceo-pick"><span>${t("bkPick")}</span><select data-bk="loc"><option value="">—</option>${BUNKERS.map(x =>
+    `<option value="${escapeHtml(x.n)}" ${b.loc === x.n ? "selected" : ""}>${x.n} · ${money(x.p)}</option>`).join("")}</select></label>`;
+}
+function bunkerModeHtml(big) {
+  const b = S.biz.bunker;
+  return `<div class="bk-mode ${big ? "big" : ""}" role="radiogroup" aria-label="${t("bkMode")}">${["manu", "res", "both"].map(m =>
+    `<button type="button" role="radio" aria-checked="${b.mode === m}" class="${b.mode === m ? "on" : ""}" data-bkmode="${m}">${t("bkMode_" + m)}</button>`).join("")}</div>
+    <p class="hint">${t("bkModeHint_" + b.mode)}</p>`;
+}
+function bunkerResText() {
+  const b = S.biz.bunker, f = bunkerForecast();
+  if (b.mode === "manu") return t("bkResOff");
+  if (isFinite(f.minToRes)) return t("bkResNext", fmtTime(f.minToRes));
+  return b.supplies > 0 && isFinite(f.resAll) ? t("bkResNeed", fmtTime(f.resAll)) : t("bkResStop");
+}
+function bunkerResHtml(extra = "") {
+  const b = S.biz.bunker;
+  return `<div class="q-label bk-res-lbl">${t("bkResearch")} · <span class="muted" data-bklive="pts">${t("bkResOf", Math.floor(b.research || 0))}</span></div>
+    ${segBarHtml("research", "bunker", extra)}
+    <div class="bar-cap"><span data-bklive="res">${bunkerResText()}</span></div>
+    <div class="bk-done"><span>${t("bkDoneLbl")}</span><button class="btn small" data-bk="done-" aria-label="−1">−</button><b>${b.done || 0}</b><button class="btn small" data-bk="done+" aria-label="+1">+</button></div>`;
+}
+// simple window: location, bed, staff and research (the rest is the usual production window)
+function bunkerWinTopHtml() {
+  const b = S.biz.bunker;
+  return `<div class="sect">${bunkerPickHtml()}${b.loc ? "" : `<p class="hint">${t("bkNoLoc")}</p>`}
+    <label class="mini-check" style="margin-top:8px"><input type="checkbox" data-bk="bed" ${b.bed ? "checked" : ""}> ${t("hasBed")}</label>
+    <div class="btn-row"><a class="btn" href="#bunker">${t("bkOpenPage")}</a></div></div>`;
+}
+function bunkerStaffHtml() {
+  const b = S.biz.bunker;
+  return `<div class="sect"><h4>${t("bkMode")}</h4>${bunkerModeHtml()}
+    ${b.mode !== "manu" ? `<div class="bk-res">${bunkerResHtml()}</div>` : ""}
+    <label class="mini-check"><input type="checkbox" data-bk="remind" ${b.resRemind ? "checked" : ""}> ${t("bkResRemind")}</label></div>`;
+}
+function bunkerQuickHtml() {
+  const b = S.biz.bunker;
+  return (b.loc ? "" : bunkerPickHtml()) + (b.mode !== "manu" ? bunkerResHtml("small") : "");
+}
+function bindBunker(root, after) {
+  const b = S.biz.bunker;
+  root.querySelectorAll("[data-bk]").forEach(el => {
+    const a = el.dataset.bk;
+    if (a === "loc") { el.onchange = () => { b.loc = el.value; after(); renderPins(); if (flyCat) fillFlyout(); }; return; }
+    if (a === "bed" || a === "remind") { el.onchange = () => { if (a === "bed") b.bed = el.checked; else b.resRemind = el.checked; after(); }; return; }
+    if (a === "lobby") { el.oninput = () => { b.lobby = +el.value; el.nextElementSibling.textContent = el.value; }; el.onchange = after; return; }
+    el.onclick = () => {
+      if (a === "done+") b.done = (b.done || 0) + 1;
+      if (a === "done-") b.done = Math.max(0, (b.done || 0) - 1);
+      if (a === "sec") b.security = !b.security;
+      if (a === "equip") b.equip = !b.equip;
+      if (a === "staff") b.staff = !b.staff;
+      if (a === "resupply") { b.supplies = 1; ackAlerts("bunker"); }
+      if (a === "sold") { const had = b.stock; b.stock = 0; ackAlerts("bunker"); toast(t("bkSoldToast"), { label: t("undo"), run: () => { b.stock = had; after(); } }); }
+      after();
+    };
+  });
+  root.querySelectorAll("[data-bkmode]").forEach(el => el.onclick = () => {
+    if (b.mode === el.dataset.bkmode) return;
+    tick();                                     // count the time so far with the old staff split
+    b.mode = el.dataset.bkmode;
+    after();
+  });
+}
+// the numbers that change every second, without rebuilding anything
+function liveBunkerBits() {
+  if (!S.biz.bunker.owned) return;
+  const b = S.biz.bunker;
+  document.querySelectorAll('[data-bklive="res"]').forEach(el => el.textContent = bunkerResText());
+  document.querySelectorAll('[data-bklive="pts"]').forEach(el => el.textContent = t("bkResOf", Math.floor(b.research || 0)));
+  document.querySelectorAll('.segbar[data-id="bunker"]').forEach(updateSegBar);
+}
+/* advanced: the Disruption Logistics laptop, the staff planner and the sale, on one screen */
+function bunkerAdvancedHtml() {
+  const b = S.biz.bunker, n = numbers("bunker"), f = bunkerForecast(), s = bunkerSale(), st = status("bunker");
+  const states = [];
+  if (b.supplies <= 0) states.push(["bad", t("suppliesStop")]);
+  else if (f.suppliesOutFirst) states.push([st === "low" ? "warn" : "ok", t("suppliesLeft", fmtTime(f.minToEmpty))]);
+  if (b.stock >= n.cap - 1e-6) states.push(["full", t("st_full")]);
+  else if (isFinite(f.minToFull)) states.push(["ok", t("toFull", fmtTime(f.minToFull))]);
+  if (b.mode !== "manu") states.push([isFinite(f.minToRes) ? "ok" : "warn", bunkerResText()]);
+  if (mansionOn("bunker")) states.push(["ok", "⚡ " + t("boostLeft", fmtTime((S.boost.until - Date.now()) / 60000))]);
+  const plan = ["manu", "res", "both"].map(m => [m, bunkerPlan(m)]);
+  const cell = v => isFinite(v) ? fmtTime(v) : "—";
+  return `
+  <div class="adv-grid2">
+    <section class="adv-card">
+      <h4>Disruption Logistics</h4>
+      <div class="bk-laptop">
+        <div class="bk-meter"><span>${t("bkValue")}</span><b class="hot">${money(s.near)}</b></div>
+        <div class="q-label">${t("stock")} · <span class="muted">${t("stockOf", [s.u, n.cap])}</span></div>${segBarHtml("stock", "bunker", "big")}
+        <div class="q-label">${t("supplies")} · <span class="muted">${Math.round(b.supplies * 100)}%</span></div>${segBarHtml("supplies", "bunker", "big")}
+        ${bunkerResHtml("big")}
+      </div>
+      <div class="btn-row"><button class="btn primary" data-bk="resupply">${t("resupply")}</button><button class="btn" data-bk="sold">${t("sold")}</button></div>
+      <h4 style="margin-top:16px">${t("advAttention")}</h4>
+      <div class="adv-alerts">${states.map(([k, m]) => `<div class="k-${k}"><span class="nbar"></span>${m}</div>`).join("") || `<div class="muted">${t("advAllGood")}</div>`}</div>
+    </section>
+    <section class="adv-card wide">
+      <div class="adv-head"><h4>${t("bkMode")}</h4><span class="muted">${t("bkPlanNote")}</span></div>
+      <div class="bk-plan">${plan.map(([m, p]) => `<button type="button" class="bk-opt ${b.mode === m ? "on" : ""}" data-bkmode="${m}" aria-pressed="${b.mode === m}">
+        <b>${t("bkMode_" + m)}</b>
+        <span><small>${t("bkPlanHour")}</small>${p.stockH ? (Math.round(p.stockH * 10) / 10) + " · " + money(p.stockH * n.value * FAR_BONUS) : "—"}</span>
+        <span><small>${t("bkPlanFull")}</small>${cell(p.full)}</span>
+        <span><small>${t("bkPlanRes")}</small>${cell(p.res)}</span>
+        <span><small>${t("bkPlanBar")}</small>${cell(p.bar)}</span>
+      </button>`).join("")}</div>
+      <p class="hint">${t("bkModeHint_" + b.mode)} ${t("bkResHint")}</p>
+      <div class="adv-head" style="margin-top:14px"><h4>${t("upgrades")}</h4></div>
+      <div class="bk-upg">${BK_UPG.map(([k, p]) => { const on = k === "security" ? b.security : b[k];
+        return `<button type="button" class="chip ${on ? "on" : ""}" data-bk="${k === "security" ? "sec" : k}">${on ? "✓ " : ""}${t(k === "equip" ? "equipment" : k === "staff" ? "staff" : "bkSecurity")} <small class="muted">${money(p)}</small></button>`; }).join("")}</div>
+      <p class="hint">${t("bkUpgHint")}</p>
+      <div class="bk-two">
+        <div>${bunkerPickHtml()}<label class="mini-check" style="margin-top:8px"><input type="checkbox" data-bk="bed" ${b.bed ? "checked" : ""}> ${t("hasBed")}</label>
+          <label class="mini-check"><input type="checkbox" data-bk="remind" ${b.resRemind ? "checked" : ""}> ${t("bkResRemind")}</label></div>
+        <div>${boostHtml("bunker")}</div>
+      </div>
+    </section>
+    <section class="adv-card">
+      <h4>${t("advSale")}</h4>
+      <div class="kv"><span>${t("bkNear")}</span><b>${money(s.near)}</b><span>${t("bkLs")}</span><b>${money(s.ls)}</b>
+        <span>${t("bkLsPub", b.lobby || 0)}</span><b style="color:var(--sodium)">${money(s.pub)}</b>
+        <span>${t("bkSupCost")}</span><b>${money(s.sup)}</b><span>${t("bkProfit")}</span><b>${money(s.ls - s.sup)}</b></div>
+      <label class="adv-range"><span>${t("advPlayers")}</span><input type="range" min="0" max="20" value="${b.lobby || 0}" data-bk="lobby"><b>${b.lobby || 0}</b></label>
+      <p class="hint">${t("bkFullHint", { v: money(s.fullLs), c: money(s.fullSup) })}</p>
+    </section>
+  </div>`;
+}
 const VEH_CAP = 40;
 function vehData() {
   try {
@@ -4234,11 +4494,13 @@ function setGoal(s, x, y, instant) {
 }
 // zoom so the world point under (cx, cy) stays under it
 function zoomAt(factor, cx, cy, instant) {
+  spotHome = null;                          // you moved the map yourself: it stays where you put it
   const ns = Math.min(MAX_ZOOM_NATIVE, Math.max(minS, goal.s * factor));
   const wx = (cx - goal.x) / goal.s, wy = (cy - goal.y) / goal.s;
   setGoal(ns, cx - wx * ns, cy - wy * ns, instant);
 }
 function fitMap(instant) {
+  spotHome = null;
   if (!imgW) return;
   computeMinS();
   setGoal(minS, 0, 0, instant);
@@ -4252,6 +4514,54 @@ function flyTo(p, minZoomFactor = 2.2) {
   const freeW = winOpen ? w - win.offsetWidth - 24 : w;
   const freeH = isPhone() && win.classList.contains("open") ? h * 0.35 : h;
   setGoal(s, freeW / 2 - p.x * imgW * s, freeH / 2 - p.y * imgH * s);
+}
+/* "Here I am": pointing at a business in the menu lights up its pin and brings it to the middle of the map area
+   that the menu and the short list don't cover. When the menu closes without opening anything, the map goes back. */
+let spotHome = null, spotTimer = null;
+function freeCenter() {
+  const mr = mapEl.getBoundingClientRect();
+  let l = mr.left, r = mr.right, tp = mr.top, bt = mr.bottom;
+  [[flyout, "show"], [quick, "show"], [win, "open"]].forEach(([el, cls]) => {
+    if (!el.classList.contains(cls)) return;
+    const e = el.getBoundingClientRect();
+    if (!e.width || e.right <= mr.left || e.left >= mr.right) return;
+    if (e.width > mr.width * 0.7) { bt = Math.min(bt, e.top); return; }        // phones: a sheet at the bottom
+    if (e.left - mr.left < mr.right - e.right) l = Math.max(l, e.right); else r = Math.min(r, e.left);
+  });
+  if (r - l < 140) { l = mr.left; r = mr.right; }
+  if (bt - tp < 120) bt = mr.bottom;
+  return { x: (l + r) / 2 - mr.left, y: (tp + bt) / 2 - mr.top, l: l - mr.left, r: r - mr.left, t: tp - mr.top, b: bt - mr.top };
+}
+function spotlight(id) {
+  clearTimeout(spotTimer);
+  const p = id && !VIEW && imgW && S.biz[id] && S.biz[id].owned ? S.biz[id].pin : null;
+  pinsEl.querySelectorAll(".pin.spot").forEach(el => { if (el.dataset.id !== id || !p) el.classList.remove("spot"); });
+  if (!p) return;
+  if (!spotHome) spotHome = { s: goal.s, x: goal.x, y: goal.y };
+  const el = pinsEl.querySelector(`.pin[data-id="${id}"]`);
+  if (el && !el.classList.contains("spot")) el.classList.add("spot");
+  // near an edge of the map it can't be centered: zoom in a little more until the pin is in the free area
+  const c = freeCenter();
+  let s = Math.max(goal.s, Math.min(MAX_ZOOM_NATIVE, minS * 1.6));
+  for (let k = 0; k < 6; k++) {
+    const q = clampPos(s, c.x - p.x * imgW * s, c.y - p.y * imgH * s), px = q.x + p.x * imgW * s, py = q.y + p.y * imgH * s;
+    if ((px > c.l + 30 && px < c.r - 30 && py > c.t + 30 && py < c.b - 30) || s >= MAX_ZOOM_NATIVE) break;
+    s = Math.min(MAX_ZOOM_NATIVE, s * 1.35);
+  }
+  setGoal(s, c.x - p.x * imgW * s, c.y - p.y * imgH * s);
+}
+function spotOff() {
+  clearTimeout(spotTimer);
+  spotTimer = setTimeout(() => {
+    pinsEl.querySelectorAll(".pin.spot").forEach(el => el.classList.remove("spot"));
+    if (spotHome && !openId && !drag) setGoal(spotHome.s, spotHome.x, spotHome.y);
+    spotHome = null;
+  }, 250);
+}
+function spotKeep() {   // a business was opened: stay where we are
+  clearTimeout(spotTimer);
+  spotHome = null;
+  pinsEl.querySelectorAll(".pin.spot").forEach(el => el.classList.remove("spot"));
 }
 
 function draw() {
@@ -4402,6 +4712,7 @@ const local = e => { const r = mapEl.getBoundingClientRect(); return { x: e.clie
 mapEl.addEventListener("pointerdown", e => {
   if (e.target.closest(".map-tools") || !imgW) return;
   if (e.pointerType === "mouse" && e.button !== 0) return;     // left button only
+  spotHome = null;
   mapEl.setPointerCapture(e.pointerId);
   const p = local(e);
   pointers.set(e.pointerId, p);
@@ -4700,7 +5011,7 @@ function renderTiles() {
     const owned = c.id === "mc" ? MC.filter(d => S.biz[d.id].owned).length : c.id === "ceo" ? CEO_SLOTS.filter(d => S.biz[d.id].owned).length : 0;
     el.innerHTML = `<div class="art ${c.art}">${c.id === "mc" ? '<div class="beam"></div>' : ""}</div>
       ${c.id === "ceo" ? `<div class="tile-dots">${ceoDots()}</div>` : c.id === "mc" ? `<div class="tile-dots">${MC.filter(d => d.production).map(d => `<i class="${S.biz[d.id].owned ? status(d.id) : ""}"></i>`).join("")}</div>` : c.ready ? "" : `<span class="soon">${t("soon")}</span>`}
-      <div class="tile-text"><h2>${t("cat_" + c.id)}${c.single ? nameMarks(c.single) : ""}</h2>${c.id === "mc" ? `<div class="tile-sub">${t("mcSub", owned)}</div>` : c.id === "ceo" ? `<div class="tile-sub">${t("mcSub", owned)}</div>` : c.single ? `<div class="tile-sub">${tileSub(c.single)}</div>` : ""}</div>`;
+      <div class="tile-text"><h2>${t("cat_" + c.id)}${c.single ? nameMarks(c.single) : ""}</h2>${c.id === "mc" ? `<div class="tile-sub">${t("mcSub", owned)}</div>` : c.id === "ceo" ? `<div class="tile-sub">${t("ceoSub", owned)}</div>` : c.single ? `<div class="tile-sub">${tileSub(c.single)}</div>` : ""}</div>`;
     if (c.ready) bindTile(el, c);
     host.appendChild(el);
   });
@@ -4717,6 +5028,7 @@ function tileSub(id) {
   const b = S.biz[id];
   if (!b.owned) return t("notOwned");
   if (id === "acid") return `${mansionOn(id) || b.aboost.units > 0 ? "⚡ " : ""}${t("st_" + status(id))} · <b>${Math.floor(b.stock + 1e-6)} / ${ACID.cap}</b>`;
+  if (id === "bunker") return `${mansionOn(id) ? "⚡ " : ""}${t("st_" + status(id))} · <b>${Math.floor(b.stock + 1e-6)} / ${BUNKER.cap}</b>${b.mode !== "manu" ? ` · ${t("bkResShort", Math.floor((b.research || 0) / RES_PTS * 100))}` : ""}`;
   if (id === "night") { const tt = ncTotals(); return `${t("ncGoodsShort")} <b>${money(tt.net)}</b> · ${t("ncPopShort")} <b style="color:${popColor(b.pop)}">${Math.round(b.pop)}%</b>`; }
   if (id === "vehwh") { const v = vehData(); return `${t("vehCars")} <b>${v.count} / ${VEH_CAP}</b>`; }
   return "";
@@ -4865,10 +5177,12 @@ function openQuick(id, tabEl) {
   const h = quick.offsetHeight;
   quick.style.top = Math.max(document.querySelector("header").offsetHeight + 6, Math.min(r.top - 4, innerHeight - h - 10)) + "px";
   quick.classList.add("show");
+  if (!Tour.layer.open) spotlight(id);
 }
 function closeQuick() {
   clearTimeout(quickTimer);
   clearTimeout(quickOpenTimer);
+  if (quickId) spotOff();
   quickId = null;
   quick.classList.remove("show");
   flyout.querySelectorAll(".tab.hot").forEach(x => x.classList.remove("hot"));
@@ -5043,6 +5357,7 @@ function renderQuickBody() {
         <button class="btn" id="qSold">${t("qSold")}</button>
       </div>
       ${defOf(id).acid ? acidBoostHtml() + acidMuttHtml() : ""}
+      ${defOf(id).bunker ? bunkerQuickHtml() : ""}
       ${mansionOn(id) ? `<div class="bar-cap"><span>⚡ ${t("boostTitle")}</span><b data-live-timer="${id}:boost"></b></div>` : ""}
       <p class="q-note">${t("qMore")}</p>`;
   }
@@ -5053,6 +5368,7 @@ function renderQuickBody() {
   if ($("#qResupply")) $("#qResupply").onclick = () => { b.supplies = 1; ackAlerts(id); afterEdit(); };
   if ($("#qSold")) $("#qSold").onclick = () => { b.stock = 0; ackAlerts(id); afterEdit(); };
   if (defOf(id).acid && b.owned) bindAcid(quick, () => { save(true); ghMarkDirty(); renderQuick(); renderAll(); });
+  if (defOf(id).bunker && b.owned) bindBunker(quick, () => { syncStatus(); save(true); ghMarkDirty(); renderQuick(); renderAll(); });
   if (b.owned) bindBoost(quick, id, () => { renderQuick(); renderAll(); });
   liveQuick();
 }
@@ -5097,17 +5413,18 @@ function barValue(kind, id) {
   if (kind === "pop") return b.pop / 100;
   if (kind === "ncgoods") return Math.min(1, ncTotals().frac);
   if (kind === "crates") return Math.min(1, (b.crates || 0) / ceoCap(id));
+  if (kind === "research") return Math.min(1, (b.research || 0) / RES_PTS);
   return kind === "stock" ? Math.min(1, b.stock / numbers(id).cap) : b.supplies;
 }
 function barTicks(kind, id) {
   if (kind === "pop") return 2;              // each box = 10%, filled in 5% steps
   if (kind === "ncgoods") return 1;
-  if (kind === "supplies" || kind === "crates") return 4;
+  if (kind === "supplies" || kind === "crates" || kind === "research") return 4;
   const per = numbers(id).cap / 5;           // units in one box: coke 2, meth 4, cash 8, docs 12, weed 16
   return per <= 8 ? per : 4;                 // too many lines get noisy: show quarters
 }
 function segBarHtml(kind, id, extra = "") {
-  const label = t({ stock: "stock", supplies: "supplies", pop: "ncPop", ncgoods: "ncGoods", crates: "ceoCrates" }[kind]);
+  const label = t({ stock: "stock", supplies: "supplies", pop: "ncPop", ncgoods: "ncGoods", crates: "ceoCrates", research: "bkResearch" }[kind]);
   const col = kind === "pop" ? ` style="--seg-c:${popColor(S.biz.night.pop)}"` : "";
   return `<div class="segbar ${kind} ${extra}"${col} data-kind="${kind}" data-id="${id}" role="slider" tabindex="0" aria-label="${label}">
     ${(() => { const v = barValue(kind, id), cnt = segCount(kind);
@@ -5121,6 +5438,7 @@ function updateSegBar(el) {
   if (kind === "pop") el.style.setProperty("--seg-c", popColor(S.biz.night.pop));
   if (kind === "pop" || kind === "ncgoods") { el.setAttribute("aria-valuenow", Math.round(v * 100)); return; }
   if (kind === "crates") { el.setAttribute("aria-valuenow", Math.floor(S.biz[id].crates || 0)); return; }
+  if (kind === "research") { el.setAttribute("aria-valuemax", RES_PTS); el.setAttribute("aria-valuenow", Math.floor(S.biz[id].research || 0)); return; }
   if (kind === "supplies") {
     const st = status(id);
     el.classList.toggle("low", st === "low");
@@ -5138,6 +5456,11 @@ function setBar(kind, id, v) {
     b.crates = Math.round(v * ceoCap(id)); b.alert = null;
     document.querySelectorAll(`.segbar[data-kind="crates"][data-id="${id}"]`).forEach(updateSegBar);
     liveCeoNums(id); save(); renderAll();
+    return;
+  }
+  if (kind === "research") {
+    b.research = Math.min(RES_PTS - 1, Math.round(v * RES_PTS));
+    liveBunkerBits(); save(); ghMarkDirty();
     return;
   }
   if (kind === "pop") { b.pop = Math.round(v * 20) * 5; b.alert = null; checkNight(false); }
@@ -5190,7 +5513,7 @@ document.addEventListener("keydown", e => {
   const el = e.target.closest && e.target.closest(".segbar");
   if (!el) return;
   const kind = el.dataset.kind, id = el.dataset.id;
-  const step = kind === "stock" ? 1 / numbers(id).cap : kind === "crates" ? 1 / ceoCap(id) : kind === "pop" ? 0.05 : 0.01;
+  const step = kind === "stock" ? 1 / numbers(id).cap : kind === "crates" ? 1 / ceoCap(id) : kind === "research" ? 1 / RES_PTS : kind === "pop" ? 0.05 : 0.01;
   const v = barValue(kind, id);
   const map = { ArrowRight: v + step, ArrowUp: v + step, ArrowLeft: v - step, ArrowDown: v - step, Home: 0, End: 1 };
   if (e.key in map) { e.preventDefault(); setBar(kind, id, map[e.key]); save(true); }
@@ -5209,6 +5532,7 @@ function afterEdit(persist = true) {
 const win = document.getElementById("win");
 let openId = null;
 function openWin(id, fly = true) {
+  spotKeep();
   openId = id;
   win._last = null;
   ackAlerts(id);
@@ -5256,17 +5580,22 @@ function renderWin() {
           <p class="hint">${t("timersNote")}</p>
         </details>`;
     }
+  } else if (b.owned && d.bunker && bkAdv()) {
+    body += bunkerAdvancedHtml();
   } else if (b.owned) {
     const n = numbers(id), f = forecast(id), st = status(id);
+    if (d.bunker) body += bunkerWinTopHtml();
     body += `
       <div class="row"><span class="state-badge st-${st}" id="wState">${t("st_" + st)}</span>${!S.inGame ? `<span class="hint" style="margin:0">${t("ingameOff")}</span>` : ""}</div>
       <div class="sect"><h4>${t("upgrades")}</h4>
         <div class="chip-row">
           <button class="chip ${b.equip ? "on" : ""}" id="wEquip">${b.equip ? "✓ " : ""}${t(d.acid ? "acidEquip" : "equipment")}</button>
           ${d.acid ? "" : `<button class="chip ${b.staff ? "on" : ""}" id="wStaff">${b.staff ? "✓ " : ""}${t("staff")}</button>`}
+          ${d.bunker ? `<button class="chip ${b.security ? "on" : ""}" data-bk="sec">${b.security ? "✓ " : ""}${t("bkSecurity")}</button>` : ""}
         </div>
       </div>
       ${boostHtml(id)}
+      ${d.bunker ? bunkerStaffHtml() : ""}
       ${d.acid ? acidBoostHtml() + acidExtrasHtml() : ""}
       <p class="hint">${t("barHelp")}</p>
       <div class="sect"><h4>${t("supplies")}</h4>
@@ -5300,8 +5629,8 @@ function renderWin() {
   const html = `
     <div class="win-head ${d.cls}">
       <span class="ico">${ICO(d.id)}</span>
-      <div><h3>${bizName(id)}${nameMarks(id)}</h3><small>${d.kind === "ceo" ? (ceoWh(id) ? `${t("cat_ceo")} · ${ceoWh(id).a} · ${ceoCap(id)}` : t("cat_ceo")) : t(d.kind === "night" ? "ncSubtitle" : d.kind === "veh" ? "cat_veh" : d.acid ? "cat_acid" : "cat_mc")}</small></div>
-      ${d.kind === "night" && b.owned && !isPhone() ? `<button class="btn small win-mode" id="wMode">${S.ncAdvanced ? t("modeSimple") : t("modeAdvanced")}</button>` : ""}
+      <div><h3>${bizName(id)}${nameMarks(id)}</h3><small>${d.kind === "ceo" ? (ceoWh(id) ? `${t("cat_ceo")} · ${ceoWh(id).a} · ${ceoCap(id)}` : t("cat_ceo")) : t(d.kind === "night" ? "ncSubtitle" : d.kind === "veh" ? "cat_veh" : d.acid ? "cat_acid" : d.bunker ? "cat_bunker" : "cat_mc")}${d.bunker && b.loc ? " · " + money(BUNKERS.find(x => x.n === b.loc).p) : ""}</small></div>
+      ${(d.kind === "night" || d.bunker) && b.owned && !isPhone() ? `<button class="btn small win-mode" id="wMode">${(d.bunker ? S.bkAdvanced : S.ncAdvanced) ? t("modeSimple") : t("modeAdvanced")}</button>` : ""}
       <button class="icon-btn" id="wClose" aria-label="${t("close")}">✕</button>
     </div>
     <div class="win-body">${body}</div>`;
@@ -5317,8 +5646,8 @@ function bindWin(id) {
   const b = S.biz[id], $ = s => win.querySelector(s);
   const changed = (full = true) => { syncStatus(); save(true); if (full) renderWin(); renderAll(); };
   $("#wClose").onclick = closeWin;
-  win.classList.toggle("wide", id === "night" && !!S.ncAdvanced && !isPhone() && b.owned);
-  if ($("#wMode")) $("#wMode").onclick = () => { S.ncAdvanced = !S.ncAdvanced; save(true); renderWin(); };
+  win.classList.toggle("wide", (id === "night" && !!S.ncAdvanced || id === "bunker" && bkAdv()) && !isPhone() && b.owned);
+  if ($("#wMode")) $("#wMode").onclick = () => { if (id === "bunker") S.bkAdvanced = !S.bkAdvanced; else S.ncAdvanced = !S.ncAdvanced; save(true); renderWin(); if (b.pin) requestAnimationFrame(() => flyTo(b.pin)); };
   $("#wOwned").onchange = e => { b.owned = e.target.checked; if (!b.owned) b.pin = b.pin || null; changed(); renderPins(); };
   if ($("#wPin")) $("#wPin").onclick = () => startPlacing(id);
   if ($("#wPinDel")) $("#wPinDel").onclick = () => { b.pin = null; changed(); renderPins(); };
@@ -5351,6 +5680,11 @@ function bindWin(id) {
     return;
   }
   if (!b.owned) return;
+  if (defOf(id).bunker) {
+    const keep = () => { const wb = win.querySelector(".win-body"), sc = wb ? wb.scrollTop : 0; changed(); const nb = win.querySelector(".win-body"); if (nb) nb.scrollTop = sc; };
+    bindBunker(win, () => { ghMarkDirty(); keep(); });
+    if (bkAdv()) { bindBoost(win, id, keep); return; }
+  }
   $("#wEquip").onclick = () => { b.equip = !b.equip; changed(); };
   if ($("#wStaff")) $("#wStaff").onclick = () => { b.staff = !b.staff; changed(); };
   if (defOf(id).acid) bindAcid(win, () => { ghMarkDirty(); changed(); });
@@ -5374,6 +5708,12 @@ function liveWin() {
     return;
   }
   if (openId && !defOf(openId).production && S.biz[openId].owned) { liveClub(win, "w"); return; }
+  if (openId === "bunker" && S.biz.bunker.owned && bkAdv()) {
+    if (++liveCount % 5 || win.matches(":active") || segDrag || win.contains(document.activeElement) && document.activeElement.matches("input, select")) { liveBunkerBits(); return; }
+    renderWin();
+    return;
+  }
+  if (openId === "bunker") liveBunkerBits();
   if (!openId || !defOf(openId).production || !S.biz[openId].owned) return;
   const id = openId, b = S.biz[id], n = numbers(id), f = forecast(id), st = status(id);
   const q = s => win.querySelector(s);
@@ -5429,7 +5769,7 @@ function renderAll() {
   const ceoTile = document.querySelector('.tile[data-cat="ceo"]');
   if (ceoTile) {
     ceoTile.querySelector(".tile-dots").innerHTML = ceoDots();
-    ceoTile.querySelector(".tile-sub").textContent = t("mcSub", CEO_SLOTS.filter(d => S.biz[d.id].owned).length);
+    ceoTile.querySelector(".tile-sub").textContent = t("ceoSub", CEO_SLOTS.filter(d => S.biz[d.id].owned).length);
   }
   CATEGORIES.filter(c => c.single).forEach(c => {
     const tl = document.querySelector(`.tile[data-cat="${c.id}"]`);
@@ -5442,7 +5782,7 @@ function renderAll() {
 }
 function renderLive() {
   renderAll();
-  if (!segDrag) { liveWin(); liveQuick(); }
+  if (!segDrag) { liveWin(); liveQuick(); liveBunkerBits(); }
 }
 
 /* ======================================================================
@@ -5645,7 +5985,7 @@ const TOUR = [
   { k: 2, target: () => ingameEl },
   { k: 3, side: true, target: () => qs('.tile[data-cat="mc"]') },
   { k: 4, side: true, prep: () => { const tl = qs('.tile[data-cat="mc"]'); openFlyout(tl, CATEGORIES[0]); }, target: () => qs("#flyout") },
-  { k: 13, side: true, target: () => [qs('.tile[data-cat="ceo"]'), qs('.tile[data-cat="acid"]')].filter(Boolean) },
+  { k: 13, side: true, target: () => [qs('.tile[data-cat="ceo"]'), qs('.tile[data-cat="acid"]'), qs('.tile[data-cat="bunker"]')].filter(Boolean) },
   { k: 5, desk: true, side: true, prep: () => { const tl = qs('.tile[data-cat="mc"]'); openFlyout(tl, CATEGORIES[0]); const tb = qs('.tab[data-id="coke"]'); if (tb) openQuick("coke", tb); }, target: () => qs("#quick") },
   { k: 6, prep: () => openWin("coke", false), target: () => qs("#win") },
   { k: 7, prep: () => openWin("coke", false), target: () => { const bars = [...document.querySelectorAll("#win .segbar")]; return bars.length ? bars : qs("#win"); } },
@@ -5659,11 +5999,12 @@ const TOUR = [
 const fq = sel => focusEl.querySelector(sel);
 const PAGE_TOURS = {
   mc: [{ k: "mt1" }, { k: "mt2", target: () => fq(".mcb-grid") || fq(".mcb") }, { k: "mt3", target: () => fq(".mcb .segbar") }, { k: "mt4", target: () => ingameEl }],
+  bunker: [{ k: "bt1" }, { k: "bt2", target: () => fq(".bk-laptop") }, { k: "bt3", target: () => fq(".bk-plan") }, { k: "bt4", target: () => { const r = fq(".adv-range"); return r ? r.closest(".adv-card") : null; } }, { k: "bt5", target: () => ingameEl }],
   night: [{ k: "nt1" }, { k: "nt2", target: () => fq(".adv-card") }, { k: "nt3", target: () => fq(".mixer") }, { k: "nt4", target: () => { const r = fq(".adv-range"); return r ? r.closest(".adv-card") : null; } }, { k: "nt5", target: () => ingameEl }]
 };
 const tourKeyOf = () => VIEW ? TOUR_KEY + ":" + VIEW : TOUR_KEY;
 sec.tourKey = TOUR_KEY;
-sec.tour = () => VIEW ? (S.biz[VIEW === "mc" ? "weed" : "night"] ? PAGE_TOURS[VIEW].map(st => ({ k: "pm." + st.k, target: st.target })) : null) : TOUR.filter(st => !(st.desk && isPhone())).map(st => ({
+sec.tour = () => VIEW ? (PAGE_TOURS[VIEW] ? PAGE_TOURS[VIEW].map(st => ({ k: "pm." + st.k, target: st.target })) : null) : TOUR.filter(st => !(st.desk && isPhone())).map(st => ({
   k: "pm.pt" + st.k, target: st.target, delay: 320,
   before: () => { tourReset(); if (st.side && !S.sideOpen) setSide(true); if (st.prep) st.prep(); }
 }));
@@ -5688,7 +6029,7 @@ const VEH_CARS = [["B1GMON3Y","Top","Z-Type"],["K1NGP1N","Top","Z-Type"],["CE0",
 /* ======================================================================
    Advanced Nightclub, MC board (?view=night / ?view=mc) and quick add for the Vehicle Warehouse
    ====================================================================== */
-let VIEW = null;   // "night" | "mc" | null: set by the route (#night, #mc)
+let VIEW = null;   // "night" | "mc" | "bunker" | null: set by the route (#night, #mc, #bunker)
 const NC_RANK = [...NC_GOODS].sort((a, b) => b.perHour - a.perHour).map(g => g.id);
 function ncOptimize() {
   const n = S.biz.night;
@@ -5851,6 +6192,22 @@ function renderFocus() {
     const own = focusEl.querySelector("[data-own]");
     if (own) own.onclick = () => { n.owned = true; save(true); renderFocus(); };
     if (n.owned) { bindNightAdvanced(focusEl, renderFocus); bindNightSettings(focusEl, renderFocus); }
+  } else if (VIEW === "bunker") {
+    const b = S.biz.bunker;
+    const html = `<div class="focus-head"><img src="${EMB.bunker}" alt=""><div><h2>${escapeHtml(bizName("bunker"))}</h2>
+      <p class="muted">${b.owned ? t("focusBunkerSub") : t("notOwned")}</p></div>
+      ${b.owned ? "" : `<button class="btn primary" data-own="bunker">${t("qOwn")}</button>`}</div>
+      ${b.owned ? bunkerAdvancedHtml() : ""}`;
+    if (html === focusEl._last) { liveBunkerBits(); return; }
+    focusEl.innerHTML = focusEl._last = html;
+    focusEl.querySelectorAll(".segbar").forEach(updateSegBar);
+    const own = focusEl.querySelector("[data-own]");
+    if (own) own.onclick = () => { b.owned = true; syncStatus(); save(true); ghMarkDirty(); renderPins(); renderAll(); renderFocus(); };
+    if (b.owned) {
+      const re = () => { syncStatus(); save(true); ghMarkDirty(); renderFocus(); renderAll(); };
+      bindBunker(focusEl, re);
+      bindBoost(focusEl, "bunker", re);
+    }
   } else {
     const html = `<div class="focus-head"><img src="${EMB.mc}" alt=""><div><h2>MC Business</h2><p class="muted">${t("focusMcSub")}</p></div></div>${mcBoardHtml()}`;
     if (html === focusEl._last) { if (S.biz.club.owned) liveClub(focusEl, "fc"); return; }
@@ -5900,7 +6257,7 @@ function bindVehAdd(root, after) {
 }
 /* emblems for the focus pages, taken from the menu artwork */
 const EMB = {};
-["night", "mc"].forEach(k => { const el = document.createElement("div"); el.className = "art-" + k; el.style.display = "none"; ROOT.appendChild(el);
+["night", "mc", "bunker"].forEach(k => { const el = document.createElement("div"); el.className = "art-" + k; el.style.display = "none"; ROOT.appendChild(el);
   EMB[k] = (getComputedStyle(el).getPropertyValue("--emb").match(/url\("?(.*?)"?\)$/) || [])[1] || ""; el.remove(); });
 
 /* Production.json on GitHub while logged in (data/production.json, same format as before) */
@@ -6092,7 +6449,7 @@ function boot() {
   closeWin();
   applyLang();
 }
-// the map, the MC page (#mc) and the Nightclub page (#night) are one section
+// the map, the MC page (#mc), the Nightclub page (#night) and the Bunker page (#bunker) are one section
 function setView(v) {
   v = v || null;
   if (v === VIEW) return;
