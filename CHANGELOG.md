@@ -2,6 +2,27 @@
 
 * * *
 
+### v0.13.0 (2026-10-25)
+* Home:
+  * Add: drag the cards to put them in your own order (on a phone, hold a card first); the order is remembered and "Default order" brings it back.
+  * Change: the cards are more see-through, so the background shows better.
+  * Change: after Show all, Show less is always in the top bar of the weekly bonuses window.
+* Production Manager:
+  * Add: every business is picked from the game's own list (Clubhouse, Weed Farm, Counterfeit Cash, Cocaine Lockup, Document Forgery, Meth Lab, Nightclub, Vehicle Warehouse) and shows its full in-game name.
+  * Change: every business shows its sale the same way: Invite only and Public 20+ (+50%) in big, selling nearby (no bonus) small.
+  * Add: the Nightclub page opens from the list and from its window; the Bunker page opens from the list too.
+  * Fix: clicking another pin while a window is open now opens that business (a long name no longer covers the pin next to it).
+* Bunker:
+  * Fix: research can be set to 60; letting go there finishes the project (with Undo).
+  * Change: "Research projects finished" shows X / 51 (the game's total) and stops there; add "All research is done", which puts the staff on Manufacturing.
+  * Change: the sale shows Invite only and Public 20+ directly, without the players slider.
+* CEO Warehouses:
+  * Add: the special items (Amir Group Investments in the game) are shown and edited from the list too, and their value is shown next to the sale.
+  * Change: a delivery vehicle upgrade ticked on one warehouse is ticked on all of them, like in the game.
+* Vehicle Manager:
+  * Change: a visitor sees one example garage (Auto Shop), marked as a preview, and one button, Create my own collection, which starts an empty collection; the same option is in the ⋮ menu, with a confirmation.
+  * Fix: a full garage is no longer a notification under the bell; the same notification is never repeated within 10 minutes.
+
 ### v0.12.0 (2026-10-24)
 * Production Manager:
   * Add Bunker: pick yours from the game's 11 bunkers, staff on manufacturing, research or both, research progress with an alert when a project is done, Equipment / Staff / Security, bed, Mansion boost.
