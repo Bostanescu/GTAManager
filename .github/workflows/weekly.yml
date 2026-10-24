@@ -172,7 +172,7 @@ jobs:
                       (cur["items"] if cur is not None else keep).append(it)
                   if keep: rest.append({"title": sec["title"], "items": keep})
               mult = [m for m in mult if m["items"]]
-              mult.sort(key=lambda m: -int(re.match(r"\d+", m["title"]).group()))
+              mult.sort(key=lambda m: int(re.match(r"\d+", m["title"]).group()))   # 2X first, then 3X, ...
               return mult + rest
           data["sections"] = tidy(data["sections"])
           for s in data["sections"]: s["items"] = [re.sub(r"Â(?=\s)", "", i).strip() for i in s["items"][:20]]
