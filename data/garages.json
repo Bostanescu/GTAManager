@@ -37,7 +37,29 @@
   },
   {
     "name": "Eclipse Boulevard Garage",
-    "slots": 50
+    "slots": 50,
+    "levels": [
+      {
+        "name": "B1",
+        "slots": 10
+      },
+      {
+        "name": "B2",
+        "slots": 10
+      },
+      {
+        "name": "B3",
+        "slots": 10
+      },
+      {
+        "name": "B4",
+        "slots": 10
+      },
+      {
+        "name": "B5",
+        "slots": 10
+      }
+    ]
   },
   {
     "name": "Facility Standard",
