@@ -2,6 +2,16 @@
 
 * * *
 
+### v0.14.0 (2026-10-26)
+* Production Manager:
+  * Add: the Hangar: pick it from the game's 5, Air Freight Cargo crates (0 / 50) with a switch between Simple (one type or mixed) and Exact (a counter for each of the 8 types), the same-type bonus by type, Higgins Helitours (+10%), Ron's 5% taken off, Invite only and Public 20+, Rooster with a timer and notifications, hangar almost full / full.
+* Vehicle Manager:
+  * Add: photo studio: paste a screenshot with Ctrl+V (or the Paste button), crop it with a fixed format (16:9, 9:16, 4:3, 3:4, 3:2, 2:3, 1:1, 21:9 or free), move and resize the frame, zoom with the slider, the mouse wheel or two fingers; Vibrance added to the colour sliders; the last format is remembered.
+* Home:
+  * Fix: dragging the cards is calm again: a card takes the place it is over and the others slide once, without jumping back and forth.
+* Everywhere:
+  * Add: when a new version of GTA V Manager is out, a small window says so once (for a copy kept on the computer or a fork too).
+
 ### v0.13.0 (2026-10-25)
 * Home:
   * Add: drag the cards to put them in your own order (on a phone, hold a card first); the order is remembered and "Default order" brings it back.

@@ -413,6 +413,10 @@ html[data-fx="wasted"] #tbTitle { letter-spacing: .08em; text-transform: upperca
 html[data-fx="soft"] #topbar::after { opacity: .35; }
 /* animations off */
 html[data-anim="off"] *, html[data-anim="off"] *::before, html[data-anim="off"] *::after { animation: none !important; transition: none !important; }
+
+/* idea 55: new version window */
+#updDlg .upd-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+#updDlg .upd-btns .btn, #updDlg .upd-btns button { text-decoration: none; }
 </style>
 </head>
 <body>
@@ -496,6 +500,11 @@ html[data-anim="off"] *, html[data-anim="off"] *::before, html[data-anim="off"] 
   <div class="dlg-body" id="textBody"></div>
 </dialog>
 
+<dialog class="dlg" id="updDlg">
+  <div class="dlg-head"><h2 id="updTitle"></h2><button class="tb-btn icon" data-close aria-label="Close">✕</button></div>
+  <div class="dlg-body" id="updBody"></div>
+</dialog>
+
 <!-- guided tour: spotlight + card -->
 <dialog id="tourLayer" aria-labelledby="tourTitle">
   <div class="tour-hole none" id="tourHole"></div>
@@ -516,7 +525,7 @@ html[data-anim="off"] *, html[data-anim="off"] *::before, html[data-anim="off"] 
 /* ======================================================================
    CORE — written once, used by every section
    ====================================================================== */
-const APP_VERSION = "0.13";
+const APP_VERSION = "0.14";
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -587,6 +596,7 @@ i18n({
     tourOf: (a, b) => `Step ${a} of ${b}`, tourNext: "Next", tourBack: "Back", tourSkip: "Skip", tourDone: "Done",
     tourViewNote: "You're only viewing; log in to change things.",
     aboutTitle: "About", version: "Version", changelog: "Changelog", helpTitle: "Help",
+    updTitle: "New version", updText: (n, o) => `GTA V Manager <b>${n}</b> is out (you have ${o}).`, updOnline: "You can open it online, or download the new file and replace yours.", updHere: "Reload the page to get it.", updOpen: "Open it online", updGet: "Download", updReload: "Reload", updNews: "What's new", updOk: "OK",
     aboutIntro: "<p>GTA V Manager keeps track of your GTA Online world: the vehicles you own, your businesses on the map and the cars waiting to be exported. A free personal project with no ads and no connection to the game itself: everything is entered by hand.</p>",
     desktopDenied: "The browser blocked desktop notifications for this page."
   },
@@ -611,6 +621,7 @@ i18n({
     tourOf: (a, b) => `Pasul ${a} din ${b}`, tourNext: "Înainte", tourBack: "Înapoi", tourSkip: "Sari peste", tourDone: "Gata",
     tourViewNote: "Doar vizualizezi; intră în cont ca să modifici.",
     aboutTitle: "Despre", version: "Versiunea", changelog: "Istoricul schimbărilor", helpTitle: "Ajutor",
+    updTitle: "Versiune nouă", updText: (n, o) => `A apărut GTA V Manager <b>${n}</b> (tu ai ${o}).`, updOnline: "O poți deschide online sau poți descărca fișierul nou ca să-l înlocuiești pe al tău.", updHere: "Reîncarcă pagina ca s-o primești.", updOpen: "Deschide online", updGet: "Descarcă", updReload: "Reîncarcă", updNews: "Ce e nou", updOk: "OK",
     aboutIntro: "<p>GTA V Manager ține evidența lumii tale din GTA Online: vehiculele pe care le deții, afacerile de pe hartă și mașinile care așteaptă exportul. Proiect personal, gratuit, fără reclame și fără nicio legătură cu jocul: totul se introduce manual.</p>",
     desktopDenied: "Browserul a blocat notificările pe desktop pentru această pagină."
   }
@@ -780,6 +791,62 @@ function openText(title, html) {
 }
 // one history for the whole of GTA V Manager, newest first (changelog.json, also published as CHANGELOG.md)
 const CHANGELOG = [
+ {
+  "v": "0.14.0",
+  "date": "2026-10-26",
+  "en": [
+   {
+    "area": "Production Manager",
+    "items": [
+     "Add: the Hangar: pick it from the game's 5, Air Freight Cargo crates (0 / 50) with a switch between Simple (one type or mixed) and Exact (a counter for each of the 8 types), the same-type bonus by type, Higgins Helitours (+10%), Ron's 5% taken off, Invite only and Public 20+, Rooster with a timer and notifications, hangar almost full / full."
+    ]
+   },
+   {
+    "area": "Vehicle Manager",
+    "items": [
+     "Add: photo studio: paste a screenshot with Ctrl+V (or the Paste button), crop it with a fixed format (16:9, 9:16, 4:3, 3:4, 3:2, 2:3, 1:1, 21:9 or free), move and resize the frame, zoom with the slider, the mouse wheel or two fingers; Vibrance added to the colour sliders; the last format is remembered."
+    ]
+   },
+   {
+    "area": "Home",
+    "items": [
+     "Fix: dragging the cards is calm again: a card takes the place it is over and the others slide once, without jumping back and forth."
+    ]
+   },
+   {
+    "area": "Everywhere",
+    "items": [
+     "Add: when a new version of GTA V Manager is out, a small window says so once (for a copy kept on the computer or a fork too)."
+    ]
+   }
+  ],
+  "ro": [
+   {
+    "area": "Production Manager",
+    "items": [
+     "Adaugă: Hangarul: ales din cele 5 din joc, lăzi Air Freight Cargo (0 / 50) cu un switch între Simplu (un tip sau amestecat) și Exact (câte un contor pentru fiecare din cele 8 tipuri), bonusul pe același tip, Higgins Helitours (+10%), cele 5% ale lui Ron scăzute, Invite only și Public 20+, Rooster cu cronometru și notificări, hangar aproape plin / plin."
+    ]
+   },
+   {
+    "area": "Vehicle Manager",
+    "items": [
+     "Adaugă: studio foto: lipești o captură cu Ctrl+V (sau butonul Lipește), o tai cu un format fix (16:9, 9:16, 4:3, 3:4, 3:2, 2:3, 1:1, 21:9 sau liber), muți și mărești cadrul, zoom din slider, rotița mouse-ului sau două degete; Vibrance adăugat la reglajele de culoare; ultimul format se ține minte."
+    ]
+   },
+   {
+    "area": "Acasă",
+    "items": [
+     "Repară: mutarea cardurilor e din nou calmă: cardul ia locul peste care e, iar celelalte alunecă o dată, fără să sară înainte și înapoi."
+    ]
+   },
+   {
+    "area": "Peste tot",
+    "items": [
+     "Adaugă: când apare o versiune nouă de GTA V Manager, o fereastră mică anunță asta o singură dată (și pentru o copie ținută pe calculator sau un fork)."
+    ]
+   }
+  ]
+ },
  {
   "v": "0.13.0",
   "date": "2026-10-25",
@@ -1179,6 +1246,44 @@ function openAbout() {
   const log = CHANGELOG.map(e => `<div class="log-entry"><h4>v${e.v} <small>(${e.date})</small></h4><ul>${e[L].map(item).join("")}</ul></div>`).join("");
   openText(t("aboutTitle"), `${t("aboutIntro")}<p class="version">${t("version")} ${APP_VERSION}</p><h3>${t("changelog")}</h3>${log}`);
 }
+
+/* ---------- idea 55: a new version is announced once, in a small window ----------
+   Once a day the page reads CHANGELOG.md from the main repo (small, public, no login); if its newest version is
+   newer than this page, a small window says so, one time per version (gtaUpdateSeen). Works for a local copy or a fork too. */
+const Update = {
+  SRC: "https://raw.githubusercontent.com/Yogi4x4/GTAManager/main/CHANGELOG.md",
+  LIVE: "https://yogi4x4.github.io/GTAManager/GTA_V_Manager.html",
+  FILE: "https://github.com/Yogi4x4/GTAManager/blob/main/GTA_V_Manager.html",
+  NEWS: "https://github.com/Yogi4x4/GTAManager/blob/main/CHANGELOG.md",
+  num: v => String(v).split(".").map(n => parseInt(n, 10) || 0),
+  newer(a, b) { const x = this.num(a), y = this.num(b); for (let i = 0; i < Math.max(x.length, y.length); i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); } return false; },
+  async check() {
+    if (Date.now() - (+LS.raw("gtaUpdateCheckedAt") || 0) < 864e5) return;
+    let txt;
+    try { const r = await fetch(this.SRC, { cache: "no-store" }); if (!r.ok) return; txt = await r.text(); } catch (e) { return; }
+    LS.set("gtaUpdateCheckedAt", String(Date.now()));
+    const m = txt.match(/^###\s*v(\d+(?:\.\d+)*)/m);
+    if (!m) return;
+    const v = m[1].replace(/\.0$/, "");
+    if (!this.newer(v, APP_VERSION) || LS.raw("gtaUpdateSeen") === v) return;
+    this.show(v);
+  },
+  show(v) {
+    // never on top of a tour or another window: try again a bit later
+    if (document.querySelector("dialog[open]")) { setTimeout(() => this.show(v), 15000); return; }
+    LS.set("gtaUpdateSeen", v);
+    const here = /yogi4x4\.github\.io$/i.test(location.hostname);
+    const d = $("#updDlg");
+    $("#updBody").innerHTML = `<p>${t("updText", v, APP_VERSION)}</p><p class="muted">${here ? t("updHere") : t("updOnline")}</p>
+      <div class="upd-btns">${here ? `<button class="btn primary" id="updReload">${t("updReload")}</button>`
+        : `<a class="btn primary" href="${this.LIVE}" target="_blank" rel="noopener">${t("updOpen")}</a><a class="btn" href="${this.FILE}" target="_blank" rel="noopener">${t("updGet")}</a>`}
+      <a class="btn" href="${this.NEWS}" target="_blank" rel="noopener">${t("updNews")}</a><button class="btn" data-close>${t("updOk")}</button></div>`;
+    $("#updTitle").textContent = t("updTitle");
+    const rl = $("#updReload"); if (rl) rl.onclick = () => location.reload();
+    d.showModal();
+  }
+};
+setTimeout(() => Update.check(), 4000);
 
 /* ---------- guided tour engine: spotlight + card, steps come from each section ----------
    step = { k: "vm.t3", target: () => el | [el], before: () => {}, note: () => bool (show the note), noteKey } */
@@ -1630,7 +1735,7 @@ i18n({ en: { m_guideShort: "Start here" }, ro: { m_guideShort: "Începe aici" } 
 #sec-home .card.dragging { z-index: 20; cursor: grabbing; transition: none; border-color: var(--accent); background: color-mix(in srgb, var(--bg2) 70%, transparent); box-shadow: 0 18px 40px rgba(0,0,0,.5); }
 #sec-home .card.lift { animation: homeLift .25s ease; }
 @keyframes homeLift { 50% { transform: scale(1.04); } }
-#sec-home .grid.sorting .card:not(.dragging) { transition: transform .15s ease; }
+#sec-home .grid.sorting .card:not(.dragging) { transition: transform .22s cubic-bezier(.2,.8,.2,1); }
 #sec-home .order-hint { margin: 10px 0 0; font-size: 12px; color: color-mix(in srgb, var(--text) 70%, transparent); text-shadow: 0 1px 6px rgba(0,0,0,.7); }
 #sec-home .order-hint button { padding: 0; border: 0; background: none; color: inherit; text-decoration: underline; font: inherit; cursor: pointer; }
 #sec-home .art { height: 168px; display: grid; place-items: center; }
@@ -1821,42 +1926,52 @@ Section({
     const saved = LS.get("gtaHomeOrder", null);
     if (Array.isArray(saved)) apply([...saved, ...DEF.filter(k => !saved.includes(k))]);
     renderHint(); Bus.on("lang", renderHint);
+    /* idea 54: the place is chosen from the grid's fixed slots (measured when the drag starts), never from the card
+       under the finger: the other cards slide while they move, and picking them made the order jump back and forth */
     let st = null, blockClick = false;
     const stop = () => { if (st && st.timer) clearTimeout(st.timer); };
+    const page = r => ({ x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height });
     const begin = () => {
-      st.on = true; st.card.classList.add("dragging", "lift"); grid.classList.add("sorting");
+      st.on = true;
+      st.slots = cards().map(c => page(c.getBoundingClientRect()));
+      const r = page(st.card.getBoundingClientRect());
+      st.gx = st.px - r.x; st.gy = st.py - r.y;          // where the card was grabbed
+      st.card.classList.add("dragging", "lift"); grid.classList.add("sorting");
       if (navigator.vibrate && st.touch) try { navigator.vibrate(15); } catch (e) {}
+    };
+    const slotAt = (x, y) => {
+      let best = -1, bd = Infinity;
+      st.slots.forEach((r, i) => { const d = Math.hypot(x - (r.x + r.w / 2), y - (r.y + r.h / 2)); if (d < bd) { bd = d; best = i; } });
+      return best;
     };
     grid.addEventListener("pointerdown", e => {
       const card = e.target.closest(".card"); if (!card || (e.pointerType === "mouse" && e.button !== 0)) return;
-      st = { card, id: e.pointerId, x: e.clientX, y: e.clientY, on: false, touch: e.pointerType !== "mouse" };
+      st = { card, id: e.pointerId, x: e.clientX, y: e.clientY, px: e.pageX, py: e.pageY, on: false, touch: e.pointerType !== "mouse" };
       if (st.touch) st.timer = setTimeout(() => { if (st && !st.on) begin(); }, 380);
     });
     addEventListener("pointermove", e => {
       if (!st || e.pointerId !== st.id) return;
-      const dx = e.clientX - st.x, dy = e.clientY - st.y;
       if (!st.on) {
-        if (Math.hypot(dx, dy) < 7) return;
+        if (Math.hypot(e.clientX - st.x, e.clientY - st.y) < 7) return;
         if (st.touch) { stop(); st = null; return; }   // a phone swipe before the hold: it is a scroll
         begin();
       }
       e.preventDefault();
-      // the card under the finger takes the place
-      st.card.style.visibility = "hidden";
-      const under = document.elementFromPoint(e.clientX, e.clientY);
-      st.card.style.visibility = "";
-      const over = under && under.closest && under.closest("#sec-home .card");
-      if (over && over !== st.card) {
-        const list = cards(), a = list.indexOf(st.card), b = list.indexOf(over);
+      const list = cards(), from = list.indexOf(st.card);
+      // the dragged card's centre decides the slot
+      const cx = e.pageX - st.gx + st.slots[from].w / 2, cy = e.pageY - st.gy + st.slots[from].h / 2;
+      const to = slotAt(cx, cy);
+      if (to !== -1 && to !== from) {
         const before = new Map(list.map(c => [c, c.getBoundingClientRect()]));
-        const r0 = st.card.getBoundingClientRect();
-        grid.insertBefore(st.card, a < b ? over.nextSibling : over);
-        // keep the dragged card under the pointer and slide the others (FLIP)
-        const r1 = st.card.getBoundingClientRect(); st.x += r1.left - r0.left; st.y += r1.top - r0.top;
-        list.forEach(c => { if (c === st.card) return; const p = before.get(c), n = c.getBoundingClientRect();
-          if (p.left !== n.left || p.top !== n.top) { c.style.transition = "none"; c.style.transform = `translate(${p.left - n.left}px,${p.top - n.top}px)`; requestAnimationFrame(() => { c.style.transition = ""; c.style.transform = ""; }); } });
+        const rest = list.filter(c => c !== st.card);
+        rest.splice(to, 0, st.card);
+        rest.forEach(c => grid.appendChild(c));
+        rest.forEach(c => { if (c === st.card) return; const p = before.get(c), n = c.getBoundingClientRect();
+          if (p.left !== n.left || p.top !== n.top) { c.style.transition = "none"; c.style.transform = `translate(${p.left - n.left}px,${p.top - n.top}px)`;
+            requestAnimationFrame(() => requestAnimationFrame(() => { c.style.transition = ""; c.style.transform = ""; })); } });
       }
-      st.card.style.transform = `translate(${e.clientX - st.x}px,${e.clientY - st.y}px)`;
+      const slot = st.slots[cards().indexOf(st.card)];
+      st.card.style.transform = `translate(${e.pageX - st.gx - slot.x}px,${e.pageY - st.gy - slot.y}px)`;
     }, { passive: false });
     // while a card is held, the phone must not scroll the page
     addEventListener("touchmove", e => { if (st && st.on) e.preventDefault(); }, { passive: false });
@@ -1865,7 +1980,7 @@ Section({
     const end = e => {
       if (!st || (e && e.pointerId !== st.id)) return;
       stop();
-      if (st.on) { const c = st.card; c.classList.remove("dragging", "lift"); c.style.transform = ""; grid.classList.remove("sorting"); blockClick = true; setTimeout(() => blockClick = false, 50); save(); }
+      if (st.on) { const c = st.card; c.classList.remove("dragging", "lift"); c.style.transition = "transform .2s ease"; c.style.transform = ""; setTimeout(() => c.style.transition = "", 220); grid.classList.remove("sorting"); blockClick = true; setTimeout(() => blockClick = false, 50); save(); }
       st = null;
     };
     addEventListener("pointerup", end); addEventListener("pointercancel", end);
@@ -2017,10 +2132,28 @@ Section({
 #sec-vehicles .lv-info { display: block; margin-top: 2px; }
 #sec-vehicles #gSlotsInput[readonly] { opacity: .75; }
 #sec-vehicles .pe-open { margin-top: 8px; }
-#sec-vehicles #photoDlg { width: min(640px, 96vw); max-width: 640px; }
-#sec-vehicles .pe-stage { display: grid; place-items: center; min-height: 180px; max-height: 46vh; overflow: hidden; border-radius: 10px;
+#sec-vehicles #photoDlg { width: min(760px, 96vw); max-width: 760px; }
+/* idea 53: photo studio: crop with a fixed format, zoom, colours; paste a screenshot with Ctrl+V */
+#sec-vehicles .pe-stage { display: grid; place-items: center; min-height: 180px; border-radius: 10px; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none;
   background: repeating-conic-gradient(var(--bg3) 0 25%, var(--bg2) 0 50%) 0 0 / 16px 16px; }
-#sec-vehicles .pe-stage img { max-width: 100%; max-height: 46vh; display: block; transition: transform .2s ease; }
+#sec-vehicles .pe-wrap { position: relative; line-height: 0; }
+#sec-vehicles .pe-wrap canvas { display: block; }
+#sec-vehicles .pe-crop { position: absolute; box-shadow: 0 0 0 9999px rgba(0, 0, 0, .58); outline: 2px solid #fff; cursor: move;
+  background-image: linear-gradient(rgba(255,255,255,.35), rgba(255,255,255,.35)), linear-gradient(rgba(255,255,255,.35), rgba(255,255,255,.35)),
+    linear-gradient(90deg, rgba(255,255,255,.35), rgba(255,255,255,.35)), linear-gradient(90deg, rgba(255,255,255,.35), rgba(255,255,255,.35));
+  background-size: 100% 1px, 100% 1px, 1px 100%, 1px 100%; background-position: 0 33.33%, 0 66.66%, 33.33% 0, 66.66% 0; background-repeat: no-repeat; }
+#sec-vehicles .pe-crop i { position: absolute; width: 22px; height: 22px; border: 3px solid #fff; }
+#sec-vehicles .pe-crop i[data-h="nw"] { left: -4px; top: -4px; border-right: 0; border-bottom: 0; cursor: nwse-resize; }
+#sec-vehicles .pe-crop i[data-h="ne"] { right: -4px; top: -4px; border-left: 0; border-bottom: 0; cursor: nesw-resize; }
+#sec-vehicles .pe-crop i[data-h="sw"] { left: -4px; bottom: -4px; border-right: 0; border-top: 0; cursor: nesw-resize; }
+#sec-vehicles .pe-crop i[data-h="se"] { right: -4px; bottom: -4px; border-left: 0; border-top: 0; cursor: nwse-resize; }
+#sec-vehicles .pe-crop i::after { content: ""; position: absolute; inset: -12px; }   /* a bigger target for a finger */
+#sec-vehicles .pe-size { margin: 6px 2px 0; font-size: 12px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; line-height: 1.2; }
+#sec-vehicles .pe-ratios { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+#sec-vehicles .pe-ratios button { padding: 5px 10px; font-size: 13px; }
+#sec-vehicles .pe-ratios button.on { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+#sec-vehicles .pe-empty { padding: 30px 16px; text-align: center; color: var(--muted); line-height: 1.5; }
+#sec-vehicles .paste-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
 #sec-vehicles .pe-sliders { display: grid; gap: 6px; margin-top: 12px; }
 #sec-vehicles .pe-sliders label { display: grid; grid-template-columns: 110px 1fr 44px; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
 #sec-vehicles .pe-sliders input[type="range"] { width: 100%; padding: 0; border: 0; background: none; accent-color: var(--accent); }
@@ -2131,6 +2264,7 @@ Section({
       <div class="form-group full">
         <label data-i18n="vm.imageLabel"></label>
         <input type="file" id="image" accept="image/*">
+        <div class="paste-row"><button type="button" class="ghost" data-act="pePaste" data-i18n="vm.pePaste"></button><span class="hint" data-i18n="vm.pasteHint"></span></div>
         <p class="hint" data-i18n="vm.imageHint"></p>
         <img id="imgPreview" class="img-preview" alt="">
         <button type="button" class="ghost pe-open" id="photoEditBtn" data-act="photoEdit" hidden data-i18n="vm.peOpen"></button>
@@ -2146,11 +2280,16 @@ Section({
 <dialog id="photoDlg" data-sticky="1">
   <div class="dlg-header"><h3 data-i18n="vm.peTitle"></h3><button class="ghost" data-act="peCancel" style="padding:4px 10px">✕</button></div>
   <div class="dlg-body">
-    <div class="pe-stage"><img id="peImg" alt=""></div>
+    <div class="pe-stage" id="peStage"><div class="pe-wrap" id="peWrap"><canvas id="peCv"></canvas>
+      <div class="pe-crop" id="peCrop"><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i></div></div></div>
+    <p class="pe-size" id="peSize"></p>
+    <div class="pe-ratios" id="peRatios"></div>
     <div class="pe-sliders">
+      <label><span data-i18n="vm.peZoom"></span><input type="range" min="0" max="100" value="0" id="peZoom"><output></output></label>
       <label><span data-i18n="vm.peBright"></span><input type="range" min="-100" max="100" value="0" data-pe="bright"><output></output></label>
       <label><span data-i18n="vm.peContrast"></span><input type="range" min="-100" max="100" value="0" data-pe="contrast"><output></output></label>
       <label><span data-i18n="vm.peSat"></span><input type="range" min="-100" max="100" value="0" data-pe="sat"><output></output></label>
+      <label><span data-i18n="vm.peVib"></span><input type="range" min="-100" max="100" value="0" data-pe="vib"><output></output></label>
       <label><span data-i18n="vm.peHue"></span><input type="range" min="-180" max="180" value="0" data-pe="hue"><output></output></label>
       <label><span data-i18n="vm.peWarm"></span><input type="range" min="-100" max="100" value="0" data-pe="warm"><output></output></label>
     </div>
@@ -2158,8 +2297,10 @@ Section({
       <button type="button" class="ghost" data-act="peRotL" data-i18n-title="vm.peRotL">⟲</button>
       <button type="button" class="ghost" data-act="peRotR" data-i18n-title="vm.peRotR">⟳</button>
       <button type="button" class="ghost" data-act="peFlip" data-i18n-title="vm.peFlip">⇋</button>
+      <button type="button" class="ghost" data-act="pePaste" data-i18n="vm.pePaste"></button>
       <button type="button" class="ghost" data-act="peReset" data-i18n="vm.peReset"></button>
     </div>
+    <p class="hint" data-i18n="vm.peHint"></p>
   </div>
   <div class="dlg-footer">
     <button class="ghost" data-act="peCancel" data-i18n="vm.cancel"></button>
@@ -2369,18 +2510,26 @@ i18n({
 
 i18n({
   en: { "vm.garagesLbl": "Garages", "vm.menuData": "GitHub",
-    "vm.peOpen": "🎨 Edit the photo", "vm.peTitle": "Edit the photo", "vm.peBright": "Brightness", "vm.peContrast": "Contrast", "vm.peSat": "Saturation",
+    "vm.peOpen": "🎨 Photo studio", "vm.peTitle": "Photo studio", "vm.peBright": "Brightness", "vm.peContrast": "Contrast", "vm.peSat": "Saturation",
     "vm.peHue": "Hue", "vm.peWarm": "Warmth", "vm.peRotL": "Rotate left", "vm.peRotR": "Rotate right", "vm.peFlip": "Mirror", "vm.peReset": "Reset",
     "vm.peApply": "Apply", "vm.peDone": "Photo edited: press Save to keep it.",
+    "vm.peZoom": "Zoom", "vm.peVib": "Vibrance", "vm.pePaste": "📋 Paste", "vm.peFree": "Free",
+    "vm.pasteHint": "or Ctrl+V: Print Screen in the game, then paste here", "vm.peHint": "Drag the frame to move it, its corners to resize it; the mouse wheel or two fingers zoom.",
+    "vm.pasteNone": "No picture in the clipboard: press Print Screen in the game first.", "vm.pasteBlocked": "The browser didn't allow reading the clipboard: press Ctrl+V instead.",
+    "vm.peSizeTxt": o => `${o[0]} × ${o[1]} px`,
     "vm.levelsLbl": "Levels (optional)", "vm.addLevel": "➕ Level", "vm.lvName": "e.g. B1", "vm.lvSlots": "spots", "vm.levelPick": "-- Level --",
     "vm.levelsHint": "For example -1 with 10 spots and -2 with 10 spots. The total is added up for you, and when you add a car you pick the level from a list.",
     "vm.t2b": "<ul><li><b>View</b>: the published garage, read-only.</li><li><b>Your own copy</b>: your own list, saved only in your browser.</li><li><b>Owner</b>: logged in, everything is saved to GitHub.</li></ul>Switch from this band or from the ⋮ menu.",
     "vm.t14b": "Pick a theme (the colored circle) and the language. The four squares take you to the other sections of GTA V Manager.",
     "vm.ghStateEdit": o => `Owner · saves to <b>${o}</b>` },
   ro: { "vm.garagesLbl": "Garaje", "vm.menuData": "GitHub",
-    "vm.peOpen": "🎨 Editează poza", "vm.peTitle": "Editează poza", "vm.peBright": "Luminozitate", "vm.peContrast": "Contrast", "vm.peSat": "Saturație",
+    "vm.peOpen": "🎨 Studio foto", "vm.peTitle": "Studio foto", "vm.peBright": "Luminozitate", "vm.peContrast": "Contrast", "vm.peSat": "Saturație",
     "vm.peHue": "Nuanță", "vm.peWarm": "Căldură", "vm.peRotL": "Rotește la stânga", "vm.peRotR": "Rotește la dreapta", "vm.peFlip": "Oglindă", "vm.peReset": "Resetează",
     "vm.peApply": "Aplică", "vm.peDone": "Poză editată: apasă Salvează ca să rămână.",
+    "vm.peZoom": "Zoom", "vm.peVib": "Vibrance", "vm.pePaste": "📋 Lipește", "vm.peFree": "Liber",
+    "vm.pasteHint": "sau Ctrl+V: Print Screen în joc, apoi lipește aici", "vm.peHint": "Trage cadrul ca să-l muți, colțurile ca să-l mărești; rotița mouse-ului sau două degete fac zoom.",
+    "vm.pasteNone": "Nu e nicio poză în clipboard: apasă întâi Print Screen în joc.", "vm.pasteBlocked": "Browserul n-a permis citirea clipboard-ului: apasă Ctrl+V.",
+    "vm.peSizeTxt": o => `${o[0]} × ${o[1]} px`,
     "vm.levelsLbl": "Niveluri (opțional)", "vm.addLevel": "➕ Nivel", "vm.lvName": "ex: B1", "vm.lvSlots": "locuri", "vm.levelPick": "-- Nivel --",
     "vm.levelsHint": "De exemplu -1 cu 10 locuri și -2 cu 10 locuri. Totalul se adună singur, iar când adaugi o mașină alegi nivelul dintr-o listă.",
     "vm.t2b": "<ul><li><b>Vizualizare</b>: garajul publicat, doar în citire.</li><li><b>Copia ta</b>: lista ta, salvată doar în browserul tău.</li><li><b>Proprietar</b>: ai intrat în cont, totul se salvează în GitHub.</li></ul>Schimbi din această bandă sau din meniul ⋮.",
@@ -2576,52 +2725,195 @@ Section({
       const prev = byId("imgPreview"), f = e.target.files[0];
       editedImage = null;
       if (!f) { prev.style.display = "none"; prev.src = ""; byId("photoEditBtn").hidden = true; return; }
-      const r = new FileReader(); r.onload = ev => { prev.src = ev.target.result; prev.style.display = "block"; byId("photoEditBtn").hidden = false; }; r.readAsDataURL(f);
+      const r = new FileReader(); r.onload = ev => { prev.src = ev.target.result; prev.style.display = "block"; byId("photoEditBtn").hidden = false; peSrc = ev.target.result; peKept = null; }; r.readAsDataURL(f);
     };
 
-    /* ---------- photo editor: brightness, contrast, saturation, hue, warmth, rotate, flip ----------
-       The preview uses CSS filters (instant); "Apply" draws the same filters on a canvas and keeps the result for this vehicle. */
+    /* ---------- photo studio (idea 53): crop with a fixed format, zoom, colours, rotate, mirror; paste with Ctrl+V ----------
+       "base" = the original picture turned / mirrored; the crop frame lives in base pixels. The preview draws the base small
+       with the colour filters; "Apply" draws only the framed part, at most 1000 px on the long side. */
     let editedImage = null;
-    const PE0 = { bright: 0, contrast: 0, sat: 0, hue: 0, warm: 0, rot: 0, flip: false };
-    let pe = { ...PE0 };
-    const photoDlg = byId("photoDlg"), peImg = byId("peImg");
+    const PE0 = { bright: 0, contrast: 0, sat: 0, vib: 0, hue: 0, warm: 0, rot: 0, flip: false };
+    const RATIOS = ["16:9", "9:16", "4:3", "3:4", "3:2", "2:3", "1:1", "21:9", "free"];
+    let pe = { ...PE0 }, peSrc = null, peOrig = null, peBase = null, crop = null, peZoomV = 0, view = 1, peKept = null;
+    let ratio = LS.raw("gtaPhotoRatio") || "16:9";
+    const photoDlg = byId("photoDlg"), peCv = byId("peCv"), peCrop = byId("peCrop"), peStage = byId("peStage");
+    const ratioNum = r => r === "free" ? null : (([a, b]) => a / b)(r.split(":").map(Number));
     const peFilter = () => `brightness(${1 + pe.bright / 100}) contrast(${1 + pe.contrast / 100}) saturate(${1 + pe.sat / 100}) hue-rotate(${pe.hue}deg) sepia(${Math.max(0, pe.warm) / 250})` + (pe.warm < 0 ? ` hue-rotate(${pe.warm / 10}deg) saturate(${1 + pe.warm / 400})` : "");
+    const canFilter = (() => { try { const c = document.createElement("canvas").getContext("2d"); return "filter" in c; } catch (e) { return false; } })();
+    const loadImg = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+    function buildBase() {
+      const turn = Math.abs(pe.rot % 180) === 90, w = peOrig.naturalWidth, h = peOrig.naturalHeight;
+      const c = document.createElement("canvas"); c.width = turn ? h : w; c.height = turn ? w : h;
+      const x = c.getContext("2d"); x.translate(c.width / 2, c.height / 2); x.rotate(pe.rot * Math.PI / 180); if (pe.flip) x.scale(-1, 1);
+      x.drawImage(peOrig, -w / 2, -h / 2); peBase = c;
+    }
+    // the biggest frame of the format inside the picture, made smaller by the zoom, around a centre
+    function frame(cx, cy) {
+      const W = peBase.width, H = peBase.height, r = ratioNum(ratio);
+      let w = W, h = H;
+      if (r) { if (W / H > r) { h = H; w = H * r; } else { w = W; h = W / r; } }
+      const k = 1 - peZoomV / 100 * 0.9; w *= k; h *= k;
+      cx = cx ?? W / 2; cy = cy ?? H / 2;
+      crop = clampCrop({ x: cx - w / 2, y: cy - h / 2, w, h });
+    }
+    function clampCrop(c) {
+      const W = peBase.width, H = peBase.height;
+      c.w = Math.min(c.w, W); c.h = Math.min(c.h, H);
+      c.x = Math.max(0, Math.min(W - c.w, c.x)); c.y = Math.max(0, Math.min(H - c.h, c.y));
+      return c;
+    }
+    let raf = 0;
+    const peRender = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; drawView(); }); };
+    function drawView() {
+      if (!peBase) return;
+      const maxW = peStage.clientWidth || 600, maxH = Math.max(200, Math.min(innerHeight * 0.46, 520));
+      view = Math.min(maxW / peBase.width, maxH / peBase.height, 1);
+      const cw = Math.round(peBase.width * view), ch = Math.round(peBase.height * view), dpr = Math.min(2, devicePixelRatio || 1);
+      peCv.width = Math.round(cw * dpr); peCv.height = Math.round(ch * dpr); peCv.style.width = cw + "px"; peCv.style.height = ch + "px";
+      const x = peCv.getContext("2d");
+      x.filter = canFilter ? peFilter() : "none";
+      peCv.style.filter = canFilter ? "" : peFilter();
+      x.drawImage(peBase, 0, 0, peCv.width, peCv.height);
+      if (pe.vib) vibrance(x, peCv.width, peCv.height);
+      placeCrop();
+    }
+    function placeCrop() {
+      Object.assign(peCrop.style, { left: crop.x * view + "px", top: crop.y * view + "px", width: crop.w * view + "px", height: crop.h * view + "px" });
+      const k = Math.min(1, 1000 / Math.max(crop.w, crop.h));
+      byId("peSize").textContent = T("peSizeTxt", [Math.round(crop.w * k), Math.round(crop.h * k)]);
+    }
+    // vibrance: more colour where there is little, less change where there is already a lot
+    function vibrance(cx, w, h) {
+      const d = cx.getImageData(0, 0, w, h), a = d.data, v = pe.vib / 100;
+      for (let i = 0; i < a.length; i += 4) {
+        const r = a[i], g = a[i + 1], b = a[i + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+        const k = 1 + v * (1 - (mx - mn) / 255), l = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        a[i] = l + (r - l) * k; a[i + 1] = l + (g - l) * k; a[i + 2] = l + (b - l) * k;
+      }
+      cx.putImageData(d, 0, 0);
+    }
     function peShow() {
-      peImg.style.filter = peFilter();
-      peImg.style.transform = `rotate(${pe.rot}deg) scaleX(${pe.flip ? -1 : 1})`;
       photoDlg.querySelectorAll("[data-pe]").forEach(r => { r.value = pe[r.dataset.pe]; r.nextElementSibling.textContent = (pe[r.dataset.pe] > 0 ? "+" : "") + pe[r.dataset.pe]; });
+      byId("peZoom").value = peZoomV; byId("peZoom").nextElementSibling.textContent = Math.round(100 / (1 - peZoomV / 100 * 0.9)) + "%";
+      byId("peRatios").innerHTML = RATIOS.map(r => `<button type="button" class="ghost ${r === ratio ? "on" : ""}" data-ratio="${r}">${r === "free" ? T("peFree") : r}</button>`).join("");
+      peRender();
     }
-    function peOpen() {
-      const src = byId("imgPreview").src;
-      if (!src) return;
-      pe = { ...PE0 };
-      peImg.src = src;
-      peShow();
-      photoDlg.showModal();
+    // a new picture (file, paste): the studio starts from it, with the last format used
+    async function peLoad(src, open = true) {
+      peSrc = src; peOrig = await loadImg(src); pe = { ...PE0 }; peZoomV = 0;
+      buildBase(); frame(); peKept = null;
+      if (open && !photoDlg.open) photoDlg.showModal();
+      peShow(); setTimeout(peRender, 30);
     }
-    photoDlg.addEventListener("input", e => { const k = e.target.dataset.pe; if (k) { pe[k] = +e.target.value; peShow(); } });
+    async function peOpen() {
+      if (peKept && peKept.src === peSrc) { ({ pe, crop, peZoomV } = peKept); pe = { ...pe }; crop = { ...crop }; peOrig = await loadImg(peSrc); buildBase(); }
+      else { const src = peSrc || byId("imgPreview").src; if (!src) return; return peLoad(src); }
+      photoDlg.showModal(); peShow(); setTimeout(peRender, 30);
+    }
+    photoDlg.addEventListener("input", e => {
+      const k = e.target.dataset.pe;
+      if (k) { pe[k] = +e.target.value; e.target.nextElementSibling.textContent = (pe[k] > 0 ? "+" : "") + pe[k]; peRender(); }
+      if (e.target.id === "peZoom") { setZoom(+e.target.value); }
+    });
+    function setZoom(z) {
+      peZoomV = Math.max(0, Math.min(100, z));
+      frame(crop.x + crop.w / 2, crop.y + crop.h / 2);
+      byId("peZoom").value = peZoomV; byId("peZoom").nextElementSibling.textContent = Math.round(100 / (1 - peZoomV / 100 * 0.9)) + "%";
+      placeCrop();
+    }
+    byId("peRatios").addEventListener("click", e => {
+      const b = e.target.closest("[data-ratio]"); if (!b) return;
+      ratio = b.dataset.ratio; LS.set("gtaPhotoRatio", ratio);
+      frame(crop.x + crop.w / 2, crop.y + crop.h / 2); peShow();
+    });
+    function peTurn(fn) { const cx = (crop.x + crop.w / 2) / peBase.width, cy = (crop.y + crop.h / 2) / peBase.height; fn(); buildBase(); frame(); peShow(); }
+    // moving / resizing the frame; wheel and two fingers zoom
+    let drag = null; const pts = new Map();
+    peStage.addEventListener("pointerdown", e => {
+      if (!peBase) return;
+      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      peStage.setPointerCapture(e.pointerId);
+      if (pts.size === 2) { const [a, b] = [...pts.values()]; drag = { pinch: Math.hypot(a.x - b.x, a.y - b.y), z: peZoomV }; return; }
+      const h = e.target.dataset && e.target.dataset.h;
+      drag = { h, x: e.clientX, y: e.clientY, c: { ...crop }, move: !h && e.target.closest("#peCrop") };
+      if (!h && !drag.move) {   // a tap outside the frame moves the frame there
+        const r = peCv.getBoundingClientRect();
+        crop.x = (e.clientX - r.left) / view - crop.w / 2; crop.y = (e.clientY - r.top) / view - crop.h / 2; clampCrop(crop); placeCrop();
+        drag = { x: e.clientX, y: e.clientY, c: { ...crop }, move: true };
+      }
+    });
+    peStage.addEventListener("pointermove", e => {
+      if (!drag || !pts.has(e.pointerId)) return;
+      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (drag.pinch) { if (pts.size < 2) return; const [a, b] = [...pts.values()]; const d = Math.hypot(a.x - b.x, a.y - b.y);
+        setZoom(drag.z + (d / drag.pinch - 1) * 60); return; }
+      const dx = (e.clientX - drag.x) / view, dy = (e.clientY - drag.y) / view, c0 = drag.c, W = peBase.width, H = peBase.height;
+      if (drag.move) { crop = clampCrop({ ...c0, x: c0.x + dx, y: c0.y + dy }); placeCrop(); return; }
+      // a corner: the opposite corner stays put; the format stays the same
+      const r = ratioNum(ratio), left = drag.h.includes("w"), top = drag.h[0] === "n";
+      const ax = left ? c0.x + c0.w : c0.x, ay = top ? c0.y + c0.h : c0.y;
+      let w = Math.max(40, left ? c0.w - dx : c0.w + dx), h = Math.max(40, top ? c0.h - dy : c0.h + dy);
+      const maxW = left ? ax : W - ax, maxH = top ? ay : H - ay;
+      if (r) { if (w / h > r) h = w / r; else w = h * r; const k = Math.min(1, maxW / w, maxH / h); w *= k; h *= k; }
+      else { w = Math.min(w, maxW); h = Math.min(h, maxH); }
+      crop = { x: left ? ax - w : ax, y: top ? ay - h : ay, w, h };
+      // the zoom slider follows the frame
+      const full = (() => { if (!r) return Math.max(w / W, h / H); return W / H > r ? h / H : w / W; })();
+      peZoomV = Math.max(0, Math.min(100, (1 - full) / 0.9 * 100)); byId("peZoom").value = peZoomV;
+      byId("peZoom").nextElementSibling.textContent = Math.round(100 / (1 - peZoomV / 100 * 0.9)) + "%";
+      placeCrop();
+    });
+    const peUp = e => { pts.delete(e.pointerId); if (pts.size < 2 && drag && drag.pinch) drag = null; if (!pts.size) drag = null; };
+    peStage.addEventListener("pointerup", peUp); peStage.addEventListener("pointercancel", peUp);
+    peStage.addEventListener("wheel", e => { if (!peBase) return; e.preventDefault(); setZoom(peZoomV + (e.deltaY < 0 ? 5 : -5)); }, { passive: false });
+    addEventListener("resize", () => { if (photoDlg.open) peRender(); });
     async function peApply() {
-      const img = new Image();
-      img.src = peImg.src;
-      await img.decode();
-      const turn = Math.abs(pe.rot % 180) === 90, maxW = 1000;
-      const scale = Math.min(1, maxW / (turn ? img.height : img.width));
-      const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
-      const cv = document.createElement("canvas");
-      cv.width = turn ? h : w; cv.height = turn ? w : h;
-      const cx = cv.getContext("2d");
-      cx.imageSmoothingQuality = "high";
-      cx.translate(cv.width / 2, cv.height / 2);
-      cx.rotate(pe.rot * Math.PI / 180);
-      if (pe.flip) cx.scale(-1, 1);
-      if ("filter" in cx) cx.filter = peFilter();
-      cx.drawImage(img, -w / 2, -h / 2, w, h);
-      if (!("filter" in cx)) pixelFilter(cx, cv.width, cv.height);   // older Safari: the same adjustments, pixel by pixel
+      if (!peBase) return;
+      const k = Math.min(1, 1000 / Math.max(crop.w, crop.h));
+      const cv = document.createElement("canvas"); cv.width = Math.round(crop.w * k); cv.height = Math.round(crop.h * k);
+      const cx = cv.getContext("2d"); cx.imageSmoothingQuality = "high";
+      if (canFilter) cx.filter = peFilter();
+      cx.drawImage(peBase, crop.x, crop.y, crop.w, crop.h, 0, 0, cv.width, cv.height);
+      if (!canFilter) pixelFilter(cx, cv.width, cv.height);   // older Safari: the same adjustments, pixel by pixel
+      if (pe.vib) { cx.filter = "none"; vibrance(cx, cv.width, cv.height); }
       const webp = cv.toDataURL("image/webp", 0.88);
       editedImage = webp.startsWith("data:image/webp") ? webp : cv.toDataURL("image/jpeg", 0.88);
-      byId("imgPreview").src = editedImage;
+      peKept = { src: peSrc, pe: { ...pe }, crop: { ...crop }, peZoomV };   // reopening the studio continues from here
+      const prev = byId("imgPreview"); prev.src = editedImage; prev.style.display = "block"; byId("photoEditBtn").hidden = false;
       photoDlg.close();
       showStatus(T("peDone"));
+    }
+    // a pasted / chosen picture, saved small at once (so Save works even without the studio)
+    async function smallCopy(src) {
+      const img = await loadImg(src), k = Math.min(1, 1000 / Math.max(img.naturalWidth, img.naturalHeight));
+      const cv = document.createElement("canvas"); cv.width = Math.round(img.naturalWidth * k); cv.height = Math.round(img.naturalHeight * k);
+      const cx = cv.getContext("2d"); cx.imageSmoothingQuality = "high"; cx.drawImage(img, 0, 0, cv.width, cv.height);
+      const w = cv.toDataURL("image/webp", 0.88); return w.startsWith("data:image/webp") ? w : cv.toDataURL("image/jpeg", 0.88);
+    }
+    const blobToUrl = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(b); });
+    async function takePicture(blob) {
+      const src = await blobToUrl(blob);
+      if (!carDlg.open) openCar(null);
+      byId("image").value = "";
+      editedImage = await smallCopy(src);
+      const prev = byId("imgPreview"); prev.src = editedImage; prev.style.display = "block"; byId("photoEditBtn").hidden = false;
+      await peLoad(src);
+    }
+    // Ctrl+V anywhere in Vehicle Manager: in the car window, in the studio, or on the page (opens a new car)
+    document.addEventListener("paste", e => {
+      if (el.hidden || !el.offsetParent && !carDlg.open && !photoDlg.open) return;
+      const item = [...(e.clipboardData && e.clipboardData.items || [])].find(i => i.kind === "file" && i.type.startsWith("image/"));
+      if (!item) return;
+      const other = document.querySelector("dialog[open]:not(#carDlg):not(#photoDlg)"); if (other) return;
+      e.preventDefault(); takePicture(item.getAsFile());
+    });
+    // the Paste button (needs the browser's permission; Ctrl+V always works)
+    async function pePaste() {
+      try {
+        const items = await navigator.clipboard.read();
+        for (const it of items) { const ty = it.types.find(x => x.startsWith("image/")); if (ty) return takePicture(await it.getType(ty)); }
+        showStatus(T("pasteNone"));
+      } catch (e) { showStatus(T("pasteBlocked")); }
     }
     function pixelFilter(cx, w, h) {
       const d = cx.getImageData(0, 0, w, h), a = d.data;
@@ -2731,7 +3023,7 @@ Section({
       byId("imaniType").disabled = !(c && c.imani);
       byId("imaniType").value = (c && c.imaniType) || "";
       byId("image").value = "";
-      editedImage = null;
+      editedImage = null; peSrc = (c && c.image) || null; peKept = null;
       const prev = byId("imgPreview");
       prev.src = (c && c.image) || ""; prev.style.display = c && c.image ? "block" : "none";
       byId("photoEditBtn").hidden = !(c && c.image);
@@ -2928,8 +3220,8 @@ Section({
       const id = +b.dataset.id, name = b.closest("tr") && b.closest("tr").dataset.name;
       ({ newCar: () => openCar(null), saveCar, goLocal, toggleFilters: () => { const o = el.classList.toggle("filters-open"); b.setAttribute("aria-expanded", o); },
          fav: () => toggleFav(id), edit: () => openCar(cars.find(c => c.id === id)), del: () => delCar(id),
-         photoEdit: peOpen, peApply, peCancel: () => photoDlg.close(), peReset: () => { pe = { ...PE0 }; peShow(); },
-         peRotL: () => { pe.rot = (pe.rot - 90) % 360; peShow(); }, peRotR: () => { pe.rot = (pe.rot + 90) % 360; peShow(); }, peFlip: () => { pe.flip = !pe.flip; peShow(); },
+         photoEdit: peOpen, peApply, pePaste, peCancel: () => photoDlg.close(), peReset: () => { pe = { ...PE0 }; peZoomV = 0; buildBase(); frame(); peShow(); },
+         peRotL: () => peTurn(() => pe.rot = (pe.rot + 270) % 360), peRotR: () => peTurn(() => pe.rot = (pe.rot + 90) % 360), peFlip: () => peTurn(() => pe.flip = !pe.flip),
          addLevel: () => { const box = byId("gLevels"); box.insertAdjacentHTML("beforeend", `<div class="lv-row"><input class="lv-name" placeholder="${T("lvName")}"><input class="lv-slots" type="number" min="1" placeholder="${T("lvSlots")}"><button class="danger" type="button" data-act="delLevel">✕</button></div>`); box.lastElementChild.querySelector("input").focus(); sumLevels(); },
          delLevel: () => { b.closest(".lv-row").remove(); sumLevels(); if (!el.querySelector("#gLevels .lv-row")) byId("gSlotsInput").readOnly = false; },
          saveGarage, newGarage: () => { clearGarageForm(); renderGarageTable(); }, gEdit: () => editGarage(name), gDel: () => deleteGarage(name) })[b.dataset.act]?.();
@@ -3349,6 +3641,11 @@ Section({
 }
 #sec-production .sale-near {margin: 6px 2px 0; font-size: 12px; color: var(--muted);}
 #sec-production .ceo-spq {display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 10px 0 0; padding: 6px 8px; border-radius: 8px; background: var(--panel-2); font-size: 13px;}
+#sec-production .c-hangar {background: linear-gradient(120deg, #9a5a14, #3e2408);}
+#sec-production .hg-switch {margin: 6px 0 10px; font-size: 13px;}
+#sec-production .hg-grid {display: grid; gap: 6px;}
+#sec-production .hg-row {display: grid; grid-template-columns: 1fr auto 64px auto; align-items: center; gap: 6px; font-size: 13px;}
+#sec-production .hg-row .num-input {width: 64px; text-align: center;}
 
 #sec-production { min-height: 0; }
 body[data-sec="production"] { overflow: hidden; }
@@ -3589,7 +3886,15 @@ i18n({
     "pm.loginIntro": "Log in to keep the same data on every device. It is saved to the project on GitHub.", "pm.logoutAsk": "Log out on this device? Your data stays saved.",
     "pm.loggedIn": "Logged in", "pm.loggedOut": "Logged out", "pm.ghTokenBad": "GitHub refused the save: log in again", "pm.ghSaveFail": "Couldn't save to GitHub, will retry", "pm.ghLoadFail": "Couldn't load from GitHub", "pm.ghLoadedPM": "Loaded your data from GitHub",
     "pm.ncSubtitle": "Club + warehouse", "pm.ncPop": "Popularity", "pm.ncPopShort": "Popularity", "pm.ncGoods": "Sell goods value", "pm.ncGoodsShort": "Goods",
-    "pm.ncPriv": "Private / Invite Only", "pm.ncPub": "Full public lobby (+50%)", "pm.ncOpenPage": "Open the Nightclub page", "pm.locPick": "Which one in the game?", "pm.ncSafe": "Office safe",
+    "pm.ncPriv": "Private / Invite Only", "pm.ncPub": "Full public lobby (+50%)", "pm.ncOpenPage": "Open the Nightclub page", "pm.locPick": "Which one in the game?",
+    "pm.b_hangar": "Hangar", "pm.hgCargo": "Air Freight Cargo", "pm.hgCrates": "Crates", "pm.hgSimple": "Simple: one type (or mixed)", "pm.hgExact": "Exact: a counter for each type",
+    "pm.hgType": "Cargo type", "pm.hgMixed": "Mixed (no same-type bonus)", "pm.hgBonusNow": p => `same-type bonus +${p}%`, "pm.hgRon": "Ron's 5% already taken off",
+    "pm.hgHeli": "I own Higgins Helitours (+10%)", "pm.hgStaff": "Rooster (staff)", "pm.hgStaffIdle": "Not sent out", "pm.hgStaffReady": "Back: 1-2 crates of a random type",
+    "pm.hgStaffSend": "Send Rooster ($25,000)", "pm.hgStaffSent": "Rooster is out: back in 48 minutes", "pm.hgStaffBack": n => `${n}: Rooster is back with 1-2 crates`,
+    "pm.hgStaffWarn": "He brings a random type, which can break the same-type bonus.", "pm.hgNearFull": o => `${o.n}: room for ${o.c} more crates`,
+    "pm.hgHint": "A crate is worth $30,000. Selling one type only adds a bonus: Narcotics, Chemicals, Medical Supplies up to +70%; Animal Materials, Art & Antiques, Jewelry & Gemstones up to +60%; Tobacco & Alcohol, Counterfeit Goods up to +50%.",
+    "pm.hg_narcotics": "Narcotics", "pm.hg_chemicals": "Chemicals", "pm.hg_medical": "Medical Supplies", "pm.hg_animal": "Animal Materials", "pm.hg_art": "Art & Antiques",
+    "pm.hg_jewelry": "Jewelry & Gemstones", "pm.hg_tobacco": "Tobacco & Alcohol", "pm.hg_counterfeit": "Counterfeit Goods", "pm.ncSafe": "Office safe",
     "pm.ncPopMax": "The safe gets the maximum payout", "pm.ncPopLess": v => `Below 95%: ${v} per in-game day instead of $50,000`,
     "pm.ncDj": "DJ +10%", "pm.ncSold": "Sold the goods", "pm.ncSoldToast": "Warehouse emptied",
     "pm.ncSafeLeft": v => `Full in about ${v} of play`, "pm.ncSafeFullHint": "Full: no more money until you collect it",
@@ -3735,7 +4040,15 @@ i18n({
     "pm.loginIntro": "Intră în cont ca să ai aceleași date pe orice dispozitiv. Se salvează în proiectul de pe GitHub.", "pm.logoutAsk": "Ieși din cont pe acest dispozitiv? Datele rămân salvate.",
     "pm.loggedIn": "Ai intrat în cont", "pm.loggedOut": "Ai ieșit din cont", "pm.ghTokenBad": "GitHub a refuzat salvarea: intră din nou în cont", "pm.ghSaveFail": "Nu s-a putut salva în GitHub, reîncerc", "pm.ghLoadFail": "Nu s-a putut încărca din GitHub", "pm.ghLoadedPM": "Datele tale au fost încărcate din GitHub",
     "pm.ncSubtitle": "Club + depozit", "pm.ncPop": "Popularitate", "pm.ncPopShort": "Popularitate", "pm.ncGoods": "Valoare sell goods", "pm.ncGoodsShort": "Goods",
-    "pm.ncPriv": "Privat / Invite Only", "pm.ncPub": "Lobby public plin (+50%)", "pm.ncOpenPage": "Deschide pagina Nightclub", "pm.locPick": "Care e, din joc?", "pm.ncSafe": "Seiful din birou",
+    "pm.ncPriv": "Privat / Invite Only", "pm.ncPub": "Lobby public plin (+50%)", "pm.ncOpenPage": "Deschide pagina Nightclub", "pm.locPick": "Care e, din joc?",
+    "pm.b_hangar": "Hangar", "pm.hgCargo": "Air Freight Cargo", "pm.hgCrates": "Lăzi", "pm.hgSimple": "Simplu: un singur tip (sau amestecat)", "pm.hgExact": "Exact: câte un contor pe tip",
+    "pm.hgType": "Tipul mărfii", "pm.hgMixed": "Amestecat (fără bonus pe tip)", "pm.hgBonusNow": p => `bonus pe același tip +${p}%`, "pm.hgRon": "cele 5% ale lui Ron sunt deja scăzute",
+    "pm.hgHeli": "Am Higgins Helitours (+10%)", "pm.hgStaff": "Rooster (personal)", "pm.hgStaffIdle": "Netrimis", "pm.hgStaffReady": "S-a întors: 1-2 lăzi de un tip aleator",
+    "pm.hgStaffSend": "Trimite-l pe Rooster (25.000 $)", "pm.hgStaffSent": "Rooster a plecat: revine în 48 de minute", "pm.hgStaffBack": n => `${n}: Rooster s-a întors cu 1-2 lăzi`,
+    "pm.hgStaffWarn": "Aduce un tip aleator, care poate strica bonusul pe același tip.", "pm.hgNearFull": o => `${o.n}: mai e loc pentru ${o.c} lăzi`,
+    "pm.hgHint": "O ladă valorează 30.000 $. Dacă vinzi un singur tip, primești un bonus: Narcotics, Chemicals, Medical Supplies până la +70%; Animal Materials, Art & Antiques, Jewelry & Gemstones până la +60%; Tobacco & Alcohol, Counterfeit Goods până la +50%.",
+    "pm.hg_narcotics": "Narcotics", "pm.hg_chemicals": "Chemicals", "pm.hg_medical": "Medical Supplies", "pm.hg_animal": "Animal Materials", "pm.hg_art": "Art & Antiques",
+    "pm.hg_jewelry": "Jewelry & Gemstones", "pm.hg_tobacco": "Tobacco & Alcohol", "pm.hg_counterfeit": "Counterfeit Goods", "pm.ncSafe": "Seiful din birou",
     "pm.ncPopMax": "Seiful primește plata maximă", "pm.ncPopLess": v => `Sub 95%: ${v} pe zi din joc în loc de $50,000`,
     "pm.ncDj": "DJ +10%", "pm.ncSold": "Am vândut marfa", "pm.ncSoldToast": "Depozitul a fost golit",
     "pm.ncSafeLeft": v => `Plin în aprox. ${v} de joc`, "pm.ncSafeFullHint": "Plin: nu mai intră bani până nu-l colectezi",
@@ -3917,14 +4230,15 @@ const CATEGORIES = [
   { id: "night", art: "art-night", emblem: true, clear: true, ready: true, single: "night" },
   { id: "ceo", art: "art-ceo", emblem: true, clear: true, ready: true },
   { id: "veh", art: "art-veh", emblem: true, clear: true, ready: true, single: "vehwh" },
-  { id: "hangar", art: "art-hangar", emblem: true, clear: true },
+  { id: "hangar", art: "art-hangar", emblem: true, clear: true, ready: true, single: "hangar" },
   { id: "acid", art: "art-acid", emblem: true, clear: true, ready: true, single: "acid" }
 ];
 const FAR_BONUS = 1.5;
 // businesses that live in their own category (one per tile)
 const EXTRA = [
   { id: "night", icon: "night", cls: "c-night", kind: "night", production: false },
-  { id: "vehwh", icon: "veh", cls: "c-veh", kind: "veh", production: false }
+  { id: "vehwh", icon: "veh", cls: "c-veh", kind: "veh", production: false },
+  { id: "hangar", icon: "hangar", cls: "c-hangar", kind: "hangar", production: false }
 ];
 // Acid Lab: one business that produces like the MC ones (supplies -> stock), in its own category.
 // 160 units; $1,485 / $2,095 per unit; 2.25 / 1.5 min per unit; a full supply bar makes 50 / 100 units (without / with the Equipment Upgrade)
@@ -3961,12 +4275,14 @@ const LOCS = {
   vehwh: [["La Mesa", 1500000], ["El Burro Heights", 1635000], ["Elysian Island", 1950000], ["LSIA", 2170000], ["LSIA 2", 2300000],
     ["Davis", 2495000], ["Cypress Flats", 2675000], ["La Puerta", 2735000], ["Murrieta Heights", 2850000]]
 };
+LOCS.hangar = [["LSIA Hangar A17", 1200000], ["LSIA Hangar 1", 1525000], ["Fort Zancudo Hangar 3497", 2085000], ["Fort Zancudo Hangar 3499", 2650000], ["Fort Zancudo Hangar A2", 3250000]];
 // the full name, as the game writes it
 const GAME_TYPE = { cash: "Counterfeit Cash Factory", docs: "Document Forgery Office" };
 function locName(id) {
   const loc = S.biz[id] && S.biz[id].loc;
   if (!LOCS[id] || !loc) return "";
   if (id === "vehwh" && loc === "LSIA 2") return "LSIA Vehicle Warehouse 2";
+  if (id === "hangar") return loc;
   return `${loc} ${GAME_TYPE[id] || t("b_" + id)}`;
 }
 function locPickHtml(id) {
@@ -4004,6 +4320,8 @@ function defaultBiz(def) {
   if (def.kind === "night") return { owned: false, pin: null, alert: null, layer: "mid", bed: false, security: false, equipment: false,
     hired: 1, floors: 1, assign: {}, crates: {}, pop: 100, safe: 0, fired: {} };
   if (def.kind === "veh") return { owned: false, pin: null, alert: null, layer: "mid" };
+  if (def.kind === "hangar") return { owned: false, pin: null, alert: null, layer: "mid", loc: "", crates: 0, exact: false, type: "medical", per: {}, heli: false,
+    staff: { last: null, remind: true, fired: {} }, fired: {} };
   if (def.kind === "ceo") return { owned: false, pin: null, alert: null, layer: "mid", wh: "", crates: 0, special: {}, veh: {},
     staff: { last: null, remind: true, fired: {} }, fired: {} };
   if (def.bunker) return { owned: false, pin: null, equip: false, staff: false, security: false, supplies: 0, stock: 0, alertMin: 15, over: {}, alert: null,
@@ -4068,6 +4386,8 @@ function mergeState(data) {
     out.mapV = 2;
   }
   out.bizOrder = fixOrder(data.bizOrder, MC.map(d => d.id));
+  const hg = out.biz.hangar;
+  if (hg) { hg.per = { ...(hg.per || {}) }; hg.staff = { last: null, remind: true, fired: {}, ...(hg.staff || {}) }; hg.fired = { ...(hg.fired || {}) }; }
   const bk = out.biz.bunker;
   // 51 without "all research is done" came from the old counter that had no limit
   if (bk) { bk.done = Math.min(bk.resAll ? RES_TOTAL : RES_TOTAL - 1, bk.done || 0); if (bk.resAll) bk.mode = "manu"; }
@@ -4277,6 +4597,7 @@ function checkAlerts(fromProduction) {
   });
   checkClub();
   checkCeo();
+  checkHangar();
   checkAcid();
   checkBoost();
   checkNight(fromProduction);
@@ -4484,7 +4805,7 @@ function muttText() {
 function liveTimers() {
   document.querySelectorAll("[data-live-timer]").forEach(el => {
     const [id, k] = el.dataset.liveTimer.split(":");
-    el.textContent = k === "staff" ? staffText(id) : k === "boost" ? (mansionOn(id) ? t("boostLeft", fmtTime((S.boost.until - Date.now()) / 60000)) : t("boostOff")) : muttText();
+    el.textContent = k === "rooster" ? roosterText() : k === "staff" ? staffText(id) : k === "boost" ? (mansionOn(id) ? t("boostLeft", fmtTime((S.boost.until - Date.now()) / 60000)) : t("boostOff")) : muttText();
   });
 }
 function checkCeo() {
@@ -4501,6 +4822,117 @@ function checkCeo() {
     if (full && !b.fired.full) { b.fired.full = true; notify(t("ceoFull", bizName(d.id)), "full", d.id); save(); }
     if (!full && b.fired.full) b.fired.full = false;
   });
+}
+/* ======================================================================
+   Hangar (idea 56): Air Freight Cargo, like the CEO warehouses: crates are sourced, nothing is produced.
+   50 crates; $30,000 a crate; a same-type bonus by type: narcotics / chemicals / medical +35% every 25 crates (+70% full),
+   animal / art / jewelry +12% every 10 (+60%), tobacco / counterfeit +5% every 5 (+50%). Higgins Helitours +10%,
+   Ron takes 5% of every sale, a full public lobby +50%. Rooster sources 1-2 crates of a random type in 48 min for $25,000.
+   Sources: gtaboss.gg, timesaver.gg, sportskeeda (oct. 2026).
+   ====================================================================== */
+const HG_CAP = 50, HG_CRATE = 30000, RON_CUT = 0.05, ROOSTER_MIN = 48;
+const HG_TYPES = [["narcotics", 1], ["chemicals", 1], ["medical", 1], ["animal", 2], ["art", 2], ["jewelry", 2], ["tobacco", 3], ["counterfeit", 3]];
+const hgTier = k => (HG_TYPES.find(x => x[0] === k) || [0, 0])[1];
+function hgBonus(tier, n) {
+  if (tier === 1) return Math.min(70, Math.floor(n / 25) * 35);
+  if (tier === 2) return Math.min(60, Math.floor(n / 10) * 12);
+  if (tier === 3) return Math.min(50, Math.floor(n / 5) * 5);
+  return 0;
+}
+const hgCount = () => { const b = S.biz.hangar; return b.exact ? HG_TYPES.reduce((s, [k]) => s + (b.per[k] || 0), 0) : Math.floor(b.crates || 0); };
+function hgSale() {
+  const b = S.biz.hangar, n = hgCount();
+  let gross = 0;
+  if (b.exact) HG_TYPES.forEach(([k, tr]) => { const c = b.per[k] || 0; gross += c * HG_CRATE * (1 + hgBonus(tr, c) / 100); });
+  else gross = n * HG_CRATE * (1 + (b.type === "mixed" ? 0 : hgBonus(hgTier(b.type), n)) / 100);
+  if (b.heli) gross *= 1.1;
+  const inv = gross * (1 - RON_CUT);
+  return { n, gross, inv, pub: inv * FAR_BONUS, bonus: b.exact || b.type === "mixed" ? null : hgBonus(hgTier(b.type), n) };
+}
+function roosterText() {
+  const st = S.biz.hangar.staff, left = minsLeft(st.last, ROOSTER_MIN);
+  return left === null ? t("hgStaffIdle") : left > 0 ? t("ceoStaffIn", fmtTime(left)) : t("hgStaffReady");
+}
+function hgNumsHtml() {
+  const s = hgSale(), b = S.biz.hangar;
+  return `<div class="bar-cap"><span>${t("hgCrates")}</span><b>${s.n} / ${HG_CAP}</b></div>
+    <div class="nc-vals"><div><small>${t("saleInv")}</small><b>${money(s.inv)}</b></div><div><small>${t("salePub")}</small><b class="hot">${money(s.pub)}</b></div></div>
+    <p class="sale-near">${s.bonus !== null ? t("hgBonusNow", s.bonus) + " · " : ""}${t("hgRon")}${b.heli ? " · Higgins +10%" : ""}</p>`;
+}
+function hgCratesHtml(small) {
+  const b = S.biz.hangar;
+  const sw = `<label class="toggle row hg-switch"><input type="checkbox" data-hg="exact" ${b.exact ? "checked" : ""}> <span>${t(b.exact ? "hgExact" : "hgSimple")}</span></label>`;
+  let body;
+  if (!b.exact) {
+    body = `<label class="ceo-pick"><span>${t("hgType")}</span><select data-hg="type">${HG_TYPES.map(([k]) => `<option value="${k}" ${b.type === k ? "selected" : ""}>${t("hg_" + k)}</option>`).join("")}<option value="mixed" ${b.type === "mixed" ? "selected" : ""}>${t("hgMixed")}</option></select></label>
+      ${segBarHtml("crates", "hangar", "small")}
+      <div class="ceo-step"><button class="btn small" data-hg="-1">−1</button><input type="number" class="num-input" min="0" max="${HG_CAP}" inputmode="numeric" value="${hgCount()}" data-hg="n"><button class="btn small" data-hg="+1">+1</button><button class="btn small" data-hg="+2">+2</button><button class="btn small" data-hg="+4">+4</button></div>`;
+  } else {
+    body = `<div class="hg-grid">${HG_TYPES.map(([k, tr]) => { const c = b.per[k] || 0;
+      return `<div class="hg-row"><span>${t("hg_" + k)}${c ? ` <small class="muted">+${hgBonus(tr, c)}%</small>` : ""}</span><button class="btn small" data-hgk="${k}" data-d="-1">−</button><input type="number" class="num-input" min="0" max="${HG_CAP}" inputmode="numeric" value="${c}" data-hgn="${k}"><button class="btn small" data-hgk="${k}" data-d="1">+</button></div>`; }).join("")}</div>`;
+  }
+  return `<div class="q-label">${t("hgCargo")}</div>${sw}${body}
+    <div data-hg-nums>${hgNumsHtml()}</div>
+    ${small ? "" : `<label class="mini-check"><input type="checkbox" data-hg="heli" ${b.heli ? "checked" : ""}> ${t("hgHeli")}</label>`}
+    <div class="btn-row"><button class="btn" data-hg="sold">${t("ceoSold")}</button></div>`;
+}
+function hgStaffHtml() {
+  const st = S.biz.hangar.staff, left = minsLeft(st.last, ROOSTER_MIN);
+  return `<div class="club-sect"><h5>${t("hgStaff")}<button class="bell-tg" data-hg="remind" aria-pressed="${st.remind}" title="${t("ceoRemind")}">🔔</button></h5>
+    <div class="club-line ${left === 0 ? "ready" : ""}"><b data-live-timer="hangar:rooster">${roosterText()}</b></div>
+    ${!S.biz.hangar.exact && S.biz.hangar.type !== "mixed" ? `<p class="hint">${t("hgStaffWarn")}</p>` : ""}
+    <div class="btn-row"><button class="btn small primary" data-hg="send">${t("hgStaffSend")}</button></div></div>`;
+}
+function hangarQuickHtml() { return hgCratesHtml(true) + hgStaffHtml() + `<p class="q-note">${t("qMore")}</p>`; }
+function hangarWinHtml() {
+  return `<div class="sect">${hgCratesHtml(false)}</div><div class="sect">${hgStaffHtml()}</div>
+    <p class="hint">${t("hgHint")}</p>`;
+}
+function liveHgNums() {
+  document.querySelectorAll("[data-hg-nums]").forEach(el => el.innerHTML = hgNumsHtml());
+  document.querySelectorAll('[data-hg="n"]').forEach(inp => { if (document.activeElement !== inp) inp.value = hgCount(); });
+}
+function bindHangar(root, rerender) {
+  const b = S.biz.hangar;
+  const done = () => { b.alert = null; save(true); ghMarkDirty(); rerender(); renderPins(); renderAll(); };
+  const setN = v => { b.crates = Math.max(0, Math.min(HG_CAP, v)); };
+  root.querySelectorAll("[data-hg]").forEach(el => {
+    const a = el.dataset.hg;
+    if (a === "exact") { el.onchange = () => {
+      // switching keeps the crates: simple -> exact puts them all on the chosen type; exact -> simple keeps the total
+      if (el.checked) { const k = b.type === "mixed" ? "narcotics" : b.type; if (!hgCount() || !Object.values(b.per).some(Boolean)) { b.per = {}; if (b.crates) b.per[k] = Math.floor(b.crates); } }
+      else { b.crates = HG_TYPES.reduce((s, [k]) => s + (b.per[k] || 0), 0); const nz = HG_TYPES.filter(([k]) => b.per[k]); b.type = nz.length === 1 ? nz[0][0] : nz.length ? "mixed" : b.type; }
+      b.exact = el.checked; done(); }; return; }
+    if (a === "type") { el.onchange = () => { b.type = el.value; done(); }; return; }
+    if (a === "heli") { el.onchange = () => { b.heli = el.checked; done(); }; return; }
+    if (a === "n") { el.onchange = () => { setN(Math.round(+el.value || 0)); done(); }; return; }
+    el.onclick = () => {
+      if (/^[+-]\d$/.test(a)) setN((b.crates || 0) + +a);
+      if (a === "send") { b.staff.last = Date.now(); b.staff.fired = {}; toast(t("hgStaffSent")); }
+      if (a === "remind") b.staff.remind = !b.staff.remind;
+      if (a === "sold") { const had = { crates: b.crates, per: { ...b.per } }; b.crates = 0; b.per = {}; toast(t("ceoSoldToast"), { label: t("undo"), run: () => { Object.assign(b, had); done(); } }); }
+      done();
+    };
+  });
+  // exact: one counter per type; the hangar holds 50 in all
+  const room = k => HG_CAP - hgCount() + (b.per[k] || 0);
+  root.querySelectorAll("[data-hgk]").forEach(el => el.onclick = () => { const k = el.dataset.hgk; b.per[k] = Math.max(0, Math.min(room(k), (b.per[k] || 0) + +el.dataset.d)); done(); });
+  root.querySelectorAll("[data-hgn]").forEach(el => el.onchange = () => { const k = el.dataset.hgn; b.per[k] = Math.max(0, Math.min(room(k), Math.round(+el.value || 0))); done(); });
+}
+function checkHangar() {
+  const b = S.biz.hangar;
+  if (!b || !b.owned) return;
+  const st = b.staff;
+  if (st.last && minsLeft(st.last, ROOSTER_MIN) === 0 && !st.fired.back) {
+    st.fired.back = true;
+    if (st.remind) { b.alert = "ready"; notify(t("hgStaffBack", bizName("hangar")), "ok", "hangar"); }
+    save();
+  }
+  const n = hgCount(), near = n >= HG_CAP - 4, full = n >= HG_CAP;
+  if (full && !b.fired.full) { b.fired.full = true; notify(t("ceoFull", bizName("hangar")), "full", "hangar"); save(); }
+  else if (near && !full && !b.fired.near) { b.fired.near = true; notify(t("hgNearFull", { n: bizName("hangar"), c: HG_CAP - n }), "warn", "hangar"); save(); }
+  if (!full) b.fired.full = false;
+  if (!near) b.fired.near = false;
 }
 // Mutt's supplies arrive: the supply bar is full again
 function checkAcid() {
@@ -5508,6 +5940,7 @@ function ringHtml(id) {
   if (d.kind === "night") { frac = Math.min(1, ncTotals().frac); col = ncForecast().idle ? "var(--bad)" : "var(--full)"; }
   else if (d.kind === "veh") { frac = Math.min(1, vehData().count / VEH_CAP); col = frac >= 1 ? "var(--bad)" : "var(--full)"; }
   else if (d.kind === "ceo") { frac = Math.min(1, (b.crates || 0) / ceoCap(id)); col = frac >= 1 ? "var(--full)" : "var(--ok)"; }
+  else if (d.kind === "hangar") { frac = Math.min(1, hgCount() / HG_CAP); col = frac >= 1 ? "var(--full)" : "var(--ok)"; }
   else if (!d.production) return "";
   else {
     const n = numbers(id);
@@ -5597,6 +6030,7 @@ function tileSub(id) {
   if (id === "bunker") return `${mansionOn(id) ? "⚡ " : ""}${t("st_" + status(id))} · <b>${Math.floor(b.stock + 1e-6)} / ${BUNKER.cap}</b>${b.mode !== "manu" ? ` · ${t("bkResShort", Math.floor((b.research || 0) / RES_PTS * 100))}` : ""}`;
   if (id === "night") { const tt = ncTotals(); return `${t("ncGoodsShort")} <b>${money(tt.net)}</b> · ${t("ncPopShort")} <b style="color:${popColor(b.pop)}">${Math.round(b.pop)}%</b>`; }
   if (id === "vehwh") { const v = vehData(); return `${t("vehCars")} <b>${v.count} / ${VEH_CAP}</b>`; }
+  if (id === "hangar") return `${t("hgCrates")} <b>${hgCount()} / ${HG_CAP}</b> · ${money(hgSale().inv)}`;
   return "";
 }
 function bindTile(el, c) {
@@ -5886,7 +6320,7 @@ function renderQuickBody() {
   if (kd) {
     let html = `<div class="q-head"><b>${bizName(id)}</b>${nameMarks(id)}</div>` + pick;
     if (!b.owned) html += `<p class="q-note">${t("notOwned")}</p><div class="btn-row"><button class="btn primary" id="qOwn">${t("qOwn")}</button></div>`;
-    else html += kd === "night" ? nightQuickHtml() : kd === "ceo" ? ceoQuickHtml(id) : vehQuickHtml();
+    else html += kd === "night" ? nightQuickHtml() : kd === "ceo" ? ceoQuickHtml(id) : kd === "hangar" ? hangarQuickHtml() : vehQuickHtml();
     if (html === quick._last) return;        // unchanged: no rebuild, no flicker
     quick.innerHTML = quick._last = html;
     quick.querySelectorAll(".segbar").forEach(updateSegBar);
@@ -5895,6 +6329,7 @@ function renderQuickBody() {
     if (kd === "night" && b.owned) bindValueInputs(quick, () => { checkNight(false); save(true); ghMarkDirty(); renderQuick(); renderAll(); });
     if (kd === "veh" && b.owned) bindVehAdd(quick, renderQuick);
     if (kd === "ceo" && b.owned) bindCeo(quick, id, () => { quick._last = null; renderQuick(); });
+    if (kd === "hangar" && b.owned) bindHangar(quick, () => { quick._last = null; renderQuick(); });
     bindPick();
     return;
   }
@@ -5986,7 +6421,7 @@ function barValue(kind, id) {
   const b = S.biz[id];
   if (kind === "pop") return b.pop / 100;
   if (kind === "ncgoods") return Math.min(1, ncTotals().frac);
-  if (kind === "crates") return Math.min(1, (b.crates || 0) / ceoCap(id));
+  if (kind === "crates") return Math.min(1, (b.crates || 0) / (id === "hangar" ? HG_CAP : ceoCap(id)));
   if (kind === "research") return Math.min(1, (b.research || 0) / RES_PTS);
   return kind === "stock" ? Math.min(1, b.stock / numbers(id).cap) : b.supplies;
 }
@@ -6027,9 +6462,10 @@ function setBar(kind, id, v) {
   const b = S.biz[id];
   v = Math.max(0, Math.min(1, v));
   if (kind === "crates") {
-    b.crates = Math.round(v * ceoCap(id)); b.alert = null;
+    b.crates = Math.round(v * (id === "hangar" ? HG_CAP : ceoCap(id))); b.alert = null;
     document.querySelectorAll(`.segbar[data-kind="crates"][data-id="${id}"]`).forEach(updateSegBar);
-    liveCeoNums(id); save(); renderAll();
+    if (id === "hangar") liveHgNums(); else liveCeoNums(id);
+    save(); renderAll();
     return;
   }
   if (kind === "research") {
@@ -6137,7 +6573,7 @@ function renderWin() {
     if (b.pin) body += `<div class="layer-row"><span>${t("layer")}</span>${["top", "mid", "bottom"].map(l => `<button type="button" class="${(b.layer || "mid") === l ? "on" : ""}" data-layer="${l}">${t("layer_" + l)}</button>`).join("")}</div>`;
   }
   if (d.kind) {
-    if (b.owned) body += d.kind === "night" ? nightWinHtml() : d.kind === "ceo" ? ceoWinHtml(id) : vehWinHtml();
+    if (b.owned) body += d.kind === "night" ? nightWinHtml() : d.kind === "ceo" ? ceoWinHtml(id) : d.kind === "hangar" ? hangarWinHtml() : vehWinHtml();
   } else if (!d.production) {
     body += `<p class="hint">${t("clubNote")}</p>`;
     if (b.owned) {
@@ -6206,7 +6642,7 @@ function renderWin() {
   const html = `
     <div class="win-head ${d.cls}">
       <span class="ico">${ICO(d.id)}</span>
-      <div><h3>${bizName(id)}${nameMarks(id)}</h3><small>${d.kind === "ceo" ? (ceoWh(id) ? `${t("cat_ceo")} · ${ceoWh(id).a} · ${ceoCap(id)}` : t("cat_ceo")) : t(d.kind === "night" ? "ncSubtitle" : d.kind === "veh" ? "cat_veh" : d.acid ? "cat_acid" : d.bunker ? "cat_bunker" : "cat_mc")}${d.bunker && b.loc ? " · " + money(BUNKERS.find(x => x.n === b.loc).p) : ""}</small></div>
+      <div><h3>${bizName(id)}${nameMarks(id)}</h3><small>${d.kind === "ceo" ? (ceoWh(id) ? `${t("cat_ceo")} · ${ceoWh(id).a} · ${ceoCap(id)}` : t("cat_ceo")) : t(d.kind === "night" ? "ncSubtitle" : d.kind === "veh" ? "cat_veh" : d.kind === "hangar" ? "cat_hangar" : d.acid ? "cat_acid" : d.bunker ? "cat_bunker" : "cat_mc")}${d.bunker && b.loc ? " · " + money(BUNKERS.find(x => x.n === b.loc).p) : ""}</small></div>
       ${(d.kind === "night" || d.bunker) && b.owned && !isPhone() ? `<button class="btn small win-mode" id="wMode">${(d.bunker ? S.bkAdvanced : S.ncAdvanced) ? t("modeSimple") : t("modeAdvanced")}</button>` : ""}
       <button class="icon-btn" id="wClose" aria-label="${t("close")}">✕</button>
     </div>
@@ -6231,6 +6667,7 @@ function bindWin(id) {
   bindLoc(win, id, () => { win._last = null; renderWin(); });
   win.querySelectorAll("[data-layer]").forEach(x => x.onclick = () => { b.layer = x.dataset.layer; save(true); renderWin(); updatePinStates(); });
   if (defOf(id).kind === "veh" && b.owned) { bindVehAdd(win, () => renderWin()); $("#wBed").onchange = e => { b.bed = e.target.checked; save(true); ghMarkDirty(); renderWin(); renderAll(); }; }
+  if (defOf(id).kind === "hangar" && b.owned) bindHangar(win, () => { const wb = win.querySelector(".win-body"), sc = wb ? wb.scrollTop : 0; win._last = null; renderWin(); const nb = win.querySelector(".win-body"); if (nb) nb.scrollTop = sc; });
   if (defOf(id).kind === "ceo" && b.owned) bindCeo(win, id, () => { const wb = win.querySelector(".win-body"), sc = wb ? wb.scrollTop : 0; win._last = null; renderWin(); const nb = win.querySelector(".win-body"); if (nb) nb.scrollTop = sc; });
   if (defOf(id).kind) { if (defOf(id).kind === "night" && b.owned) bindNightWin(() => { const sc = win.querySelector(".win-body").scrollTop; renderWin(); win.querySelector(".win-body").scrollTop = sc; }); return; }
   if (!defOf(id).production) {
