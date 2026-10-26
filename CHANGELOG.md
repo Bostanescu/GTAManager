@@ -2,6 +2,22 @@
 
 * * *
 
+### v0.15.0 (2026-10-26)
+* Production Manager:
+  * Add: the Hangar has its own page (from its list and its window): the laptop, the source cooldowns, Rooster and a table of the bonus and the cooldown for each group of cargo.
+  * Add: source cooldown reminder for the Hangar: pick the cargo type and how many crates you brought (1 to 4), press the bell, and it rings when that type can be sourced again (2 to 7 minutes, as in the game).
+  * Change: the Hangar sale is shown big as the game's laptop shows it, and small under it what you get after Ron's 5%.
+  * Change: owning Hands On Car Wash adds 35% to Counterfeit Cash sales and Smoke on the Water 35% to Weed Farm sales (MC sales only, not the Nightclub).
+  * Fix: coming back from another page starts with a clean map, without the last window still open.
+  * Fix: the Hangar's crates bar no longer sticks to the cargo type list above it.
+* Job Manager:
+  * Add: the Job Manager page (from its Home card, still marked Coming soon): one card for every job emblem.
+  * Add: the Money Fronts page: Hands On Car Wash, Higgins Helitours and Smoke on the Water, each with owned, Heat (laundering missions and legal jobs), the 15 missions that double its safe income, and notifications at 80% and 100% Heat.
+* Vehicle Manager:
+  * Add: a garage can be a Hangar: 20 places for planes and helicopters, named after your Hangar in Production Manager; a car put in a Hangar, or an aircraft in a garage, gets a warning.
+* Everywhere:
+  * Change: in the pages menu, the pages of a manager are always shown under it, a little to the right; Hangar and Job Manager / Money Fronts added.
+
 ### v0.14.0 (2026-10-26)
 * Production Manager:
   * Add: the Hangar: pick it from the game's 5, Air Freight Cargo crates (0 / 50) with a switch between Simple (one type or mixed) and Exact (a counter for each of the 8 types), the same-type bonus by type, Higgins Helitours (+10%), Ron's 5% taken off, Invite only and Public 20+, Rooster with a timer and notifications, hangar almost full / full.
