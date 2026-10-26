@@ -2,6 +2,11 @@
 
 * * *
 
+### v0.16.0 (2026-10-26)
+* Job Manager:
+  * Change: the page is split in two big cards, HEISTS (Cayo Perico, Cluckin' Bell Farm Raid, Diamond Casino, Doomsday, Kortz Center) and JOBS (Agency, Auto Shop, Bail Office, Dr. Dre Contract, Garment Factory, Money Fronts), each with its own emblem.
+  * Change: Money Fronts is a card like the others, showing how many fronts you own; it still opens its page.
+
 ### v0.15.0 (2026-10-26)
 * Production Manager:
   * Add: the Hangar has its own page (from its list and its window): the laptop, the source cooldowns, Rooster and a table of the bonus and the cooldown for each group of cargo.
