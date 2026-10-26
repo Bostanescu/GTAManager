@@ -1,0 +1,21 @@
+{
+  "id": "./GTA_V_Manager.html",
+  "name": "GTA V Manager",
+  "short_name": "GTA Manager",
+  "description": "Vehicles, businesses, heists and jobs for GTA Online, in one place.",
+  "start_url": "./GTA_V_Manager.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#121820",
+  "theme_color": "#0e141b",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Vehicle Manager", "url": "./GTA_V_Manager.html#vehicles", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Production Manager", "url": "./GTA_V_Manager.html#production", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Job Manager", "url": "./GTA_V_Manager.html#jobs", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
+  ]
+}

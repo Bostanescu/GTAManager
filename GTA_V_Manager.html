@@ -7,6 +7,12 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0e141b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GTA Manager">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Russo+One&family=Orbitron&family=Audiowide&family=Black+Ops+One&family=Monoton&family=Pacifico&family=Righteous&family=Racing+Sans+One&family=Bungee&family=Rubik+Mono+One&family=Permanent+Marker&family=Rye&display=swap">
@@ -141,6 +147,7 @@ function applyTheme(cfg) {
   r.setProperty("--title-font", `'${t.font}'`);
   r.setProperty("--shadow", t.dark ? "rgba(0,0,0,.55)" : "rgba(30,35,45,.2)");
   r.colorScheme = t.dark ? "dark" : "light";
+  const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.content = t.header;   // the app's title bar takes the theme's colour
   document.documentElement.dataset.dark = t.dark ? "1" : "0";
   document.documentElement.dataset.fx = t.fx || (t.dark ? "glow" : "soft");
   const m = document.querySelector('meta[name="theme-color"]');
@@ -408,6 +415,11 @@ html[data-anim="off"] *, html[data-anim="off"] *::before, html[data-anim="off"] 
 /* idea 55: new version window */
 #updDlg .upd-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 #updDlg .upd-btns .btn, #updDlg .upd-btns button { text-decoration: none; }
+/* install instructions (idea 65) */
+.inst-here { padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, var(--accent) 12%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.inst-here small { color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-size: 11px; }
+.inst-other summary { cursor: pointer; color: var(--accent); font-weight: 600; margin-top: 4px; }
+.inst-other p { margin: 8px 0; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -516,7 +528,7 @@ html[data-anim="off"] *, html[data-anim="off"] *::before, html[data-anim="off"] 
 /* ======================================================================
    CORE — written once, used by every section
    ====================================================================== */
-const APP_VERSION = "0.16";
+const APP_VERSION = "0.17";
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -572,7 +584,14 @@ i18n({
     customHint: "Text colors adjust automatically so everything stays readable.",
     markRead: "Mark all read", clearAll: "Clear", noNotes: "No notifications yet.", open: "Open",
     m_notes: "Notifications", m_sound: "🔊 Sound", m_testSound: "🎵 Test the sound", m_desktop: "🖥 Desktop notifications",
-    m_account: "Account", m_login: "🔑 Log in", m_logout: "⏏ Log out", m_help: "❓ Help", m_tour: "🧭 Guided tour", m_look: "Look", m_anim: "✨ Animations", m_about: "ℹ️ About & changelog",
+    m_account: "Account", m_login: "🔑 Log in", m_logout: "⏏ Log out", m_help: "❓ Help", m_tour: "🧭 Guided tour", m_look: "Look", m_anim: "✨ Animations", m_about: "ℹ️ About & changelog", m_install: "📲 Install as an app", appInstalled: "GTA V Manager is installed: open it from its icon.", inst_here: "On this device", inst_other: "Other devices",
+    inst_ios: "<b>iPhone / iPad:</b> in Safari (or Chrome), tap <b>Share</b> (the square with the arrow), then <b>Add to Home Screen</b>.",
+    inst_android: "<b>Android:</b> open the browser menu (<b>⋮</b> in Chrome, <b>≡</b> in Samsung Internet or Firefox) and tap <b>Install app</b> or <b>Add to Home screen</b>.",
+    inst_desktop: "<b>Windows / Linux / ChromeOS, Chrome or Edge:</b> click the install icon at the right end of the address bar, or menu <b>⋮</b> / <b>…</b> → <b>Install</b> (Chrome: Cast, save and share → Install page as app; Edge: Apps → Install this site as an app).",
+    inst_mac: "<b>Mac:</b> in Safari, menu <b>File → Add to Dock</b> (macOS Sonoma or newer); in Chrome or Edge as on Windows.",
+    inst_firefox: "<b>Firefox on a computer</b> can't install web apps: open this page in Chrome or Edge.",
+    inst_after: "GTA V Manager then opens from its own icon, in its own window, and works without internet too (saving to GitHub waits for the connection).",
+    
     loggedAs: u => `Logged in as <b>${u}</b>. Everything is saved to GitHub.`, notLogged: "Not logged in: data stays in this browser.",
     user: "User", pass: "Password", login: "Log in", loginTitle: "Log in", loginLead: "Log in to keep the same data on every device.",
     setup: "First time: set up the login (owner)",
@@ -597,7 +616,14 @@ i18n({
     customHint: "Culorile textului se ajustează automat ca totul să rămână lizibil.",
     markRead: "Marchează citite", clearAll: "Șterge", noNotes: "Nicio notificare încă.", open: "Deschide",
     m_notes: "Notificări", m_sound: "🔊 Sunet", m_testSound: "🎵 Testează sunetul", m_desktop: "🖥 Notificări pe desktop",
-    m_account: "Cont", m_login: "🔑 Intră în cont", m_logout: "⏏ Ieși din cont", m_help: "❓ Ajutor", m_tour: "🧭 Tur ghidat", m_look: "Aspect", m_anim: "✨ Animații", m_about: "ℹ️ Despre și istoric",
+    m_account: "Cont", m_login: "🔑 Intră în cont", m_logout: "⏏ Ieși din cont", m_help: "❓ Ajutor", m_tour: "🧭 Tur ghidat", m_look: "Aspect", m_anim: "✨ Animații", m_about: "ℹ️ Despre și istoric", m_install: "📲 Instalează ca aplicație", appInstalled: "GTA V Manager e instalat: deschide-l de pe iconița lui.", inst_here: "Pe acest dispozitiv", inst_other: "Pe alte dispozitive",
+    inst_ios: "<b>iPhone / iPad:</b> în Safari (sau Chrome) apasă <b>Distribuie</b> (pătratul cu săgeata), apoi <b>Adaugă pe ecranul principal</b>.",
+    inst_android: "<b>Android:</b> deschide meniul browserului (<b>⋮</b> în Chrome, <b>≡</b> în Samsung Internet sau Firefox) și apasă <b>Instalează aplicația</b> sau <b>Adaugă pe ecranul de pornire</b>.",
+    inst_desktop: "<b>Windows / Linux / ChromeOS, Chrome sau Edge:</b> apasă iconița de instalare din dreapta barei de adresă, sau meniul <b>⋮</b> / <b>…</b> → <b>Instalează</b> (Chrome: Proiectează, salvează și distribuie → Instalează pagina ca aplicație; Edge: Aplicații → Instalează site-ul ca aplicație).",
+    inst_mac: "<b>Mac:</b> în Safari, meniul <b>Fișier → Adaugă în Dock</b> (macOS Sonoma sau mai nou); în Chrome sau Edge ca pe Windows.",
+    inst_firefox: "<b>Firefox pe calculator</b> nu poate instala aplicații web: deschide pagina în Chrome sau Edge.",
+    inst_after: "GTA V Manager se deschide apoi de pe iconița lui, în fereastra lui, și merge și fără internet (salvarea pe GitHub așteaptă conexiunea).",
+    
     loggedAs: u => `Conectat ca <b>${u}</b>. Totul se salvează în GitHub.`, notLogged: "Nu ești conectat: datele rămân în acest browser.",
     user: "Utilizator", pass: "Parolă", login: "Intră", loginTitle: "Intră în cont", loginLead: "Intră în cont ca să ai aceleași date pe orice dispozitiv.",
     setup: "Prima dată: configurează login-ul (proprietar)",
@@ -780,6 +806,32 @@ function openText(title, html) {
 }
 // one history for the whole of GTA V Manager, newest first (changelog.json, also published as CHANGELOG.md)
 const CHANGELOG = [
+ {
+  "v": "0.17.0",
+  "date": "2026-10-26",
+  "en": [
+   {
+    "area": "Everywhere",
+    "items": [
+     "Add: GTA V Manager can be installed as an app (PWA): its own icon and window on Android, iPhone / iPad, Windows, Mac, Linux and ChromeOS. ⋮ → Install as an app uses the browser's own install when it offers one, otherwise shows the steps for this device (and the others).",
+     "Add: it opens without internet, with the last saved copy; changes are kept on the device and sent to GitHub as soon as the connection is back (no more failed-save warnings while offline).",
+     "Change: a new version shows up on a normal reload; Ctrl+F5 is no longer needed.",
+     "Add: app shortcuts (long press on the icon): Vehicle Manager, Production Manager, Job Manager. The app's title bar takes the theme's colour."
+    ]
+   }
+  ],
+  "ro": [
+   {
+    "area": "Peste tot",
+    "items": [
+     "Adaugă: GTA V Manager se poate instala ca aplicație (PWA): iconiță și fereastră proprie pe Android, iPhone / iPad, Windows, Mac, Linux și ChromeOS. ⋮ → Instalează ca aplicație folosește instalarea browserului când o oferă, altfel arată pașii pentru dispozitivul tău (și pentru celelalte).",
+     "Adaugă: se deschide și fără internet, cu ultima copie; schimbările rămân pe dispozitiv și pleacă pe GitHub imediat ce revine conexiunea (fără avertismente de salvare eșuată cât ești offline).",
+     "Schimbă: o versiune nouă apare la un reload obișnuit; nu mai e nevoie de Ctrl+F5.",
+     "Adaugă: scurtături (apăsare lungă pe iconiță): Vehicle Manager, Production Manager, Job Manager. Bara de titlu a aplicației ia culoarea temei."
+    ]
+   }
+  ]
+ },
  {
   "v": "0.16.0",
   "date": "2026-10-26",
@@ -1329,6 +1381,37 @@ function openAbout() {
 /* ---------- idea 55: a new version is announced once, in a small window ----------
    Once a day the page reads CHANGELOG.md from the main repo (small, public, no login); if its newest version is
    newer than this page, a small window says so, one time per version (gtaUpdateSeen). Works for a local copy or a fork too. */
+/* ---------- App (idea 65): installable from the browser (PWA). manifest.webmanifest + sw.js sit next to the page;
+   the service worker always fetches the page fresh when online, and keeps a copy for opening it without internet. ---------- */
+const App = {
+  prompt: null,
+  standalone: () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true,
+  ios: () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1),
+  init() {
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost"))
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    addEventListener("beforeinstallprompt", e => { e.preventDefault(); this.prompt = e; });
+    addEventListener("appinstalled", () => { this.prompt = null; Notes.add(t("appInstalled"), "ok"); });
+  },
+  // which instructions fit this device (Chrome / Edge / Samsung Internet usually offer the install themselves: then the browser's own window opens)
+  platform() {
+    const ua = navigator.userAgent;
+    if (this.ios()) return "ios";
+    if (/Android/i.test(ua)) return "android";
+    if (/Firefox\//.test(ua)) return "firefox";
+    if (/Macintosh/.test(ua) && !/Chrome|Edg\//.test(ua)) return "mac";
+    return "desktop";
+  },
+  canOffer() { return !this.standalone() && location.protocol !== "file:"; },
+  async install() {
+    if (this.prompt) { const p = this.prompt; this.prompt = null; p.prompt(); try { await p.userChoice; } catch (e) {} return; }
+    const here = this.platform(), all = ["android", "ios", "desktop", "mac", "firefox"];
+    openText(t("m_install"), `<p class="inst-here"><small>${t("inst_here")}</small><br>${t("inst_" + here)}</p><p>${t("inst_after")}</p>
+      <details class="inst-other"><summary>${t("inst_other")}</summary>${all.filter(k => k !== here).map(k => `<p>${t("inst_" + k)}</p>`).join("")}</details>`);
+  }
+};
+App.init();
+
 const Update = {
   SRC: "https://raw.githubusercontent.com/Yogi4x4/GTAManager/main/CHANGELOG.md",
   LIVE: "https://yogi4x4.github.io/GTAManager/GTA_V_Manager.html",
@@ -1615,6 +1698,7 @@ const Sync = {
     } catch (e) {
       j.failed = true;
       if (e.message === "token") notify(t("tokenBad"), "bad");
+      else if (!navigator.onLine) { /* no internet (e.g. the app used offline): saved on the device, sent when the connection is back */ }
       else notify(t("saveFail", path.split("/").pop()), "bad", { quiet: true, action: { label: t("saveRetry"), fn: () => this.run(path) } });
       clearTimeout(j.timer); j.timer = setTimeout(() => this.run(path), 30000);
     }
@@ -1624,6 +1708,8 @@ const Sync = {
     this.dot();
   },
   pending() { return Object.keys(this.jobs).length > 0; },
+  // back online: send what is waiting right away
+  init() { addEventListener("online", () => Object.keys(this.jobs).forEach(p => { clearTimeout(this.jobs[p].timer); this.run(p); })); },
   async flush() { await Promise.all(Object.keys(this.jobs).map(p => { clearTimeout(this.jobs[p].timer); return this.run(p); })); },
   dot() {
     const d = $("#syncDot"), err = Object.values(this.jobs).some(j => j.failed);
@@ -1631,6 +1717,8 @@ const Sync = {
     d.classList.toggle("busy", !err && this.pending());
   }
 };
+Sync.init();   // idea 65: send waiting saves when the internet is back
+
 addEventListener("beforeunload", e => { if (Sync.pending()) { Sync.flush(); e.preventDefault(); e.returnValue = t("unsaved"); } });
 addEventListener("pagehide", () => { if (Sync.pending()) Sync.flush(); });
 
@@ -1717,6 +1805,7 @@ const Router = {
     if (s.tour && s.tour()) items.push({ label: t("m_tour"), act: () => $("#tourBtn").click() });
     items.push({ label: t("m_guide"), act: openGuide });
     if (help) items.push({ label: t("m_help"), act: () => openText(t("helpTitle"), help) });
+    if (App.canOffer()) items.push({ label: t("m_install"), act: () => App.install() });
     items.push({ label: t("m_about"), act: openAbout });
     const list = $("#moreList");
     list.innerHTML = "";

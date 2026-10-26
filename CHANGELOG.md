@@ -2,6 +2,13 @@
 
 * * *
 
+### v0.17.0 (2026-10-26)
+* Everywhere:
+  * Add: GTA V Manager can be installed as an app (PWA): its own icon and window on Android, iPhone / iPad, Windows, Mac, Linux and ChromeOS. ⋮ → Install as an app uses the browser's own install when it offers one, otherwise shows the steps for this device (and the others).
+  * Add: it opens without internet, with the last saved copy; changes are kept on the device and sent to GitHub as soon as the connection is back (no more failed-save warnings while offline).
+  * Change: a new version shows up on a normal reload; Ctrl+F5 is no longer needed.
+  * Add: app shortcuts (long press on the icon): Vehicle Manager, Production Manager, Job Manager. The app's title bar takes the theme's colour.
+
 ### v0.16.0 (2026-10-26)
 * Job Manager:
   * Change: the page is split in two big cards, HEISTS (Cayo Perico, Cluckin' Bell Farm Raid, Diamond Casino, Doomsday, Kortz Center) and JOBS (Agency, Auto Shop, Bail Office, Dr. Dre Contract, Garment Factory, Money Fronts), each with its own emblem.
