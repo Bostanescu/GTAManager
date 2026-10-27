@@ -1,0 +1,197 @@
+# GTA V Manager: weekly GTA Online bonuses for the Home page.
+# Every Thursday (after Rockstar's weekly update) and once a day as a check, this reads the newest
+# "Weekly Bonuses and Discounts" post on r/gtaonline (the same info Rockstar posts on its Newswire),
+# (JSON, then its RSS feed), with gtaboss.gg / gtabase.com as fallbacks, and saves it as data/weekly.json. The page only reads that file.
+# Run it by hand any time: Actions → Weekly bonuses → Run workflow.
+name: Weekly bonuses
+on:
+  schedule:
+    - cron: "30 10 * * 4"   # Thursday, after the weekly update
+    - cron: "30 14 * * 4"   # Thursday again, in case the post came late
+    - cron: "0 9 * * *"     # every day: keeps the file fresh if something failed
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: weekly-bonuses
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Read this week's bonuses
+        run: |
+          python3 - <<'PY'
+          import json, re, datetime, urllib.request, html
+          from html.parser import HTMLParser
+
+          UA = "GTAManager-weekly/1.0 (GitHub Action; personal fan page)"
+          def get(url):
+              req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "*/*"})
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return r.read().decode("utf-8", "replace")
+
+          def clean(s):
+              s = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", s)          # markdown links -> text
+              s = re.sub(r"[*_`~>#]+", "", s)
+              s = html.unescape(re.sub(r"<[^>]+>", "", s))
+              return re.sub(r"\s+", " ", s).strip(" -:|")
+
+          # ---- generic HTML reader: headings (h2-h4, or a paragraph that is all bold) and list items / table rows ----
+          class Page(HTMLParser):
+              def __init__(self):
+                  super().__init__(); self.secs = []; self.tag = None; self.buf = ""; self.bold = ""; self.inb = 0; self.cells = None
+              def handle_starttag(self, tag, attrs):
+                  if tag in ("strong", "b"): self.inb += 1
+                  if tag == "tr": self.cells = []
+                  if tag in ("td", "th") and self.cells is not None: self.tag, self.buf = tag, ""
+                  if tag in ("h1", "h2", "h3", "h4", "h5", "h6", "li", "p"):
+                      if tag == "p" and self.tag == "li": return       # a paragraph inside a list item belongs to the item
+                      self.tag, self.buf, self.bold = tag, "", ""
+              def handle_endtag(self, tag):
+                  if tag in ("strong", "b"): self.inb = max(0, self.inb - 1)
+                  if tag in ("td", "th") and self.cells is not None:
+                      self.cells.append(clean(self.buf)); self.tag = None; return
+                  if tag == "tr" and self.cells is not None:
+                      cells = [c for c in self.cells if c]; self.cells = None
+                      if cells and self.secs and cells[0].lower() not in ("vehicle", "item", "name", "discount"):
+                          self.secs[-1]["items"].append(" — ".join(cells))
+                      return
+                  if tag != self.tag and not (tag == "li" and self.tag == "p"): return
+                  text = clean(self.buf); self.tag = None
+                  if not text: return
+                  if tag in ("h1", "h2", "h3", "h4", "h5", "h6") or (tag == "p" and len(text) < 80 and clean(self.bold) == text):
+                      self.secs.append({"title": text.rstrip(":"), "items": []})
+                  elif tag == "p" and self.secs and clean(self.bold) and text.startswith(clean(self.bold)) and len(text) < 160:
+                      self.secs[-1]["items"].append(text)          # "Podium Vehicle: Annis Savestra"
+                  elif tag == "li" and self.secs and len(text) < 220:
+                      self.secs[-1]["items"].append(text)
+                  elif tag == "p" and self.secs and len(text) < 160:
+                      self.secs[-1]["items"].append(text)          # a plain line under a heading
+              def handle_data(self, d):
+                  if self.tag: self.buf += d
+                  if self.tag and self.inb: self.bold += d
+          def sections_of(html_text):
+              pg = Page(); pg.feed(html_text)
+              return [s for s in pg.secs if s["items"] and not re.search(r"comment|related|newsletter|follow us|share|read more|latest news", s["title"], re.I)][:14]
+
+          # ---- 1. r/gtaonline weekly post (markdown) ----
+          def from_reddit():
+              for host in ("https://www.reddit.com", "https://old.reddit.com"):
+                  try:
+                      q = host + "/r/gtaonline/search.json?q=title%3A%22Weekly%20Bonuses%22&restrict_sr=on&sort=new&limit=5"
+                      posts = [c["data"] for c in json.loads(get(q))["data"]["children"]]
+                      posts = [p for p in posts if "weekly bonuses" in p["title"].lower() and p.get("selftext")]
+                      if not posts: continue
+                      p = max(posts, key=lambda p: p["created_utc"])
+                      meta = {"source": "r/gtaonline", "title": clean(p["title"]), "url": "https://www.reddit.com" + p["permalink"],
+                              "posted": datetime.datetime.utcfromtimestamp(p["created_utc"]).strftime("%Y-%m-%dT%H:%MZ")}
+                      if p.get("selftext_html"):
+                          secs = sections_of(html.unescape(p["selftext_html"]))
+                          if len(secs) >= 2: return {**meta, "sections": secs}
+                      secs, cur = [], None
+                      for line in p["selftext"].splitlines():
+                          raw = line.strip()
+                          if not raw or set(raw) <= set("-|: "): continue
+                          head = re.match(r"^#{1,6}\s*(.+)$", raw) or re.match(r"^\*{2,3}(.+?)\*{2,3}:?$", raw)
+                          if head:
+                              cur = {"title": clean(head.group(1)), "items": []}; secs.append(cur); continue
+                          if raw.startswith("|"):
+                              cells = [clean(c) for c in raw.strip("|").split("|")]
+                              cells = [c for c in cells if c]
+                              if not cells or cells[0].lower() in ("vehicle", "item", "name", "discount"): continue
+                              item = " — ".join(cells)
+                          elif re.match(r"^([*+\-]|\d+[.)])\s+", raw):
+                              item = clean(re.sub(r"^([*+\-]|\d+[.)])\s+", "", raw))
+                          elif re.match(r"^\*\*(.+?)\*\*:?\s*(.+)$", raw):      # **Podium Vehicle:** Annis Savestra
+                              m = re.match(r"^\*\*(.+?)\*\*:?\s*(.+)$", raw)
+                              item = clean(m.group(1)) + ": " + clean(m.group(2))
+                          else:
+                              continue
+                          if item:
+                              if cur is None: cur = {"title": "", "items": []}; secs.append(cur)
+                              cur["items"].append(item)
+                      secs = [s for s in secs if s["items"]]
+                      if secs:
+                          return {"source": "r/gtaonline", "title": clean(p["title"]), "url": "https://www.reddit.com" + p["permalink"],
+                                  "posted": datetime.datetime.utcfromtimestamp(p["created_utc"]).strftime("%Y-%m-%dT%H:%MZ"), "sections": secs}
+                  except Exception as e:
+                      print("reddit failed:", host, e)
+              return None
+
+          # ---- 1b. r/gtaonline RSS feed (often allowed when the JSON is not) ----
+          def from_reddit_rss():
+              try:
+                  feed = get("https://www.reddit.com/r/gtaonline/search.rss?q=title%3A%22Weekly%20Bonuses%22&restrict_sr=on&sort=new&limit=5")
+                  for entry in re.findall(r"<entry>(.*?)</entry>", feed, re.S):
+                      title = clean(re.search(r"<title>(.*?)</title>", entry, re.S).group(1))
+                      if "weekly bonuses" not in title.lower(): continue
+                      link = re.search(r'<link href="([^"]+)"', entry).group(1)
+                      when = (re.search(r"<updated>(.*?)</updated>", entry) or re.search(r"<published>(.*?)</published>", entry)).group(1)
+                      body = html.unescape(re.search(r"<content[^>]*>(.*?)</content>", entry, re.S).group(1))
+                      secs = sections_of(body)
+                      if secs:
+                          return {"source": "r/gtaonline", "title": title, "url": link, "posted": when[:16] + "Z", "sections": secs}
+              except Exception as e:
+                  print("reddit rss failed:", e)
+              return None
+
+          # ---- 2. gtaboss.gg / gtabase.com weekly pages (HTML) ----
+          def from_sites():
+              for url in ("https://www.gtaboss.gg/gta-5-online/gta-online-weekly-updates", "https://www.gtabase.com/gta-online/this-week-bonuses-discounts"):
+                  try:
+                      page = get(url)
+                      # gtaboss: the index links to the current week's page
+                      m = re.search(r'href="(/gta-5-online/gta-online-weekly-updates/\d{4}-\d{2}-\d{2})"', page)
+                      if m:
+                          url = "https://www.gtaboss.gg" + m.group(1); page = get(url)
+                      secs = sections_of(page)
+                      if secs:
+                          name = url.split("/")[2].replace("www.", "")
+                          return {"source": name, "title": "GTA Online weekly update", "url": url, "posted": "", "sections": secs}
+                      print("no sections found on", url)
+                  except Exception as e:
+                      print("site failed:", url, e)
+              return None
+
+          data = from_reddit() or from_reddit_rss() or from_sites()
+          if not data:
+              # red X in Actions, so a failed week is visible; data/weekly.json stays as it was
+              print("::error::No source answered this time; data/weekly.json stays as it was."); raise SystemExit(1)
+          # 3X / 2X GTA$ and RP blocks become their own sections, at the top (highest first); the subreddit's link lists are dropped
+          def tidy(secs):
+              mult, rest = [], []
+              is_mult = lambda x: len(x) < 40 and re.match(r"^\d+\s*X\s+(GTA\$|RP)", x, re.I)
+              for sec in secs:
+                  if re.search(r"resources|thanks to|useful links", sec["title"], re.I): continue
+                  if is_mult(sec["title"]): mult.append(sec); continue
+                  keep, cur = [], None
+                  for it in sec["items"]:
+                      if is_mult(it): cur = {"title": it, "items": []}; mult.append(cur); continue
+                      (cur["items"] if cur is not None else keep).append(it)
+                  if keep: rest.append({"title": sec["title"], "items": keep})
+              mult = [m for m in mult if m["items"]]
+              mult.sort(key=lambda m: int(re.match(r"\d+", m["title"]).group()))   # 2X first, then 3X, ...
+              return mult + rest
+          data["sections"] = tidy(data["sections"])
+          for s in data["sections"]: s["items"] = [re.sub(r"Â(?=\s)", "", i).strip() for i in s["items"][:20]]
+          data["fetched"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ")
+          old = {}
+          try: old = json.load(open("data/weekly.json"))
+          except Exception: pass
+          if {k: v for k, v in old.items() if k != "fetched"} == {k: v for k, v in data.items() if k != "fetched"}:
+              print("Nothing new."); raise SystemExit(0)
+          json.dump(data, open("data/weekly.json", "w"), ensure_ascii=False, indent=1)
+          print("::notice::Saved from " + data["source"] + ":", data["title"], "-", sum(len(s["items"]) for s in data["sections"]), "items")
+          PY
+      - name: Save to the repository
+        run: |
+          if [ -n "$(git status --porcelain data/weekly.json)" ]; then
+            git config user.name "GTA Manager bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/weekly.json
+            git commit -m "Weekly bonuses (GTA Manager)"
+            git pull --rebase
+            git push
+          fi
