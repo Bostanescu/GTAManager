@@ -2,6 +2,11 @@
 
 * * *
 
+### v0.17.1 (2026-10-27)
+* Everywhere:
+  * Fix: saving to GitHub no longer warns at the first failure (a phone waking up, Chrome back from the background, a short network drop): it tries again quietly after 5 s, 15 s, then every 30 s, and right away when you come back to the app. The warning shows only if it still fails after 2 minutes, with the reason, and a note confirms when it is saved.
+  * Fix: when another device saved the same file in between, the save reads GitHub again (fresh, not a cached copy) and tries up to 3 times.
+
 ### v0.17.0 (2026-10-26)
 * Everywhere:
   * Add: GTA V Manager can be installed as an app (PWA): its own icon and window on Android, iPhone / iPad, Windows, Mac, Linux and ChromeOS. ⋮ → Install as an app uses the browser's own install when it offers one, otherwise shows the steps for this device (and the others).

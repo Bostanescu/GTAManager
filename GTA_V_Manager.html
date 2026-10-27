@@ -528,7 +528,7 @@ html[data-anim="off"] *, html[data-anim="off"] *::before, html[data-anim="off"] 
 /* ======================================================================
    CORE — written once, used by every section
    ====================================================================== */
-const APP_VERSION = "0.17";
+const APP_VERSION = "0.17.1";
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -601,7 +601,7 @@ i18n({
     errNet: "GitHub didn't answer. Try again.", errShort: "Choose a user and a password of at least 8 characters.", errMatch: "The passwords don't match.",
     account: "Account", loggedIn: "Logged in. Your data now comes from GitHub.", loggedOut: "Logged out. Data stays in this browser.",
     logoutConfirm: "Log out on this device? Your data on GitHub stays as it is.",
-    saveFail: f => `Couldn't save ${f} to GitHub. It will be tried again.`, saveRetry: "Retry", unsaved: "Some changes are still being saved to GitHub.",
+    saveFail: f => `Couldn't save ${f} to GitHub. It will be tried again.`, saveRetry: "Retry", whyNet: "no connection", saveOk: f => `${f} saved to GitHub.`, unsaved: "Some changes are still being saved to GitHub.",
     tokenBad: "GitHub refused the saved login (token expired?). Log in again.",
     tourOf: (a, b) => `Step ${a} of ${b}`, tourNext: "Next", tourBack: "Back", tourSkip: "Skip", tourDone: "Done",
     tourViewNote: "You're only viewing; log in to change things.",
@@ -633,7 +633,7 @@ i18n({
     errNet: "GitHub nu a răspuns. Încearcă din nou.", errShort: "Alege un utilizator și o parolă de minim 8 caractere.", errMatch: "Parolele nu se potrivesc.",
     account: "Cont", loggedIn: "Ai intrat în cont. Datele vin acum din GitHub.", loggedOut: "Ai ieșit din cont. Datele rămân în acest browser.",
     logoutConfirm: "Ieși din cont pe acest dispozitiv? Datele din GitHub rămân neschimbate.",
-    saveFail: f => `Nu s-a putut salva ${f} în GitHub. Se încearcă din nou.`, saveRetry: "Reîncearcă", unsaved: "Unele modificări încă se salvează în GitHub.",
+    saveFail: f => `Nu s-a putut salva ${f} în GitHub. Se încearcă din nou.`, saveRetry: "Reîncearcă", whyNet: "fără conexiune", saveOk: f => `${f} s-a salvat în GitHub.`, unsaved: "Unele modificări încă se salvează în GitHub.",
     tokenBad: "GitHub a refuzat login-ul salvat (token expirat?). Intră din nou în cont.",
     tourOf: (a, b) => `Pasul ${a} din ${b}`, tourNext: "Înainte", tourBack: "Înapoi", tourSkip: "Sari peste", tourDone: "Gata",
     tourViewNote: "Doar vizualizezi; intră în cont ca să modifici.",
@@ -806,6 +806,28 @@ function openText(title, html) {
 }
 // one history for the whole of GTA V Manager, newest first (changelog.json, also published as CHANGELOG.md)
 const CHANGELOG = [
+ {
+  "v": "0.17.1",
+  "date": "2026-10-27",
+  "en": [
+   {
+    "area": "Everywhere",
+    "items": [
+     "Fix: saving to GitHub no longer warns at the first failure (a phone waking up, Chrome back from the background, a short network drop): it tries again quietly after 5 s, 15 s, then every 30 s, and right away when you come back to the app. The warning shows only if it still fails after 2 minutes, with the reason, and a note confirms when it is saved.",
+     "Fix: when another device saved the same file in between, the save reads GitHub again (fresh, not a cached copy) and tries up to 3 times."
+    ]
+   }
+  ],
+  "ro": [
+   {
+    "area": "Peste tot",
+    "items": [
+     "Repară: salvarea în GitHub nu mai avertizează la prima eroare (telefonul care se trezește, Chrome revenit din fundal, o cădere scurtă de rețea): reîncearcă discret după 5 s, 15 s, apoi la 30 s, și imediat când revii în aplicație. Avertismentul apare doar dacă tot nu merge după 2 minute, cu motivul, iar un mesaj confirmă când s-a salvat.",
+     "Repară: când alt dispozitiv a salvat același fișier între timp, salvarea citește din nou GitHub (proaspăt, nu o copie veche) și încearcă de până la 3 ori."
+    ]
+   }
+  ]
+ },
  {
   "v": "0.17.0",
   "date": "2026-10-26",
@@ -1647,9 +1669,10 @@ const GH = {
     return r.text();
   },
   async getJson(path) { const s = await this.get(path); return s ? JSON.parse(s) : null; },
-  async put(path, text, a = Auth.get(), retry = true) {
+  async put(path, text, a = Auth.get(), tries = 3) {
     if (this.shas[path] === undefined) {
-      const r = await fetch(this.url(a, path) + "?ref=" + encodeURIComponent(a.branch), { headers: this.hdr("application/vnd.github.object+json", a.token), cache: "no-store" });
+      // "&t=" makes GitHub answer with the file as it is now, not a copy from a few seconds ago (else: a conflict again)
+      const r = await fetch(this.url(a, path) + "?ref=" + encodeURIComponent(a.branch) + "&t=" + Date.now(), { headers: this.hdr("application/vnd.github.object+json", a.token), cache: "no-store" });
       this.shas[path] = r.status === 404 ? null : r.ok ? (await r.json()).sha : undefined;
       if (this.shas[path] === undefined) throw new Error(r.status === 401 || r.status === 403 ? "token" : "HTTP " + r.status);
     }
@@ -1659,7 +1682,9 @@ const GH = {
     if (this.shas[path]) body.sha = this.shas[path];
     const r = await fetch(this.url(a, path), { method: "PUT", headers: { ...this.hdr("application/vnd.github+json", a.token), "Content-Type": "application/json" }, body: JSON.stringify(body) });
     // the file changed on GitHub since we last saw it: take its new version and overwrite
-    if ((r.status === 409 || r.status === 422) && retry) { delete this.shas[path]; return this.put(path, text, a, false); }
+    // (another device or tab saved in between): read it again and overwrite, a few times if needed
+    if ((r.status === 409 || r.status === 422) && tries > 1) { delete this.shas[path]; await new Promise(ok => setTimeout(ok, 1500)); return this.put(path, text, a, tries - 1); }
+    if (r.status === 409 || r.status === 422) delete this.shas[path];
     if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? "token" : "HTTP " + r.status);
     this.shas[path] = (await r.json()).content.sha;
   },
@@ -1694,22 +1719,31 @@ const Sync = {
     j.running = true; this.busy++; this.dot();
     try {
       await GH.put(path, j.make());
-      j.failed = false;
+      j.failed = false; j.fails = 0; j.since = 0;
     } catch (e) {
-      j.failed = true;
+      j.failed = true; j.fails = (j.fails || 0) + 1; j.since = j.since || Date.now();
+      // a phone waking up, the app coming back from the background or a short network drop often fails once: try again quietly
+      // (5 s, 15 s, then every 30 s) and only speak up when it still fails after 2 minutes; the reason goes in the message
+      const why = e.message === "token" ? "token" : !navigator.onLine || e instanceof TypeError ? t("whyNet") : e.message;
       if (e.message === "token") notify(t("tokenBad"), "bad");
-      else if (!navigator.onLine) { /* no internet (e.g. the app used offline): saved on the device, sent when the connection is back */ }
-      else notify(t("saveFail", path.split("/").pop()), "bad", { quiet: true, action: { label: t("saveRetry"), fn: () => this.run(path) } });
-      clearTimeout(j.timer); j.timer = setTimeout(() => this.run(path), 30000);
+      else if (navigator.onLine && Date.now() - j.since > 2 * 60000 && !j.told) {
+        j.told = true;
+        notify(t("saveFail", path.split("/").pop()) + " (" + why + ")", "bad", { quiet: true, action: { label: t("saveRetry"), fn: () => this.run(path) } });
+      }
+      clearTimeout(j.timer); j.timer = setTimeout(() => this.run(path), [5000, 15000][j.fails - 1] || 30000);
     }
     j.running = false; this.busy--;
     if (j.again) { j.again = false; return this.run(path); }
-    if (!j.failed) delete this.jobs[path];
+    if (!j.failed) { if (j.told) notify(t("saveOk", path.split("/").pop()), "ok", { quiet: true }); delete this.jobs[path]; }
     this.dot();
   },
   pending() { return Object.keys(this.jobs).length > 0; },
   // back online: send what is waiting right away
-  init() { addEventListener("online", () => Object.keys(this.jobs).forEach(p => { clearTimeout(this.jobs[p].timer); this.run(p); })); },
+  init() {
+    const now = () => Object.keys(this.jobs).forEach(p => { if (this.jobs[p].failed) { clearTimeout(this.jobs[p].timer); this.run(p); } });
+    addEventListener("online", now);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) setTimeout(now, 1500); });   // back in the app / tab
+  },
   async flush() { await Promise.all(Object.keys(this.jobs).map(p => { clearTimeout(this.jobs[p].timer); return this.run(p); })); },
   dot() {
     const d = $("#syncDot"), err = Object.values(this.jobs).some(j => j.failed);
