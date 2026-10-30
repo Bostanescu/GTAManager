@@ -2,6 +2,66 @@
 
 * * *
 
+### v0.28.0 (2026-10-30)
+* Property Manager:
+  * Change: the Property Manager page shows only emblems, one for everything you can own: Mansions and CEO Office big on top, then Agency, Nightclub, Bunker, Hangar, MC Clubhouse, Acid Lab, CEO Warehouses, Vehicle Warehouse and Money Fronts. The ones you own are bright (with how many you have), the others faded; each opens its page.
+  * Change: Mansions has its own page (#mansions): the three villas and, on the right, the boost, what is bought once for all and the rules. A villa's page goes back to it.
+  * Add: the CEO Office page (Mihai's emblem): you own it or not, which of the four buildings (Maze Bank Tower, Arcadius, Lombank West, Maze Bank West, with prices), its pin on the Property Manager map, and the CEO warehouses and Vehicle Warehouse you run from it.
+
+### v0.27.1 (2026-10-30)
+* Job Manager:
+  * Change: the Agency has a new emblem (the music studio, the Agency tower and the security team), on the Job Manager card and the Agency pages.
+
+### v0.27.0 (2026-10-30)
+* Property Manager:
+  * Change: the Property Manager is redone like the Job Manager: a Mansions section (the MANSIONS emblem and a card for each villa: the ones you own bright, with their upgrades as small icons, the others faded) and a section with every business you own in the other Managers, each opening its own page.
+  * Change: adding a Mansion opens a small window where you tick its upgrades once; later they change from ⚙ Settings on its page (also where you remove it). Art Studio and Security Team are ticked the same way, once for all.
+  * Change: the boost, the things bought once for all and the rules are small cards on the right, the rules with icons.
+  * Change: a Mansion's page: its emblem, the upgrades as small icons, the photo of the villa, the cars on show (small buttons until a car is set; a set car is a small card, the podium a bit bigger) and on the right the boost, what a Mansion has (as chips) and the rules. The page arranges itself by what is set.
+
+### v0.26.0 (2026-10-30)
+* Everywhere:
+  * Add: every button has a short hint saying what it does: with a mouse, rest on the button for half a second; on a phone, hold it (the button is not pressed then, only the hint shows).
+* Job Manager:
+  * Fix: Dr. Dre Contract: Undo and Clear the ticks stopped working after the data was loaded from GitHub or changed in another tab (the page kept working on the old data). The same fix covers the Agency and Property Manager pages.
+  * Add: Dr. Dre Contract: "I didn't finish it" takes back the last recorded finale at any time (the weekly bonus and the replay timer come back), not only during the few seconds of the Undo message.
+  * Fix: the Job Manager map shows only the Job Manager places (the Agency), no more Mansions.
+* Property Manager:
+  * Fix: a Mansion's car picker no longer says there are no cars before you visit the Vehicle Manager: the cars start loading as soon as a property page opens, the picker says they are loading and fills itself when they arrive.
+  * Change: the Property Manager has its own map and title, with everything you own: the Mansions, the Agency and the Production Manager businesses placed on its map (each with a button to its page).
+  * Fix: the Mansion cards showed "Upgrades 4 / undefined".
+
+### v0.25.0 (2026-10-29)
+* Property Manager:
+  * Add: the Property Manager opens (Home card, pages menu): the three Mansions (Richman Villa, The Vinewood Residence, The Tongva Estate); adding one suggests the three, the ones you own greyed out with (Owned).
+  * Add: a page for each Mansion: the cars on show (the Car Podium, big, and the two driveway places under it), picked from the Vehicle Manager by garage and level, with the photo next to the mouse; the room upgrades; the AI Concierge production boost; everything a Mansion has, by area; the rules for owning several (one AI and one boost for all, Security Team and Art Studio count for all).
+  * Add: the Mansions you own are on the map (the same map as the Job Manager), with a pin you can drag.
+* Job Manager:
+  * Add: the Kortz Center Heist card says whether you can host it (a Mansion with the Art Studio) and opens the Property Manager.
+  * Fix: the In game switch now also shows on the Job Manager pages.
+
+### v0.24.0 (2026-10-29)
+* Everywhere:
+  * Add: the In game switch is on every page, at the same place as in the Production Manager (on narrow phones only its track shows).
+* Vehicle Manager:
+  * Add: when you add a car, after the brand the models of that brand are suggested (every GTA Online vehicle), and picking one fills in the class.
+  * Add: the car window says what special upgrades the model takes: HSW (30 cars), Imani Tech (20 cars), the Benny's version it turns into (or that it is one), the Arena Workshop version, hydraulics; the HSW / Benny's / Imani Tech boxes that apply are lit up.
+* Agency:
+  * Add: the Agency upgrades Armory, Accommodation and Vehicle Workshop, with prices and what they give.
+  * Add: Security Contracts: pick the type (6) and the difficulty (Professional, Specialist, Specialist+, with their pay) before pressing I finished a contract; they are noted in a list with a count per type.
+  * Add: Call Franklin: you can ask him by phone for a random Security Contract from anywhere on the map.
+  * Change: the Agency pin line says the pin is on the map by itself; See on the map, and Back to the game's place only after you moved it.
+* Home:
+  * Change: the weekly bonuses robot tries every hour on Thursdays (12:17 to 20:17 in Romania), because GitHub sometimes skips a scheduled run.
+
+### v0.23.2 (2026-10-29)
+* Job Manager:
+  * Change: the Agency pin shows the Agency icon from the game map (the white building), drawn so it stays sharp at any zoom.
+
+### v0.23.1 (2026-10-29)
+* Guided tours:
+  * Fix: on phones the tour window goes across the screen again, at the bottom or at the top (whichever covers less of what it shows); it no longer sits in the middle of the business list on the left.
+
 ### v0.23.0 (2026-10-28)
 * Vehicle Manager:
   * Change: the car cards are as see-through as the Home cards, so the background shows behind them.
