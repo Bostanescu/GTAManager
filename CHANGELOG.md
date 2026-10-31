@@ -2,6 +2,37 @@
 
 * * *
 
+### v0.32.0 (2026-11-01)
+* Job Manager:
+  * Change: heists and contracts sorted as in the game. Heists: the five classic ones (The Fleeca Job, The Prison Break, The Humane Labs Raid, Series A Funding, The Pacific Standard Job), Doomsday, Diamond Casino, Cayo Perico, Kortz Center. Contracts: Security Contracts, Dr. Dre (VIP Contract), Auto Shop Contracts, Salvage Yard Robberies, Cluckin' Bell Farm Raid, Bail Office Bounties. Jobs keeps the businesses (Agency, Auto Shop, Bail Office, Garment Factory, Money Fronts).
+  * Add: every heist and contract opens its own page with its missions in order (scope out, tasks / preps, planning, finale; optional ones marked): tick them as you go, "Finale done" counts the run and starts the ticks over (with Undo). Doomsday has its three acts, Auto Shop its eight contracts with their payouts, the Salvage Yard its five robberies.
+  * Add: the Salvage Yard page shows this week's three robberies and their cars, read by itself from the weekly post; the other two are faded. On a new week the robbery ticks start over and a notification says which cars are on.
+  * Add: the Kortz Center page shows this week's primary targets; Bail Office Bounties shows this week's Most Wanted target and FIB Priority File.
+  * Add: heists and contracts without an emblem yet have a card with their name (and what they need), until the emblem comes.
+
+### v0.31.0 (2026-10-31)
+* Job Manager:
+  * Add: a third category, Contracts (Mihai's emblem), under Heists and Jobs, across the whole width. For now it holds Security Contracts (opens its page; shows how many you've done, or that it needs the Agency); more contracts come here as their emblems arrive.
+  * Change: the Agency page shows its two cards big, each with its emblem on top and centred: Security Contracts (new emblem) and Dr. Dre Contract, whose emblem was hard to see before. The Security Contracts page has the new emblem at the top.
+* Property Manager:
+  * Add: the Garage card (Mihai's emblem; opens the Vehicle Manager) and the McKenzie Field Hangar card (coming soon).
+
+### v0.30.0 (2026-10-31)
+* Characters:
+  * Add: two characters, like in GTA Online (⋮ → Settings → Characters → Create the second character). Each one has its own businesses, properties, vehicles and garages, timers, contracts and export list; only the bank is shared in the game. Character 1 keeps all the data you have now.
+  * Add: once the second character exists, a round button with its initial in the top bar switches between them. Switching stops "In game" for the character you leave and starts it for the other one.
+  * Add: on GitHub the second character's data is in data/c2/; the names are in data/characters.json. A notification about the other character offers to switch to it.
+* Property Manager:
+  * Add: cards have a height too (↕, 1 to 4 rows) besides the width (↔): small cards now fill the room next to a tall one, for example a big card on the left with two rows of small ones on its right.
+  * Add: Templates: 15 ready-made layouts (Big + 2, Big left + 4, Big in the middle, Banner, Mosaic, Magazine, Tall + 6 and more). Tap a place to choose what goes there, drag a card onto another place to swap them; the others can show below. On a phone the layout rearranges itself.
+  * Add: the Apartment and Facility cards (Mihai's emblems), coming soon.
+* Settings:
+  * Add: ⋮ → ⚙ Settings: one window for General, Look, Notifications, Characters, Account and, under Pages, each page's own settings, every row with a line on what it does. The ⋮ menu is shorter.
+  * Add: Look → Cards: how see-through the cards are on every page, with a slider; while you hold it the window steps aside and you see the page change live.
+  * Add: Backgrounds: "▶ Show now" under each picture; it stays one whole interval, then the pictures change again by themselves.
+* Updates:
+  * Fix: copies of the app (forks) now also receive the Twitch Drops Action (.github/workflows/drops.yml).
+
 ### v0.29.0 (2026-10-31)
 * Maps:
   * Change: a pin moves only after you hold it for half a second (it lifts, the phone buzzes); a normal drag, even one starting on a pin, moves the map. A short tap on a pin still opens its window. On every map.
