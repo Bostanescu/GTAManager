@@ -2,13 +2,38 @@
 
 * * *
 
+### v0.34.0 (2026-11-01)
+* Property Manager:
+  * Add: the Garages card opens its own page (no longer the Vehicle Manager): the garages for your personal vehicles, separate from the garages of the other properties. Each one shows how many spaces are taken and free, from the Vehicle Manager garage it is linked to. Add one from the list of every Dynasty 8 garage (2, 6 or 10 vehicles, with prices) and the Eclipse Boulevard Garage (50), or type another. The Eclipse Boulevard Garage you already have in the Vehicle Manager is added by itself.
+* Job Manager:
+  * Add: heist cards show the fewest players needed, with a small person icon in the corner ("2+" when it can also be done with more).
+
+### v0.33.0 (2026-11-01)
+* Job Manager:
+  * Change: a new page layout. Tabs on top (All, Heists, Contracts, Jobs); under All, "In progress" (what you've started, with how far you are) and "This week" (the Salvage Yard cars, the Kortz Center targets, the Most Wanted bounty); then each category with its emblem, a line about what it is, and its cards. A started heist or contract has a progress bar on its card.
+  * Add: every mission on the heist and contract pages has a short line about what it is, and every heist / contract a few words on top.
+  * Add: emblems for the five classic heists (The Fleeca Job, The Prison Break, The Humane Labs Raid, Series A Funding, The Pacific Standard Job).
+* Property Manager:
+  * Fix: on a phone, arranging was slow and cards changed places by themselves. A card is now dragged only after a long press (a short buzz); a swipe scrolls the page, a tap opens the list of the place. Nothing redraws while you arrange, and the page is much lighter (the emblems are no longer copied into it at every redraw).
+  * Add: the five MC businesses as properties: Weed Farm, Counterfeit Cash Factory, Cocaine Lockup, Methamphetamine Lab, Document Forgery Office (their name on the card until they have an emblem; they open the MC Business page).
+* Vehicle Manager:
+  * Add: a "Special Upgrades" button next to Filters, to the page of HSW / Imani Tech / Benny's vehicles (before, it was only in the pages menu).
+* Home:
+  * Change: Twitch Drops: when none are on, a small line says so and when it was last checked; if the automatic check stops running, it says that too.
+  * Fix: the Twitch Drops check missed the Grotti Turismo Omaggio drop (Oct 30 – Nov 1, 2026), announced only on Rockstar's Newswire and X. It now also reads the news sites (Google News, last 10 days) and the weekly post, understands dates like "Oct. 30-Nov. 1", and notes a check at least once a day. Needs the new .github/workflows/drops.yml.
+
+### v0.32.1 (2026-11-01)
+* Job Manager:
+  * Change: the three categories are one under the other, Heists, Contracts, Jobs, all the same size: full width, the same emblem height and the same card height (they were side by side and uneven).
+
 ### v0.32.0 (2026-11-01)
 * Job Manager:
-  * Change: heists and contracts sorted as in the game. Heists: the five classic ones (The Fleeca Job, The Prison Break, The Humane Labs Raid, Series A Funding, The Pacific Standard Job), Doomsday, Diamond Casino, Cayo Perico, Kortz Center. Contracts: Security Contracts, Dr. Dre (VIP Contract), Auto Shop Contracts, Salvage Yard Robberies, Cluckin' Bell Farm Raid, Bail Office Bounties. Jobs keeps the businesses (Agency, Auto Shop, Bail Office, Garment Factory, Money Fronts).
+  * Change: heists and contracts sorted as in the game. Heists: the five classic ones (The Fleeca Job, The Prison Break, The Humane Labs Raid, Series A Funding, The Pacific Standard Job), Doomsday, Diamond Casino, Cayo Perico, Kortz Center. Contracts: Dr. Dre (VIP Contract), Auto Shop Contracts, Salvage Yard Robberies, Cluckin' Bell Farm Raid, Bail Office Bounties. Jobs keeps the businesses (Agency, Auto Shop, Bail Office, Garment Factory, Money Fronts); the Agency is a container like Money Fronts, and its Security Contracts (jobs, not contracts) are on the Agency page, with their emblem.
   * Add: every heist and contract opens its own page with its missions in order (scope out, tasks / preps, planning, finale; optional ones marked): tick them as you go, "Finale done" counts the run and starts the ticks over (with Undo). Doomsday has its three acts, Auto Shop its eight contracts with their payouts, the Salvage Yard its five robberies.
   * Add: the Salvage Yard page shows this week's three robberies and their cars, read by itself from the weekly post; the other two are faded. On a new week the robbery ticks start over and a notification says which cars are on.
   * Add: the Kortz Center page shows this week's primary targets; Bail Office Bounties shows this week's Most Wanted target and FIB Priority File.
   * Add: heists and contracts without an emblem yet have a card with their name (and what they need), until the emblem comes.
+  * Fix: the Contracts emblem has its top back (it was cut off in the picture itself; the frame's tip is redrawn).
 
 ### v0.31.0 (2026-10-31)
 * Job Manager:
