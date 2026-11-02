@@ -2,6 +2,30 @@
 
 * * *
 
+### v0.38.0 (2026-11-02)
+* Property Manager:
+  * Add: a screenshot put on a car on show in a Mansion opens a photo studio, like in the Vehicle Manager: move and resize the 16:9 frame (corners, drag, a tap elsewhere, the wheel or two fingers), zoom, brightness, contrast, saturation, vibrance, warmth. The original and the settings are kept, so "✂ Edit the screenshot" in the car's window continues from where you left it.
+
+### v0.37.0 (2026-11-02)
+* Production Manager:
+  * Change: the Nightclub's popularity has three round buttons, like the blips in the game, all blue, each with how much the bar goes up: rebook a DJ (+10%), a troublemaker thrown out (the blue dot, +25%) and a VIP taken home or to hospital (the blue figure, +25%). Both 25% values checked by Mihai in the game. Hold a button for what it is.
+
+### v0.36.2 (2026-11-02)
+* Home:
+  * Change: the Twitch Drops card is small and sits right on top of "This week in GTA Online", moving with it when you open or fold it (on narrower screens, right above it in the page). One short line with the dates ("Twitch Drops · 30 Oct – 1 Nov"), the claim date under it. It shows only while there are drops to watch or a reward to claim; otherwise it is hidden.
+
+### v0.36.1 (2026-11-01)
+* Property Manager:
+  * Fix: on a phone, the name of a car on show was partly under its photo (the make and "Car podium" hidden). An old phone rule from the small cards capped the photo's box at 150 px while the picture kept its full height and spilled over the name. The showroom cards keep their whole 16:9 photo now, and the handwritten name has room for its tall letters.
+* Home:
+  * Fix: Twitch Drops said "period unknown" although Rockstar's page gives October 30 – November 1. That page is built by scripts, so its text is inside the page's data, which the check used to throw away; it now reads it. It also reads the full articles of two GTA news sites (rockstarintel.com, gtaboom.com) and Rockstar Support's wording ("until November 1 … to claim the drop on Twitch", "until November 11 … to log in and claim … in-game"). Needs the new .github/workflows/drops.yml.
+
+### v0.36.0 (2026-11-01)
+* Property Manager:
+  * Change: the Mansion page, all new (variant A of the mockups): a banner with the house's photo behind its emblem, name, price and the upgrades (yours lit); three small figures (cars on show, the boost that's on, upgrades); then the showroom, the podium car big with the two driveway places next to it (empty places are dashed boxes you tap to fill), and beside it the boost and, folded, what a Mansion has and the rules. On a phone everything stacks in one column.
+* Home:
+  * Fix: Twitch Drops showed made-up dates (1–4 November instead of 30 October – 1 November). When a drop was found only through a news article with no dates, the check took the article's day as the start and added three days. Now dates are only read, never made up: Rockstar's own Twitch Drops page is tried first, "between October 30 – November 1" and "Oct. 30-Nov. 1" are understood, and so is the day you can claim the reward in the game until. The card says "watch on Twitch 30 October – 1 November · claim in the game until 11 November", keeps showing the claim date after the watching is over, and says "period unknown" when no date was found. Needs the new .github/workflows/drops.yml.
+
 ### v0.35.2 (2026-11-01)
 * Property Manager:
   * Fix: the Vinewood Residence page showed mostly the hills above it: a new, closer photo of the whole Mansion (Mihai's), and a Mansion's photo is never cut any more (shown whole, at the page's width).
