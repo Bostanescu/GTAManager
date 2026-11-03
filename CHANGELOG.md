@@ -2,6 +2,22 @@
 
 * * *
 
+### v0.40.0 (2026-11-03)
+* Production Manager:
+  * Change: every business window has three tabs (variant B): Production, open by default (state, supplies with Stash House, stock, sale, resupplied / sold, boosts, Mutt), Upgrades (what the business has) and Settings (owned, pin, location, map layer, value from the game, alert, advanced numbers, timers). The Clubhouse too: bar and bike shop in Production, bed, bike shop and gun locker in Upgrades, timers in Settings. A business you don't own shows only its settings.
+  * Add: a gun locker mark next to the Clubhouse's name (like the bed and the bike shop) and a Gun locker tick on the CEO Office page. The Agency's gun locker comes with its Armory, a Mansion's with its Armory.
+  * Change: Stash House, Yohan and Business Battle are small icons of the same size, without text (what they are: rest the mouse on them); Yohan's wait is a small number on his icon. The Business Battle crate is green on a clear background.
+  * Fix: the "Page" link in the MC Business menu stayed on the page after the menu closed; it now comes and goes with the menu, with a page icon.
+
+### v0.39.0 (2026-11-02)
+* Production Manager:
+  * Fix: on the Nightclub page and in its window, the popularity % above the bar and the "Below 95%" line follow the bar while you drag it; letting go updates the rest of the page at once (it used to wait a few seconds).
+  * Change: Nightclub popularity in 2.5% steps (each box split in four).
+  * Add: the Nightclub's resident DJs (Solomun, Tale Of Us, Dixon, The Black Madonna), ticked when you have them; the Clubhouse's Gun locker.
+  * Add: Stash House (the purple icon from the map) next to Supplies of the MC businesses, the Bunker and the Acid Lab: the daily raid refilled that business to 100% (one a day, with Undo).
+  * Add: Nightclub goods from Yohan and from Business Battles (his portrait and a green crate): pick the type and how many crates, they go into the warehouse; Yohan counts down his 20 minutes and a notification says when he can be called again.
+  * Add: Acid Lab in the pages menu under Production Manager: the map with the Acid Lab's big window open, on its pin. The MC Business card of the left menu has a link to the MC Business page.
+
 ### v0.38.0 (2026-11-02)
 * Property Manager:
   * Add: a screenshot put on a car on show in a Mansion opens a photo studio, like in the Vehicle Manager: move and resize the 16:9 frame (corners, drag, a tap elsewhere, the wheel or two fingers), zoom, brightness, contrast, saturation, vibrance, warmth. The original and the settings are kept, so "✂ Edit the screenshot" in the car's window continues from where you left it.
