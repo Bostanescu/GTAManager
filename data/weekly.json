@@ -20,13 +20,13 @@
     "Heist Targets",
     "Salvage Yard",
     "Test Ride",
+    "GTA+",
     "HSW Test Ride",
     "Time Trials",
     "Luxury Autos",
     "PDM",
     "FAQ",
-    "Bonuses",
-    "Discounts"
+    "Bonuses"
    ]
   },
   {
@@ -116,7 +116,22 @@
     "Impaler LX Muscle · Declasse Imani −30% $1,465,000 $1,025,500",
     "I-Wagen SUVs · Obey −30% $1,729,000 $1,210,300"
    ]
+  },
+  {
+   "title": "GTA+ Benefits",
+   "items": [
+    "Itali RSX Free",
+    "Warehouses & Vehicle Warehouses 60% off",
+    "Body Armor & Ammo 75% off",
+    "Import/Export Sell Missions 2X GTA$ & RP",
+    "Staff Sourced Special Cargo 2X Speed",
+    "Contact Missions 2X GTA$ & RP",
+    "White Prismatic Pearl Chameleon Paint & Wheel Paint Vehicle Paint",
+    "Pop Art Revere Collar",
+    "Sod Off Painting",
+    "Blagueurs Baseball Bat & Snakeskin Knife Weapon Finishes"
+   ]
   }
  ],
- "fetched": "2026-11-12T09:52Z"
+ "fetched": "2026-11-15T09:40Z"
 }
