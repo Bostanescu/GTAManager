@@ -2,6 +2,137 @@
 
 * * *
 
+### v0.53.0 (2026-11-16)
+* Job Manager:
+  * Add: Casino: when a board is done you stay on it and the next board's tab blinks until you open it (Prep after Setup, Finale after Prep).
+  * Add: Casino: after Done the 48-minute heist cooldown starts: the Setup board shows the minutes left and the time it ends, the Job Manager chip too, and the bell rings when it's over.
+  * Add: Casino: a note under Player Take about the host's first finale of the week paying ×1.86 (since July 2026).
+  * Fix: every tick and every pill on the three Casino boards can be undone with another tap (checked on all of them).
+  * Change: the Casino boards use Black Ops One for the titles and the app's plain font for everything else (no more handwriting).
+
+### v0.52.0 (2026-11-16)
+* Job Manager:
+  * Change: The Diamond Casino Heist boards redone (idea 158, mockup 1 of 5): no game pictures, the same look on all three boards — a white board with boxes per category. Setup: Scope Out and the target, the approach (the one played last time crossed out), the access points found by group, P.O.I. 1–10, the extras with prices. Prep: gunman, driver and hacker as tap-to-pick pills with cut, skill, how to unlock, the gunman's weapons and the driver's car; mandatory and optional prep work with what each one gives (Big Con: the entry disguise). Finale: entrance, exit (only the access points found are full), buyer, optional, the money and every player's cut.
+  * Change: the boards keep their normal size on PC and scroll; on phones the boxes stack in one column.
+
+### v0.51.1 (2026-11-15)
+* Job Manager:
+  * Fix: on phones the Casino boards were wider than the screen and cut off on the right; now everything fits one column.
+  * Change: the Setup board looks like the game's: the 6 access points (Main Door, Side Doors, Sewer Tunnel, Roof Terrace, Security Tunnel, Roof) with ‹ › for the ones that have several, the target with ‹ ›, the 10 P.O.I. scoped, the extras with PURCHASED and the price, the approaches with their picture and description. Pictures from your screenshots, including Sewer Tunnel, Security Tunnel and Vault Door.
+  * Fix: on PC the Casino boards no longer shrink to fit the screen height (the Big Con prep board was unreadable); they fill the width and the page scrolls.
+
+### v0.51.0 (2026-11-15)
+* Job Manager:
+  * Add: The Diamond Casino Heist is a planning screen like in the Arcade basement (idea 158, variant A): three tabs, 1 Setup · 2 Prep · 3 Finale, the right one opens by itself; the pictures come from your screenshots.
+  * Add: Setup: Scope Out Casino and Vault Contents, the 11 access points (tick the ones you photographed), the target (Cash, Artwork, Gold, Diamonds), the extras with prices and the approach (the one played last time is marked: the game doesn't allow it twice in a row).
+  * Add: Prep: the support crew with ‹ › like in the game (all 15, cut, skill, how to unlock them; Chester can't be both gunman and driver), each gunman's two loadouts for the chosen approach, each driver's four cars, each hacker's vault time; the mandatory and optional prep work of the approach (Big Con: the entry disguise), the general prep work, Security Pass level 1 / 2, Masks.
+  * Add: Finale: entrance, exit and buyer with ‹ ›, Gunman Decoy and Clean Vehicle; type the Potential Heist Take from the board and the screen works out the buyer, the crew + Lester cut and every player's money (min. 15 %). START → Done records the finale and starts the next one (undo in the message).
+  * Add: the heist in progress shows at the top of the Job Manager.
+
+### v0.50.0 (2026-11-14)
+* Vehicle Manager:
+  * Add: Service vehicles page (idea 145, variant B): the list on the left (Kosatka, Mobile Operations Center, Avenger, Terrorbyte, Acid Lab, Galaxy Super Yacht), the chosen one on the right: owned or not, where it is kept, its upgrades with prices, what it unlocks and where it shows in the app. Open it from the button next to Filters or from the pages menu.
+  * Add: only the upgrades that change something in the game (researched 14.11.2026): Kosatka (Sonar Station, Guided Missiles, Weapon Workshop, Sparrow, Kraken Avisa), MOC (cab, the three bays, rear turrets), Avenger (workshops, Operations Terminal, Thruster, Stealth Module or Missile Lock-on Jammer, turrets, machine guns, missiles), Terrorbyte (four stations and the four Bureau Tech upgrades of the Garment Factory), Acid Lab (Equipment Upgrade, the same tick as in Production Manager), Galaxy Super Yacht (Orion, Pisces or Aquarius). The total shows what the vehicle is worth with its upgrades.
+  * Add: where it is kept: the MOC in the Bunker, the Avenger in a Facility (one of the nine) or the Hangar, the Terrorbyte in the Nightclub or the Garment Factory, the Acid Lab in the Freakshop, the yacht at one of the 12 moorings, the Kosatka wherever you write.
+  * Add: in the car window one tap on a service vehicle (or typing its model) fills brand, class and type; the garage gives way to where it is kept and its upgrades.
+  * Add: service vehicles are cards with a blue frame and the Service tag, their place instead of the garage, and they take no garage space; a new Service filter; the picture opens the service card. Paste (Ctrl+V), file and photo studio work on the service page too.
+* Job Manager:
+  * Change: in “Needs: …” the Kosatka, MOC, Avenger (and its Operations Terminal), Terrorbyte, Acid Lab and Galaxy Super Yacht turn green with ✓ when they are in your Vehicle Manager; on a page they open the service card.
+* Property Manager:
+  * Add: Kosatka and Galaxy Super Yacht cards; they open the service card.
+
+### v0.49.0 (2026-11-13)
+* Job Manager:
+  * Change: the eight hub titles are all the same size; long names go on two lines (variant B).
+  * Add: the Bail Office is now a working screen (idea 160): the board of three standard targets (caught alive or dead, with the pay; after the third one a 48-minute timer for the new board), the Most Wanted of the day (the six targets with their extra task, which ones you caught, a 24-hour timer), the agents (0–2, a 48-minute timer each, the holding-cell time), the safe (what is in it, Collected) and the daily Madrazo Hit. Every timer rings the bell when it ends.
+  * Add: the seven Odd Jobs are working screens too: log a run (how many, how much, how long), totals, money per run and per hour, the last runs with undo, the cooldowns (Pizza This...: each restaurant waits 48 minutes after five deliveries), all the unlocks and awards with their progress (trade prices, outfits, liveries), how they pay and good-to-know facts.
+  * Add: the running timers show up at the top of the Job Manager and on the cards.
+  * Add: every mission in the story strands and property operations has its details: where it starts, what you do, what it needs (players, property, unlocks) and what it gives (17 series, over 100 missions, from gtabase.com, gta.wiki, gtaboom.com, gtaboss.gg).
+  * Fix (checked): Special Vehicle Work's sixth mission is Coast Guard Duty; Lowriders, Short Trips, Special Vehicle Work and Mobile Operations cannot be played solo; Client Jobs are six; the Clubhouse has 13 contracts; Payphone Hits now wait 10 minutes and pay $15,000 + $30,000 bonus.
+  * Add: working screens for Payphone Hits (bonus or not, the 10-minute wait with a bell, the 8 trophies), Client Jobs (Done starts the 30-minute timer for that job and the 5-minute one for the others), the Salvage Yard (tows, a 48-minute reminder to keep the reputation up, the safe) and Oscar Guzman (the one-hour wait after The Titan Job starts by itself).
+  * Add: details for the five original heists (every setup: what, where, players, what it unlocks) and the Cluckin' Bell Farm Raid (start, gangs, approaches, pay, the one-hour wait that now starts by itself).
+  * Add: Auto Shop customer cars (low / mid / high, by you or the staff, the Special Delivery award), FIB Files (this week's Priority File done or not, the Garment Factory safe), Fooligan Jobs as a new card in Property Operations (job done → the 48-minute wait with a bell, 0/10 to the Acid Lab Equipment Upgrade), and unlock counters for Mobile Operations (Bunker resupplies stolen) and Special Vehicle Work (Vehicle Cargo cars stolen) that show which missions are open and which is next.
+
+### v0.48.0 (2026-11-13)
+* Job Manager:
+  * Change: the Job Manager has eight categories instead of four (idea 159, after a check of all GTA Online missions): Heists, Contracts, Story Operations, Story Missions, Property Operations, Agency Work, Odd Jobs and Arena Wars, each with its own page and picture on the hub.
+  * Add: Oscar Guzman Flies Again (6 missions), the FIB Files (4), eleven story strands with every mission to tick (Lowriders, Gerald's Last Play, Premium Deluxe Repo Work, Casino Story Missions, A Superyacht Life, Short Trips, Operation Paper Trail, First Dose, Last Dose, Project Overthrow, Mr. Faber Work), the property operations (Mobile Operations, Special Vehicle Work, Client Jobs, LSA Operations, Clubhouse Contracts), Payphone Hits (8) and the seven Odd Jobs.
+  * Change: new pictures for almost every card (ChatGPT, from Mihai), with the title written by the app; the Kortz Center planning board has real pictures for all its methods.
+  * Change: Dr. Dre, the Cluckin' Bell Farm Raid and KnoWay Out moved to Story Operations; the Agency and Security Contracts to Agency Work; Money Fronts to Property Operations. Old links to the Jobs page open Agency Work.
+  * Fix: when this week's update comes from gtaboss.gg, the Job Manager now also reads the Salvage Yard cars and the FIB Priority File (a chip at the top), and shows the Kortz paintings without the repeated "Kortz Center Heist".
+
+### v0.47.2 (2026-11-12)
+* Home:
+  * Fix: the weekly card shows the 2X / 3X / 4X bonuses on top again, grouped by multiplier, also when the week comes from gtaboss.gg (which lists them as lines inside one section); the site's menus and page title are no longer shown as sections.
+
+### v0.47.1 (2026-11-11)
+* Job Manager:
+  * Add: on the Kortz Center board you tick each entry point you photographed in the Scope Out (click its picture or its box); not scoped = gray, the red frame = the entry of the Infiltration Gear you picked; the TODO line shows how many entries are scoped, and a method whose entry is not scoped says so in its note. Also on phones (in step 1).
+  * Add: drawn pictures for the methods that had none (Tactical Equipment, Alpha Mail, Hazmat, Security, Military, Armored Caracara, Annihilator Stealth), until there are pictures from the game.
+  * Change: the whole board fits the screen (on a 1080p monitor without scrolling): it scales to the space under the header, and the header of the page is shorter.
+
+### v0.47.0 (2026-11-11)
+* Job Manager:
+  * Change: The Kortz Center Heist has a planning board like the one in the game (idea 158). On a PC: a white board with the entry points, the target, TODO / optional lists, the required prep work with ‹ › (or Enter) to change the method, the optional prep work, the extras and START. On phones: the same as steps (Scope Out, required, optional, finale).
+  * Add: every prep now has its real mission: what it gives (which entry it opens, which weapons), the steps and a tip, in a note that opens when you click its picture; all 17 preps, the Scope Out and the extras.
+  * Add: the target of the week. The first run is always La Dernière Débauche (it must be sold); after that you pick this week's painting (from the weekly post, also an event that locks it in) and see its value, whether this week's bonus (first sale ×4) is still free (it comes back on Thursday) and the paintings you kept in the Mansion (4 places).
+  * Change: after START (the finale) you say whether the painting was sold or kept; the prep work starts over, like in the game (with undo).
+
+### v0.46.0 (2026-11-09)
+* Vehicle Manager:
+  * Add: 208 vehicles now say they can take the Missile Lock-On Jammer (Imani Tech, Agency Vehicle Workshop; aircraft in the Hangar workshop): the 50-car lists of Agents of Sabotage, Money Fronts, A Safehouse in the Hills and The Kortz Center Heist, plus its new cars. For example the Übermacht Sentinel Classic. On those cars the Remote Control Unit can't be chosen (only the 20 Imani Tech cars take it).
+  * Add: the nine new cars of The Kortz Center Heist in the suggestions of the car window (Cartuccia GT, LRC GT, Läufer, Merula, E-Stride, Warden, Horus, Ignus Pursuit, Caracara Armored).
+  * Change: letters with marks count as the plain letter when you search or type a first letter: "U" finds Übermacht, "franken" finds Fränken Stange; a brand typed without marks takes the right spelling. Also in the Export Tracker, the Vehicle Warehouse search and every list you choose from.
+* Job Manager:
+  * Fix: on phones the Arena Wars cards (and other text cards) went over each other; they now grow as tall as their text needs.
+  * Fix: on phones the strip on top of a category page now really shows the current category (it sometimes stayed at the start).
+
+### v0.45.0 (2026-11-09)
+* Settings:
+  * Add: a Job Manager tab with the card size for the category pages (Heists, Contracts, Jobs, Arena Wars): Big (3 in a row, as before), Medium (4), Small (5), Very small (6); on phones 2 or 3 in a row. Kept on each device. On Small and Very small the number of players is hidden so the cards don't get crowded.
+
+### v0.44.1 (2026-11-09)
+* Job Manager:
+  * Change: on the category pages (Heists, Contracts, Jobs, Arena Wars) the cards are big: three in a row on a PC, two on tablets and phones; under the mouse they grow a little (6%) so they don't cover each other.
+  * Change: the nine heist pictures are sharper (900×600 instead of 600×400), so they stay crisp on the bigger cards.
+
+### v0.44.0 (2026-11-09)
+* Job Manager:
+  * Change: the Job Manager page is now a hub of four big cards with Mihai's new pictures: Heists, Contracts, Jobs and Arena Wars (model 4: Mihai's font "Serious", a small spaced line with a colored bar, the name solid, about a quarter of the card's height, low in the bottom-left corner and never cut; a thin white frame; the number of cards inside in the corner). A tap opens the category's own page.
+  * Change: each category has its own page and address (#heists, #contracts, #jm-jobs, #arena), with a strip on top to go back to Job Manager or to another category; the phone's back button goes back to the hub. The All / Heists / Contracts / Jobs tabs and the old category emblems are gone.
+  * Change: a heist or contract page goes back to its category; Agency and Money Fronts go back to Jobs; Dr. Dre to Contracts.
+  * Add: Arena Wars: the Arena Workshop (owned or not; $995,000, gives Arena Points and the Arena career) and the nine modes, each with what it is: Carnage, Flag War, Games Masters, Here Come the Monsters, Hot Bomb, Tag Team, Wreck It, Buzzer Beater, Bomb Ball.
+  * Add: when you own the Arena Workshop, it has its pin on the Job Manager map and on the Property Manager map (Maze Bank Arena; drag it if it's not exactly right, "put the pin back" on the Arena Wars page).
+  * Change: the pages menu lists the four categories under Job Manager; the Job Manager tour shows the new hub.
+  * Fix: opening the app straight on a Job Manager page (a link, a reload) showed the "In game" switch, which has no meaning there.
+
+### v0.43.1 (2026-11-09)
+* Job Manager:
+  * Fix: the heist cards were much darker than Mihai's pictures (a dark layer over the left side and the bottom, there to make the title readable). Now only a small soft shade sits in the bottom-left corner, under the title (variant B); the rest of the picture shows as it is.
+  * Change: Job Manager cards grow a bit more under the mouse (15% instead of 8%).
+
+### v0.43.0 (2026-11-09)
+* Job Manager:
+  * Change: the nine heist cards have Mihai's new pictures without text, and the app writes the title on them (variant A): a red "Heist" box and the name in two lines, Bebas Neue, over a darker left side. The title grows and shrinks with the card.
+  * Change: Job Manager cards grow a little under the mouse, like the pictures in the Vehicle Manager.
+  * Add: KnoWay Out (A Safehouse in the Hills), under Contracts: Avi Schwartzman's five missions in order (Negative Press, Inside Job, Tunnel Vision, Trash Talking, A Clean Break) and Home Sweet Home, with a Mansion; no property needed, solo is fine; the finale's pay (more on the first one after Thursday's reset). Its card has its name for now, until it gets a picture.
+* Production Manager:
+  * Change: the MC Business menu on the left shows only the short names (Clubhouse, Weed, Cash, Cocaine, Doc. Forgery, Meth); the whole name is on the MC Business page and when you rest the mouse on it.
+
+### v0.42.0 (2026-11-08)
+* Home:
+  * Change: Twitch Drops, strict (Mihai's choice): only Rockstar's own Twitch Drops page and the official weekly post are believed, and only when they give explicit dates; today has to be inside them. Reddit questions and news articles are no longer read (a player's question titled "Twitch Drops" made it say drops were on). Needs the new .github/workflows/drops.yml. If the next real drop is still wrong, the feature goes.
+* Job Manager:
+  * Fix: the new card pictures were darker at the bottom: they shared a class name with the left menu's tiles, whose dark gradient covered them. They now show as they are.
+
+### v0.41.0 (2026-11-08)
+* Job Manager:
+  * Change: Mihai's new pictures on the cards of the 14 heists and contracts (the five classic heists, Doomsday, Diamond Casino, Cayo Perico, Kortz Center, Dr. Dre, Auto Shop Contracts, Salvage Yard Robberies, Cluckin' Bell Farm Raid, Bail Office Bounties); the cards fill with them. The pages keep the emblems.
+* Property Manager:
+  * Add: a Mansion's garage in the Vehicle Manager (named like it, with the levels B1, B2, Driveway, Podium) fills its cars on show by itself: what you put on the Podium and the Driveway shows with its VM photo; your screenshot and font still go on top. The two driveway places can change places: drag one onto the other, or "⇄ Swap" in the car's window; the order is kept.
+  * Add: on the mouse, a car on show tells what it is: make and model, class, Imani Tech, HSW, Benny's, modified, garage and level, and "tap to edit", in the showroom's colours.
+  * Change: the three figures (cars on show, boost, upgrades) are small, at the top of the right column; the upgrades have gold frames like the cars; the Armory is a real rifle, no longer a toy; the "Cars on show" title and the "Driveway 1 / 2" labels are gone.
+
 ### v0.40.0 (2026-11-03)
 * Production Manager:
   * Change: every business window has three tabs (variant B): Production, open by default (state, supplies with Stash House, stock, sale, resupplied / sold, boosts, Mutt), Upgrades (what the business has) and Settings (owned, pin, location, map layer, value from the game, alert, advanced numbers, timers). The Clubhouse too: bar and bike shop in Production, bed, bike shop and gun locker in Upgrades, timers in Settings. A business you don't own shows only its settings.
