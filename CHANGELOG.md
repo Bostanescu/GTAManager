@@ -2,6 +2,43 @@
 
 * * *
 
+### v0.57.1 (2026-11-20)
+* Job Manager:
+  * Change: Money Fronts after Mihai's safe screen: you type the game's „Total daily income” (at the safe, Q); the app keeps the part from your other businesses and adds the three fronts live ($750, $1,500 after 15 missions, $0 at max Heat). Each front at max Heat, the Car Wash included, only takes out its own part.
+  * Change: Heat shows as 5 boxes, like the HEAT bar in the game (a laundering mission is half a box); tap a box to set it.
+  * Change: Heat rising on its own (about 8% a game day) is on by default: Smoke on the Water and Higgins Helitours reached max Heat without laundering.
+
+### v0.57.0 (2026-11-20)
+* Job Manager:
+  * Change: Money Fronts is a working screen. On top the shared Car Wash safe (fills while In game, $100,000 cap, “full in”, bell when almost full and full, Collected, and the daily amount from the game) and the clean money by the bed (a 10-minute timer that starts by itself after a laundering mission, with the bell).
+  * Change: every front has its own Heat in %: +10% per laundering mission and per Mr. Faber Work, +5% for one left unfinished, one legal job (Car Wash, Helicopter Tour, Weed Delivery) brings it back to 0; tap a box to set it as in the game. At 100% the front stops paying into the safe (not a raid, as it said before) and can't launder.
+  * Add: the 4 laundering missions of each front by name, with how many times you did them; the count to 15 for the double safe ($750 → $1,500 a day), where Mr. Faber Work counts for all three fronts; Mr. Faber Work (the 6 missions, picked from the front you start it from); Red Harvest today (0–10 bags, resets every day); Undo the last one.
+  * Add: an optional switch for Heat rising on its own (8% a game day), until it is checked in the game.
+  * Change: the Money Fronts card shows the safe and the highest Heat, or how many fronts are stopped; the Property Manager cards and the map show each front's Heat.
+  * Add: new pictures for LSA Operations, Clubhouse Contracts, Money Fronts, the Casino story missions and the Agency Work page.
+
+### v0.56.0 (2026-11-17)
+* Production Manager:
+  * Change: automatic In game / Off waits before switching on: in the loading screen the game already has connections open, so it used to switch on too early. Now the switch turns yellow, “Connecting…” (the time does not run), and turns on about 1½ minutes after you joined; leaving or a click cancels it. The first time the detector is found, a short note explains this and that a very long or stuck loading screen needs a click to Off.
+  * Add: Nightclub: the DJ, Troublemaker, VIP and Promote Club buttons are in the small window from the left menu too, with the same cooldowns and bell.
+  * Change: the In game / Off switch shows on every page, the Job Manager pages included.
+
+### v0.55.1 (2026-11-17)
+* Production Manager:
+  * Change: CEO warehouse special items are counted from the per-type list again (as before 0.55); the fields for the game's number and total value are gone. The game's sell screen jumps between values (a game bug: it showed $470,000, it paid $410,000, which is exactly the list's Ornamental Egg + Large Diamond + Rare Pocket Watch).
+
+### v0.55.0 (2026-11-17)
+* Production Manager:
+  * Add: automatic In game / Off on your PC: a small helper (gta_detector.ps1, started with Windows) sees whether GTA is running and has an Online session open (only Windows' list of processes and connections, nothing from the game). When you enter a private or public session the switch turns on by itself; when you leave or get the AFK kick it turns off and the time stops at the moment you left, not when it noticed. The switch shows “auto” and 🌐 public / 🔒 private; a click still works; without the helper (or on the phone) everything stays manual.
+  * Add: CEO warehouse special items: you can type the number and the total value exactly as the game shows them; they win over the per-type list (which stays for those who know the types).
+
+### v0.54.0 (2026-11-17)
+* Production Manager:
+  * Add: Nightclub: a fourth popularity button, Promote Club +25% (the Nightclub Management mission from the laptop or from Tony), next to DJ, Troublemaker and VIP, on the Nightclub page and in the quick window.
+  * Add: Nightclub: the “Bonus week ×2” switch: while on, Promote Club gives +50%; it turns itself off at the next weekly reset (Thursday).
+  * Add: Nightclub: you choose under which popularity the bell rings (95 %, 90 %, 80 %, 70 %, 50 % or never); the message reminds you of Promote Club.
+  * Add: Nightclub cooldowns: after Promote Club the button is grey for 5 minutes, after a Troublemaker or a VIP both are grey for 48 minutes (one in-game day), counting down; still pressable after a question; the bell rings when they are free again. The DJ has no cooldown.
+
 ### v0.53.0 (2026-11-16)
 * Job Manager:
   * Add: Casino: when a board is done you stay on it and the next board's tab blinks until you open it (Prep after Setup, Finale after Prep).
